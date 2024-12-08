@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using TechShelf.Infrastructure;
+using TechShelf.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,5 +27,20 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    try
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        await dbContext.Database.MigrateAsync();
+        logger.LogInformation("Successfully applied migrations to ApplicationDbContext");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "An error occurred while applying migrations.");
+    }
+}
 
 app.Run();
