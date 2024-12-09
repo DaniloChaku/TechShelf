@@ -22,6 +22,7 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             .HasMaxLength(1000);
 
         builder.Property(p => p.Price)
+            .HasPrecision(10, 2)
             .IsRequired();
 
         builder.Property(p => p.Stock)

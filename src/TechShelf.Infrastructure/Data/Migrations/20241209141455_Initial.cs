@@ -47,7 +47,7 @@ namespace TechShelf.Infrastructure.Data.Migrations
                     Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
                     CategoryId = table.Column<int>(type: "integer", nullable: false),
                     BrandId = table.Column<int>(type: "integer", nullable: false),
-                    Price = table.Column<int>(type: "integer", nullable: false),
+                    Price = table.Column<decimal>(type: "numeric(10,2)", precision: 10, scale: 2, nullable: false),
                     Stock = table.Column<int>(type: "integer", nullable: false),
                     ThumbnailUrl = table.Column<string>(type: "character varying(250)", maxLength: 250, nullable: false),
                     ImageUrls = table.Column<string>(type: "character varying(1250)", maxLength: 1250, nullable: false)

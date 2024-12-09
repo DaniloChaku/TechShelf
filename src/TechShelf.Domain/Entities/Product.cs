@@ -8,7 +8,7 @@ public class Product : Entity<int>
     public string Description { get; set; } = string.Empty;
     public int CategoryId { get; set; }
     public int BrandId { get; set; }
-    public int Price { get; set; }
+    public decimal Price { get; set; }
     public int Stock { get; set; }
     public string ThumbnailUrl { get; set; } = string.Empty;
     public List<string> ImageUrls { get; set; } = [];
