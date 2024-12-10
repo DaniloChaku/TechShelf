@@ -7,13 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Features\**" />
-    <EmbeddedResource Remove="Features\**" />
-    <None Remove="Features\**" />
+    <ProjectReference Include="..\TechShelf.Domain\TechShelf.Domain.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TechShelf.Domain\TechShelf.Domain.csproj" />
+    <PackageReference Include="Mapster" Version="7.4.0" />
+    <PackageReference Include="MediatR" Version="12.4.1" />
   </ItemGroup>
 
 </Project>
