@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{29D4E27D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechShelf.IntegrationTests", "tests\TechShelf.IntegrationTests\TechShelf.IntegrationTests.csproj", "{F1C183BA-52CA-48F6-B19C-AB263EF299BE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechShelf.UnitTests", "tests\TechShelf.UnitTests\TechShelf.UnitTests.csproj", "{B100E932-975D-4A88-AF3F-FD1A9CB562E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{F1C183BA-52CA-48F6-B19C-AB263EF299BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1C183BA-52CA-48F6-B19C-AB263EF299BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1C183BA-52CA-48F6-B19C-AB263EF299BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B100E932-975D-4A88-AF3F-FD1A9CB562E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B100E932-975D-4A88-AF3F-FD1A9CB562E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B100E932-975D-4A88-AF3F-FD1A9CB562E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B100E932-975D-4A88-AF3F-FD1A9CB562E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,5 +59,6 @@ Global
 		{C16BDEDD-28E6-49B5-8E4E-64AC92F7DC27} = {DFBECB93-A299-4EDF-A7CC-0F402875CFCE}
 		{22BA943D-ABD4-4152-8DC7-32DB167AA3B8} = {DFBECB93-A299-4EDF-A7CC-0F402875CFCE}
 		{F1C183BA-52CA-48F6-B19C-AB263EF299BE} = {29D4E27D-4401-40C7-8E9B-7A67805A70EE}
+		{B100E932-975D-4A88-AF3F-FD1A9CB562E2} = {29D4E27D-4401-40C7-8E9B-7A67805A70EE}
 	EndGlobalSection
 EndGlobal
