@@ -6,7 +6,7 @@ using TechShelf.Domain.Entities;
 using TechShelf.Infrastructure.Data;
 using TechShelf.Infrastructure.Data.Repositories;
 
-namespace TechShelf.IntegrationTests.Integration.Data.Repositories;
+namespace TechShelf.IntegrationTests.Infrastructure.Data.Repositories;
 
 public class GenericRepositoryTests : IDisposable
 {
