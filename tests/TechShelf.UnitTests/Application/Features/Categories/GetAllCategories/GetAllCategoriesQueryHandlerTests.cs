@@ -18,7 +18,7 @@ public class GetAllCategoriesQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_CategoriesExist_ReturnsCategoryDtos()
+    public async Task Handle_ReturnsCategoryDtos_WhenCategoriesExist()
     {
         // Arrange
         var categories = new List<Category>
@@ -47,7 +47,7 @@ public class GetAllCategoriesQueryHandlerTests
     }
 
     [Fact]
-    public async Task Handle_NoCategoriesExist_ReturnsEmptyList()
+    public async Task Handle_ReturnsEmptyList_WhenNoCategoriesExist()
     {
         // Arrange
         var repositoryMock = new Mock<IRepository<Category>>();
