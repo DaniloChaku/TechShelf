@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TechShelf.Infrastructure;
 using TechShelf.Infrastructure.Data;
+using TechShelf.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 
