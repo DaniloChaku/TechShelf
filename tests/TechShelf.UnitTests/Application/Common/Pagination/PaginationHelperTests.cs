@@ -1,14 +1,14 @@
 ﻿using FluentAssertions;
-using TechShelf.Application.Common;
+using TechShelf.Application.Common.Pagination;
 
-namespace TechShelf.UnitTests.Application.Common;
+namespace TechShelf.UnitTests.Application.Common.Pagination;
 
 public class PaginationHelperTests
 {
     [Theory]
-    [InlineData(1, 10, 0, 10)] 
+    [InlineData(1, 10, 0, 10)]
     [InlineData(2, 10, 10, 10)]
-    [InlineData(3, 20, 40, 20)] 
+    [InlineData(3, 20, 40, 20)]
     public void CalculatePagination_ReturnsCorrectSkipAndTake_WhenInputValid
         (int pageIndex, int pageSize, int expectedSkip, int expectedTake)
     {
@@ -21,7 +21,7 @@ public class PaginationHelperTests
     }
 
     [Theory]
-    [InlineData(0, 10)] 
+    [InlineData(0, 10)]
     [InlineData(-1, 10)]
     public void CalculatePagination_InvalidPageIndex_ThrowsArgumentOutOfRangeException(int pageIndex, int pageSize)
     {

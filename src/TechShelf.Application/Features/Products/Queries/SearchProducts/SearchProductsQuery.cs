@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using TechShelf.Application.Common;
+using TechShelf.Application.Common.Pagination;
 using TechShelf.Application.Features.Products.Queries.Shared;
 
 namespace TechShelf.Application.Features.Products.Queries.SearchProducts;

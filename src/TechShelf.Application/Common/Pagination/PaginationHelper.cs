@@ -1,4 +1,4 @@
-﻿namespace TechShelf.Application.Common;
+﻿namespace TechShelf.Application.Common.Pagination;
 
 public static class PaginationHelper
 {
