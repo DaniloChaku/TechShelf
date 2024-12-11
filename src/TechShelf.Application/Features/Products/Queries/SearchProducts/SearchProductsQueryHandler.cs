@@ -1,4 +1,5 @@
-﻿using Mapster;
+﻿using ErrorOr;
+using Mapster;
 using MediatR;
 using TechShelf.Application.Common.Pagination;
 using TechShelf.Application.Features.Products.Queries.Shared;
@@ -9,7 +10,7 @@ using TechShelf.Domain.Specifications.Products;
 namespace TechShelf.Application.Features.Products.Queries.SearchProducts;
 
 public class SearchProductsQueryHandler
-    : IRequestHandler<SearchProductsQuery, PagedResult<ProductDto>>
+    : IRequestHandler<SearchProductsQuery, ErrorOr<PagedResult<ProductDto>>>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -18,9 +19,16 @@ public class SearchProductsQueryHandler
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<PagedResult<ProductDto>> Handle(SearchProductsQuery request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<PagedResult<ProductDto>>> Handle(SearchProductsQuery request, CancellationToken cancellationToken)
     {
-        var (skip, take) = PaginationHelper.CalculatePagination(request.PageIndex, request.PageSize);
+        var paginationResult = PaginationHelper.CalculatePagination(request.PageIndex, request.PageSize);
+
+        if (paginationResult.IsError)
+        {
+            return paginationResult.Errors;
+        }
+
+        var (skip, take) = paginationResult.Value;
 
         var spec = new SearchProductsPageSpec(
             skip: skip,

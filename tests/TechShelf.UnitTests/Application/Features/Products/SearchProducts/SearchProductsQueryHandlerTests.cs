@@ -49,11 +49,12 @@ public class SearchProductsQueryHandlerTests
         var result = await _handler.Handle(query, cancellationToken);
 
         // Assert
-        result.Should().NotBeNull();
-        result.Items.Should().HaveCount(products.Count);
-        result.TotalCount.Should().Be(expectedTotalCount);
-        result.PageIndex.Should().Be(query.PageIndex);
-        result.PageSize.Should().Be(query.PageSize);
+        result.IsError.Should().BeFalse();
+        var pagedResult = result.Value;
+        pagedResult.Items.Should().HaveCount(products.Count);
+        pagedResult.TotalCount.Should().Be(expectedTotalCount);
+        pagedResult.PageIndex.Should().Be(query.PageIndex);
+        pagedResult.PageSize.Should().Be(query.PageSize);
     }
 
     [Fact]
@@ -78,9 +79,10 @@ public class SearchProductsQueryHandlerTests
         var result = await _handler.Handle(query, cancellationToken);
 
         // Assert
-        result.Should().NotBeNull();
-        result.Items.Should().BeEmpty();
-        result.TotalCount.Should().Be(expectedTotalCount);
+        result.IsError.Should().BeFalse();
+        var pagedResult = result.Value;
+        pagedResult.Items.Should().BeEmpty();
+        pagedResult.TotalCount.Should().Be(expectedTotalCount);
     }
 
     [Fact]
@@ -117,31 +119,19 @@ public class SearchProductsQueryHandlerTests
         ), cancellationToken), Times.Once);
     }
 
-    [Fact]
-    public async Task Handle_ThrowsArgumentOutOfRangeException_WhenPageIndexInvalid()
+    [Theory]
+    [InlineData(-1, 1)]
+    [InlineData(1, -1)]
+    public async Task Handle_ReturnsError_WhenPaginationInvalid(int pageIndex, int pageSize)
     {
         // Arrange
-        var query = new SearchProductsQuery(
-            PageIndex: -1,
-            PageSize: 10);
+        var query = new SearchProductsQuery(PageIndex: pageIndex, PageSize: pageSize);
         var cancellationToken = CancellationToken.None;
 
-        // Act & Assert
-        Func<Task> act = async () => await _handler.Handle(query, cancellationToken);
-        await act.Should().ThrowAsync<ArgumentOutOfRangeException>();
-    }
+        // Act
+        var result = await _handler.Handle(query, cancellationToken);
 
-    [Fact]
-    public async Task Handle_ThrowsArgumentOutOfRangeException_WhenPageSizeInvalid()
-    {
-        // Arrange
-        var query = new SearchProductsQuery(
-            PageIndex: 1,
-            PageSize: 0);
-        var cancellationToken = CancellationToken.None;
-
-        // Act & Assert
-        Func<Task> act = async () => await _handler.Handle(query, cancellationToken);
-        await act.Should().ThrowAsync<ArgumentOutOfRangeException>();
+        // Assert
+        result.IsError.Should().BeTrue();
     }
 }

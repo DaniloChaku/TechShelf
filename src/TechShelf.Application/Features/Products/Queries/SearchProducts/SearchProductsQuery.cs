@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using ErrorOr;
+using MediatR;
 using TechShelf.Application.Common.Pagination;
 using TechShelf.Application.Features.Products.Queries.Shared;
 
@@ -12,5 +13,5 @@ public record SearchProductsQuery(
     string? Name = null,
     int? MinPrice = null,
     int? MaxPrice = null
-) : IRequest<PagedResult<ProductDto>>;
+) : IRequest<ErrorOr<PagedResult<ProductDto>>>;
 
