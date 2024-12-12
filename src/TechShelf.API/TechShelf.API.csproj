@@ -16,10 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\TechShelf.Application\TechShelf.Application.csproj" />
     <ProjectReference Include="..\TechShelf.Infrastructure\TechShelf.Infrastructure.csproj" />
   </ItemGroup>
