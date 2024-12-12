@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using TechShelf.Infrastructure;
 using TechShelf.Infrastructure.Data;
 using TechShelf.Application;
+using Microsoft.AspNetCore.Http.Features;
+using TechShelf.API.Common.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +16,18 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
+
+builder.Services.AddProblemDetails(conf =>
+{
+    conf.CustomizeProblemDetails = context =>
+    {
+        context.ProblemDetails.Instance =
+            $"{context.HttpContext.Request.Method} {context.HttpContext.Request.Path}";
+
+        context.ProblemDetails.Extensions.TryAdd(
+            HttpContextKeys.RequestId, context.HttpContext.TraceIdentifier);
+    };
+});
 
 var app = builder.Build();
 
