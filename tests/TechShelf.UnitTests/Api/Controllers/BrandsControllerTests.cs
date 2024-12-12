@@ -1,6 +1,6 @@
-﻿using FluentAssertions;
+﻿using AutoFixture;
+using FluentAssertions;
 using MediatR;
-using Microsoft.AspNetCore.Mvc;
 using Moq;
 using TechShelf.API.Controllers;
 using TechShelf.Application.Features.Brands.Queries.GetAllBrands;
@@ -10,11 +10,13 @@ namespace TechShelf.UnitTests.Api.Controllers;
 
 public class BrandsControllerTests
 {
+    private readonly Fixture _fixture;
     private readonly Mock<IMediator> _mediatorMock;
     private readonly BrandsController _controller;
 
     public BrandsControllerTests()
     {
+        _fixture = new Fixture();
         _mediatorMock = new Mock<IMediator>();
         _controller = new BrandsController(_mediatorMock.Object);
     }
@@ -23,11 +25,7 @@ public class BrandsControllerTests
     public async Task GetAll_ReturnsListOfBrandDtos_WhenBrandsExist()
     {
         // Arrange
-        var expectedBrands = new List<BrandDto>
-        {
-            new (1, "Brand1"),
-            new (2, "Brand2")
-        };
+        var expectedBrands = _fixture.CreateMany<BrandDto>().ToList();
 
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<GetAllBrandsQuery>(), It.IsAny<CancellationToken>()))
