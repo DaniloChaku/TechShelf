@@ -18,7 +18,7 @@ public class ProductsController : BaseApiController
         _mediator = mediator;
     }
 
-    [HttpGet]
+    [HttpGet("search")]
     [ProducesResponseType(statusCode: StatusCodes.Status200OK, type: typeof(PagedResult<ProductDto>))]
     [ProducesResponseType(statusCode: StatusCodes.Status400BadRequest, type: typeof(ValidationProblemDetails))]
     public async Task<IActionResult> SearchProducts(
