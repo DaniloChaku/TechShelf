@@ -4,6 +4,7 @@ using TechShelf.Infrastructure.Data;
 using TechShelf.Application;
 using Microsoft.AspNetCore.Http.Features;
 using TechShelf.API.Common.Http;
+using TechShelf.API.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails(conf =>
 {
     conf.CustomizeProblemDetails = context =>
@@ -41,6 +43,10 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+else
+{
+    app.UseExceptionHandler();
 }
 
 app.UseHttpsRedirection();
