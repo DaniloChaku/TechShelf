@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TechShelf.Application.Interfaces.Data;
@@ -22,8 +23,18 @@ public static class DependencyInjection
             options.UseNpgsql(configuration.GetConnectionString("Default"));
         });
 
+        services.AddIdentityCore<ApplicationUser>(options =>
+        {
+            options.User.RequireUniqueEmail = true;
+        })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<AppIdentityDbContext>();
+
         services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        services.Configure<AdminOptions>(configuration.GetSection(AdminOptions.SectionName));
+        services.AddScoped<IdentitySeeder>();
 
         return services;
     }

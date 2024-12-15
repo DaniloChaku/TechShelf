@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using TechShelf.Infrastructure;
 using TechShelf.Infrastructure.Data;
 using TechShelf.Application;
-using Microsoft.AspNetCore.Http.Features;
 using TechShelf.API.Common.Http;
 using TechShelf.API.Common;
+using TechShelf.Infrastructure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,8 +68,15 @@ using (var scope = app.Services.CreateScope())
     {
         logger.LogError(ex, "An error occurred while applying migrations.");
     }
+
+    var identitySeeder = scope.ServiceProvider.GetRequiredService<IdentitySeeder>();
+    await identitySeeder.SeedAsync();
 }
 
+#pragma warning disable S6966 // Awaitable method should be used
 app.Run();
+#pragma warning restore S6966 // Awaitable method should be used
 
+#pragma warning disable S1118 // Utility classes should not have public constructors
 public partial class Program { }
+#pragma warning restore S1118 // Utility classes should not have public constructors

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using TechShelf.Infrastructure.Data;
+using TechShelf.Infrastructure.Identity;
 using TechShelf.IntegrationTests.TestHelpers.Seed;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
@@ -21,19 +22,27 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
         builder.ConfigureTestServices(services =>
         {
             services.RemoveAll<DbContextOptions<ApplicationDbContext>>();
+            services.RemoveAll<DbContextOptions<ApplicationDbContext>>();
 
             _connectionString = GetConnectionString();
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(_connectionString, options => options.SetPostgresVersion(12, 0)));
 
-            using var dbContext = CreateDbContext(services);
-            dbContext.Database.EnsureDeleted();
-            dbContext.Database.Migrate();
+            using var applicationDbContext = CreateDbContext<ApplicationDbContext>(services);
+            applicationDbContext.Database.EnsureDeleted();
+            applicationDbContext.Database.Migrate();
 
-            BrandHelper.Seed(dbContext);
-            CategoryHelper.Seed(dbContext);
-            ProductHelper.Seed(dbContext);
+            BrandHelper.Seed(applicationDbContext);
+            CategoryHelper.Seed(applicationDbContext);
+            ProductHelper.Seed(applicationDbContext);
+
+            services.AddDbContext<AppIdentityDbContext>(options =>
+                options.UseNpgsql(_connectionString, options => options.SetPostgresVersion(12, 0)));
+            services.Configure<AdminOptions>(options =>
+            {
+                options.SuperAdmins = [AdminHelper.SuperAdmin];
+            });
         });
     }
 
@@ -47,11 +56,12 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
         return connectionString;
     }
 
-    private static ApplicationDbContext CreateDbContext(IServiceCollection services)
+    private static IDbContext CreateDbContext<IDbContext>(IServiceCollection services)
+        where IDbContext : DbContext
     {
         var serviceProvider = services.BuildServiceProvider();
         var scope = serviceProvider.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var dbContext = scope.ServiceProvider.GetRequiredService<IDbContext>();
         return dbContext;
     }
 
