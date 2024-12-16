@@ -1,4 +1,4 @@
-﻿using TechShelf.Infrastructure.Identity;
+﻿using TechShelf.Infrastructure.Identity.Options;
 
 namespace TechShelf.IntegrationTests.TestHelpers.Seed;
 

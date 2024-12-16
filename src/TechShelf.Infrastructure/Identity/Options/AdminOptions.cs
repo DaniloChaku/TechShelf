@@ -1,4 +1,4 @@
-﻿namespace TechShelf.Infrastructure.Identity;
+﻿namespace TechShelf.Infrastructure.Identity.Options;
 
 public class AdminOptions
 {

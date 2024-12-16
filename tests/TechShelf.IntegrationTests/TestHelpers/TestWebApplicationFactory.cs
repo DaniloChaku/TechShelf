@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using TechShelf.Infrastructure.Data;
 using TechShelf.Infrastructure.Identity;
+using TechShelf.Infrastructure.Identity.Options;
 using TechShelf.IntegrationTests.TestHelpers.Seed;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]

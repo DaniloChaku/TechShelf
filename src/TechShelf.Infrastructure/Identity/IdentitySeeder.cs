@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using TechShelf.Domain.Common;
+using TechShelf.Infrastructure.Identity.Options;
 
 namespace TechShelf.Infrastructure.Identity;
 
