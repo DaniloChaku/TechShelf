@@ -39,6 +39,7 @@ public static class DependencyInjection
         services.Configure<AdminOptions>(configuration.GetSection(AdminOptions.SectionName));
         services.AddScoped<IdentitySeeder>();
         services.AddScoped<ITokenService, JwtService>();
+        services.AddScoped<IUserService ,UserService>();
 
         services.AddSingleton(TimeProvider.System);
 
