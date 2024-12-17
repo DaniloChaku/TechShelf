@@ -23,7 +23,7 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
         builder.ConfigureTestServices(services =>
         {
             services.RemoveAll<DbContextOptions<ApplicationDbContext>>();
-            services.RemoveAll<DbContextOptions<ApplicationDbContext>>();
+            services.RemoveAll<DbContextOptions<AppIdentityDbContext>>();
 
             _connectionString = GetConnectionString();
 
@@ -70,12 +70,25 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
     {
         if (disposing && !string.IsNullOrEmpty(_connectionString))
         {
-            using var dbContext = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
+            var appDbContextOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
                 .UseNpgsql(_connectionString, options => options.SetPostgresVersion(12, 0))
-                .Options);
+                .Options;
 
-            dbContext.Database.EnsureDeleted();
+            using (var dbContext = new ApplicationDbContext(appDbContextOptions))
+            {
+                dbContext.Database.EnsureDeleted();
+            }
+
+            var identityDbContextOptions = new DbContextOptionsBuilder<AppIdentityDbContext>()
+                .UseNpgsql(_connectionString, options => options.SetPostgresVersion(12, 0))
+                .Options;
+
+            using (var appIdentityDbContext = new AppIdentityDbContext(identityDbContextOptions))
+            {
+                appIdentityDbContext.Database.EnsureDeleted();
+            }
         }
+
         base.Dispose(disposing);
     }
 }
