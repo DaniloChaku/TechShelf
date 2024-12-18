@@ -82,7 +82,7 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task RegisterAsync_ReturnsFalse_WhenRoleAssignmentFails()
+    public async Task RegisterAsync_ReturnsError_WhenRoleAssignmentFails()
     {
         // Arrange
         var userDto = _fixture.Create<UserDto>();
@@ -148,5 +148,47 @@ public class UserServiceTests
         _dbContextMock.Setup(db => db.Database)
             .Returns(databaseFacadeMock.Object);
         return transactionMock;
+    }
+
+    [Fact]
+    public async Task ValidatePasswordAsync_ReturnsError_WhenUserNotFound()
+    {
+        // Arrange
+        var email = _fixture.Create<string>();
+        var password = _fixture.Create<string>();
+
+        _userManagerMock.Setup(um => um.FindByEmailAsync(email))
+            .ReturnsAsync((ApplicationUser?)null);
+
+        // Act
+        var result = await _authService.ValidatePasswordAsync(email, password);
+
+        // Assert
+        result.IsError.Should().BeTrue();
+        result.FirstError.Should().Be(UserErrors.NotFound(email));
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task ValidatePasswordAsync_ReturnsValidationResult_WhenUserWasFound(bool expectedIsPasswordValid)
+    {
+        // Arrange
+        var email = _fixture.Create<string>();
+        var password = _fixture.Create<string>();
+        var user = _fixture.Create<ApplicationUser>();
+
+        _userManagerMock.Setup(um => um.FindByEmailAsync(email))
+            .ReturnsAsync(user);
+
+        _userManagerMock.Setup(um => um.CheckPasswordAsync(user, password))
+            .ReturnsAsync(expectedIsPasswordValid);
+
+        // Act
+        var result = await _authService.ValidatePasswordAsync(email, password);
+
+        // Assert
+        result.IsError.Should().BeFalse();
+        result.Value.Should().Be(expectedIsPasswordValid);
     }
 }

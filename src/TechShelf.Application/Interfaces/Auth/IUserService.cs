@@ -5,5 +5,6 @@ namespace TechShelf.Application.Interfaces.Auth;
 
 public interface IUserService
 {
-    public Task<ErrorOr<bool>> RegisterAsync(UserDto userDto, string password, string role);
+    Task<ErrorOr<bool>> RegisterAsync(UserDto userDto, string password, string role);
+    Task<ErrorOr<bool>> ValidatePasswordAsync(string email, string password);
 }

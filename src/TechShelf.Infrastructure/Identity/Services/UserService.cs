@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using TechShelf.Application.Features.Users.Common;
 using TechShelf.Application.Interfaces.Auth;
-using TechShelf.Domain.Common;
 using TechShelf.Infrastructure.Identity.Errors;
 
 namespace TechShelf.Infrastructure.Identity.Services;
@@ -67,5 +66,17 @@ public class UserService : IUserService
         }
 
         return true;
+    }
+
+    public async Task<ErrorOr<bool>> ValidatePasswordAsync(string email, string password)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if (user is null)
+        {
+            return UserErrors.NotFound(email);
+        }
+
+        return await _userManager.CheckPasswordAsync(user, password);
     }
 }
