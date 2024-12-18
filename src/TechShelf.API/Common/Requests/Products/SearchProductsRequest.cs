@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TechShelf.API.Requests.Products;
+namespace TechShelf.API.Common.Requests.Products;
 
 public record SearchProductsRequest(
     [Range(1, int.MaxValue, ErrorMessage = "Page index must be greater than 0")] int PageIndex,

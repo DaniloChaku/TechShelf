@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Net.Http.Json;
-using TechShelf.API.Requests.Products;
+using TechShelf.API.Common.Requests.Products;
 using TechShelf.Application.Common.Pagination;
 using TechShelf.Application.Features.Products.Queries.Shared;
 using TechShelf.IntegrationTests.TestHelpers;

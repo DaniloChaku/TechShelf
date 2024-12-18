@@ -8,4 +8,6 @@ public static class ApiUrls
 
     public const string Products = "api/products";
     public const string ProductsSearch = $"{Products}/search";
+
+    public const string RegisterCustomer = "api/users/register";
 }
