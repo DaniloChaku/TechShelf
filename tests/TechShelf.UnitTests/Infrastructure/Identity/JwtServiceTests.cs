@@ -5,11 +5,11 @@ using TechShelf.Infrastructure.Identity.Services;
 using TechShelf.Infrastructure.Identity;
 using Microsoft.Extensions.Options;
 using FluentAssertions;
-using TechShelf.Infrastructure.Identity.Errors;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using AutoFixture;
 using Microsoft.Extensions.Time.Testing;
+using TechShelf.Domain.Errors;
 
 namespace TechShelf.UnitTests.Infrastructure.Identity;
 

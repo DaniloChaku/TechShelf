@@ -2,7 +2,6 @@
 using Moq;
 using TechShelf.Infrastructure.Identity.Services;
 using TechShelf.Infrastructure.Identity;
-using TechShelf.Infrastructure.Identity.Errors;
 using AutoFixture;
 using TechShelf.Application.Features.Users.Common;
 using FluentAssertions;
@@ -10,6 +9,7 @@ using Microsoft.Extensions.Logging.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using TechShelf.Domain.Errors;
 
 namespace TechShelf.UnitTests.Infrastructure.Identity;
 

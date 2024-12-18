@@ -6,7 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using TechShelf.Application.Interfaces.Auth;
-using TechShelf.Infrastructure.Identity.Errors;
+using TechShelf.Domain.Errors;
 using TechShelf.Infrastructure.Identity.Options;
 
 namespace TechShelf.Infrastructure.Identity.Services;

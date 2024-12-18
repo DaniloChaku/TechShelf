@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using TechShelf.Application.Features.Users.Common;
 using TechShelf.Application.Interfaces.Auth;
-using TechShelf.Infrastructure.Identity.Errors;
+using TechShelf.Domain.Errors;
 
 namespace TechShelf.Infrastructure.Identity.Services;
 
