@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Mapster;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -66,6 +67,8 @@ public static class DependencyInjection
         services.AddScoped<IUserService ,UserService>();
 
         services.AddSingleton(TimeProvider.System);
+
+        IdentityMapsterConfig.Configure();
 
         return services;
     }
