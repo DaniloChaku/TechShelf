@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using TechShelf.Application.Common.Behaviors;
 
@@ -14,6 +15,8 @@ public static class DependencyInjection
             conf.AddOpenBehavior(typeof(LoggingBehavior<,>));
             conf.AddOpenBehavior(typeof(ValidationBehavior<,>));
         });
+
+        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
         return services;
     }
