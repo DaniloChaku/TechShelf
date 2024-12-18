@@ -29,6 +29,11 @@ public static class DependencyInjection
         services.AddIdentityCore<ApplicationUser>(options =>
         {
             options.User.RequireUniqueEmail = true;
+            options.Password.RequiredLength = 8;
+            options.Password.RequireNonAlphanumeric = true;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireDigit = true;
         })
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<AppIdentityDbContext>();
