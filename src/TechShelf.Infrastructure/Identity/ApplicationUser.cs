@@ -9,4 +9,6 @@ public class ApplicationUser : IdentityUser
     public string FirstName { get; set; } = string.Empty;
     [StringLength(50)]
     public string LastName { get; set; } = string.Empty;
+    [StringLength(20)]
+    public override string? PhoneNumber { get => base.PhoneNumber; set => base.PhoneNumber = value; }
 }
