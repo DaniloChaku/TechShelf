@@ -8,5 +8,5 @@ public static class UserErrors
     public static Error RegistrationFalied =>
         Error.Unexpected("User.Registration", "Registration failed.");
     public static Error LoginAttemptFailed =>
-        Error.Unauthorized("Invalid email or password");
+        Error.Unauthorized("User.Login", "Invalid email or password");
 }
