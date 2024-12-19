@@ -5,6 +5,7 @@ using TechShelf.IntegrationTests.TestHelpers;
 using TechShelf.API.Common.Responses;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using TechShelf.IntegrationTests.TestHelpers.Seed;
 
 namespace TechShelf.IntegrationTests.Api.Controllers;
 
@@ -55,6 +56,64 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>
 
         // Act
         var response = await client.PostAsJsonAsync(ApiUrls.RegisterCustomer, request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        problemDetails.Should().NotBeNull();
+        problemDetails!.Errors.Should().ContainKey("Email");
+    }
+
+    [Fact]
+    public async Task Login_ReturnsOk_WhenCredentialsAreValid()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        var loginRequest = new LoginRequest(
+            Email: AdminHelper.SuperAdmin.Email,
+            Password: AdminHelper.SuperAdmin.Password
+        );
+
+        // Act
+        var response = await client.PostAsJsonAsync(ApiUrls.Login, loginRequest);
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var responseData = await response.Content.ReadFromJsonAsync<TokenResponse>();
+        responseData.Should().NotBeNull();
+        responseData!.Token.Should().NotBeNullOrEmpty();
+    }
+
+    [Fact]
+    public async Task Login_ReturnsUnauthorized_WhenCredentialsAreInvalid()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+
+        var loginRequest = new LoginRequest(
+            Email: AdminHelper.SuperAdmin.Email,
+            Password: "WrongPassword123!"
+        );
+
+        // Act
+        var response = await client.PostAsJsonAsync(ApiUrls.Login, loginRequest);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task Login_ReturnsProblem_WhenEmailFormatIsInvalid()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        var loginRequest = new LoginRequest(
+            Email: "invalid-email",
+            Password: AdminHelper.SuperAdmin.Password
+        );
+
+        // Act
+        var response = await client.PostAsJsonAsync(ApiUrls.Login, loginRequest);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);

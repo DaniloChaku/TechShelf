@@ -7,6 +7,7 @@ using Moq;
 using TechShelf.API.Common.Requests.Users;
 using TechShelf.API.Common.Responses;
 using TechShelf.API.Controllers;
+using TechShelf.Application.Features.Users.Commands.Login;
 using TechShelf.Application.Features.Users.Commands.RegisterCustomer;
 
 namespace TechShelf.UnitTests.Api.Controllers;
@@ -30,6 +31,7 @@ public class UsersControllerTests
         // Arrange
         var request = _fixture.Create<RegisterCustomerRequest>();
         var token = _fixture.Create<string>();
+        var expectedTokenResponse = new TokenResponse(token);
 
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<RegisterCustomerCommand>(), It.IsAny<CancellationToken>()))
@@ -41,7 +43,7 @@ public class UsersControllerTests
         // Assert
         result.Should().BeOfType<OkObjectResult>();
         var okResult = result as OkObjectResult;
-        okResult!.Value.Should().BeEquivalentTo(new TokenResponse(token));
+        okResult!.Value.Should().BeEquivalentTo(expectedTokenResponse);
 
         _mediatorMock.Verify(m => m.Send(It.IsAny<RegisterCustomerCommand>(), It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -70,5 +72,51 @@ public class UsersControllerTests
         problemDetails!.Errors.Should().HaveCount(1);
 
         _mediatorMock.Verify(m => m.Send(It.IsAny<RegisterCustomerCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Login_ReturnsOk_WhenLoginSucceeds()
+    {
+        // Arrange
+        var request = _fixture.Create<LoginRequest>();
+        var token = _fixture.Create<string>();
+        var expectedTokenResponse = new TokenResponse(token);
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<LoginCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(token);
+
+        // Act
+        var result = await _controller.Login(request);
+
+        // Assert
+        result.Should().BeOfType<OkObjectResult>();
+        var okResult = result as OkObjectResult;
+        okResult!.Value.Should().BeEquivalentTo(expectedTokenResponse);
+        _mediatorMock.Verify(m => m.Send(It.IsAny<LoginCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task Login_ReturnsProblem_WhenLoginFails()
+    {
+        // Arrange
+        var request = _fixture.Create<LoginRequest>();
+        var expectedPropName = _fixture.Create<string>();
+        var expectedDescription = _fixture.Create<string>();
+        var error = Error.Validation(expectedPropName, expectedDescription);
+
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<LoginCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(error);
+
+        // Act
+        var result = await _controller.Login(request);
+
+        // Assert
+        result.Should().BeOfType<ObjectResult>();
+        var problemResult = result as ObjectResult;
+        problemResult!.Value.Should().BeOfType<ValidationProblemDetails>();
+        var problemDetails = problemResult.Value as ValidationProblemDetails;
+        problemDetails!.Errors.Should().HaveCount(1);
+        _mediatorMock.Verify(m => m.Send(It.IsAny<LoginCommand>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 }
