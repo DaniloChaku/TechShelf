@@ -27,7 +27,7 @@ public class RegisterCustomerCommandHandler
 
         if (registerResult.IsError)
         {
-            return registerResult.FirstError;
+            return registerResult.Errors;
         }
 
         var tokenResult = await _tokenService.GetTokenAsync(userDto.Email);
