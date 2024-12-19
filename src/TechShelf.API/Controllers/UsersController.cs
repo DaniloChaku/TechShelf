@@ -18,6 +18,8 @@ public class UsersController : BaseApiController
     }
 
     [HttpPost("register")]
+    [ProducesResponseType(statusCode: StatusCodes.Status200OK, type: typeof(TokenResponse))]
+    [ProducesResponseType(statusCode: StatusCodes.Status400BadRequest, type: typeof(ValidationProblemDetails))]
     public async Task<IActionResult> RegisterCustomer([FromBody] RegisterCustomerRequest request)
     {
         var command = request.Adapt<RegisterCustomerCommand>();
@@ -30,6 +32,9 @@ public class UsersController : BaseApiController
     }
 
     [HttpPost("login")]
+    [ProducesResponseType(statusCode: StatusCodes.Status200OK, type: typeof(TokenResponse))]
+    [ProducesResponseType(statusCode: StatusCodes.Status400BadRequest, type: typeof(ValidationProblemDetails))]
+    [ProducesResponseType(statusCode: StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
         var command = request.Adapt<LoginCommand>();
