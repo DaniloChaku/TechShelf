@@ -97,7 +97,7 @@ public class IdentitySeeder
                     Email = admin.Email,
                     FirstName = admin.FirstName,
                     LastName = admin.LastName,
-                    EmailConfirmed = true
+                    PhoneNumber = admin.PhoneNumber,
                 };
 
                 var result = await _userManager.CreateAsync(user, admin.Password);
