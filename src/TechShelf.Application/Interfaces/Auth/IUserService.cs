@@ -7,4 +7,5 @@ public interface IUserService
 {
     Task<ErrorOr<bool>> RegisterAsync(UserDto userDto, string password, string role);
     Task<ErrorOr<bool>> ValidatePasswordAsync(string email, string password);
+    Task<ErrorOr<UserDto>> GetUserByEmailAsync(string email);
 }

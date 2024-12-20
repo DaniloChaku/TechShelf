@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using TechShelf.Domain.Errors;
+using Mapster;
 
 namespace TechShelf.UnitTests.Infrastructure.Identity;
 
@@ -190,5 +191,42 @@ public class UserServiceTests
         // Assert
         result.IsError.Should().BeFalse();
         result.Value.Should().Be(expectedIsPasswordValid);
+    }
+
+    [Fact]
+    public async Task GetUserByEmailAsync_ReturnsError_WhenUserNotFound()
+    {
+        // Arrange
+        var email = _fixture.Create<string>();
+        var expectedError = UserErrors.NotFound(email);
+
+        _userManagerMock.Setup(um => um.FindByEmailAsync(email))
+            .ReturnsAsync((ApplicationUser?)null);
+
+        // Act
+        var result = await _authService.GetUserByEmailAsync(email);
+
+        // Assert
+        result.IsError.Should().BeTrue();
+        result.FirstError.Should().Be(expectedError);
+    }
+
+    [Fact]
+    public async Task GetUserByEmailAsync_ReturnsUserDto_WhenUserFound()
+    {
+        // Arrange
+        var email = _fixture.Create<string>();
+        var user = _fixture.Create<ApplicationUser>();
+        var userDto = user.Adapt<UserDto>();
+
+        _userManagerMock.Setup(um => um.FindByEmailAsync(email))
+            .ReturnsAsync(user);
+
+        // Act
+        var result = await _authService.GetUserByEmailAsync(email);
+
+        // Assert
+        result.IsError.Should().BeFalse();
+        result.Value.Should().BeEquivalentTo(userDto);
     }
 }

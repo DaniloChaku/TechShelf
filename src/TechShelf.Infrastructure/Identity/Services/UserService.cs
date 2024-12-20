@@ -74,9 +74,22 @@ public class UserService : IUserService
 
         if (user is null)
         {
+            // fix
             return UserErrors.NotFound(email);
         }
 
         return await _userManager.CheckPasswordAsync(user, password);
+    }
+
+    public async Task<ErrorOr<UserDto>> GetUserByEmailAsync(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if (user is null)
+        {
+            return UserErrors.NotFound(email);
+        }
+
+        return user!.Adapt<UserDto>();
     }
 }
