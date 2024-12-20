@@ -6,16 +6,26 @@ using TechShelf.API.Common.Responses;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using TechShelf.IntegrationTests.TestHelpers.Seed;
+using System.Net.Http.Headers;
+using TechShelf.Application.Features.Users.Common;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using TechShelf.Domain.Common;
+using TechShelf.Infrastructure.Identity;
 
 namespace TechShelf.IntegrationTests.Api.Controllers;
 
 public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>
 {
     private readonly TestWebApplicationFactory _factory;
+    private readonly JwtTestHelper _jwtHelper;
 
     public UsersControllerTests(TestWebApplicationFactory factory)
     {
         _factory = factory;
+        _jwtHelper = new JwtTestHelper(
+            factory.Services.GetRequiredService<IConfiguration>(),
+            factory.Services.GetRequiredService<TimeProvider>());
     }
 
     [Fact]
@@ -70,8 +80,8 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>
         // Arrange
         var client = _factory.CreateClient();
         var loginRequest = new LoginRequest(
-            Email: AdminHelper.SuperAdmin.Email,
-            Password: AdminHelper.SuperAdmin.Password
+            Email: AdminHelper.SuperAdminOptions.Email,
+            Password: AdminHelper.SuperAdminOptions.Password
         );
 
         // Act
@@ -91,7 +101,7 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>
         var client = _factory.CreateClient();
 
         var loginRequest = new LoginRequest(
-            Email: AdminHelper.SuperAdmin.Email,
+            Email: AdminHelper.SuperAdminOptions.Email,
             Password: "WrongPassword123!"
         );
 
@@ -109,7 +119,7 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>
         var client = _factory.CreateClient();
         var loginRequest = new LoginRequest(
             Email: "invalid-email",
-            Password: AdminHelper.SuperAdmin.Password
+            Password: AdminHelper.SuperAdminOptions.Password
         );
 
         // Act
@@ -120,5 +130,55 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>
         var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
         problemDetails.Should().NotBeNull();
         problemDetails!.Errors.Should().ContainKey("Email");
+    }
+
+    [Fact]
+    public async Task GetCurrentUser_ReturnsOk_WhenUserIsAuthorized()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        var user = AdminHelper.SuperAdmin;
+        var token = _jwtHelper.GenerateToken(user, [UserRoles.SuperAdmin]);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        // Act
+        var response = await client.GetAsync(ApiUrls.Me);
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var userDto = await response.Content.ReadFromJsonAsync<UserDto>();
+        userDto.Should().NotBeNull();
+        userDto!.FirstName.Should().Be(user.FirstName);
+        userDto!.LastName.Should().Be(user.LastName);
+        userDto!.Email.Should().Be(user.Email);
+        userDto!.PhoneNumber.Should().Be(user.PhoneNumber);
+    }
+
+    [Fact]
+    public async Task GetCurrentUser_ReturnsUnauthorized_WhenNoAuthorizationHeader()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+
+        // Act
+        var response = await client.GetAsync(ApiUrls.Me);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task GetCurrentUser_ReturnsUnauthorized_WhenTokenIsInvalid()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = 
+            new AuthenticationHeaderValue("Bearer", "invalid-token");
+
+        // Act
+        var response = await client.GetAsync(ApiUrls.Me);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 }

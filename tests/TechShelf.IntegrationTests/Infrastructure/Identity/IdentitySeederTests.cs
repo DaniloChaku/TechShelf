@@ -38,7 +38,7 @@ public class IdentitySeederTests : IClassFixture<TestWebApplicationFactory>
         // Arrange
         using var scope = _factory.Services.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-        var user = await userManager.FindByEmailAsync(AdminHelper.SuperAdmin.Email);
+        var user = await userManager.FindByEmailAsync(AdminHelper.SuperAdminOptions.Email);
 
         // Assert
         user.Should().NotBeNull();

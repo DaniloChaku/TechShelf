@@ -12,4 +12,5 @@ public static class ApiUrls
     private const string Users = "api/users";
     public const string RegisterCustomer = $"{Users}/register";
     public const string Login = $"{Users}/login";
+    public const string Me = $"{Users}/me";
 }

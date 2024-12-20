@@ -1,10 +1,14 @@
 ﻿using Mapster;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TechShelf.API.Common.Requests.Users;
 using TechShelf.API.Common.Responses;
 using TechShelf.Application.Features.Users.Commands.Login;
 using TechShelf.Application.Features.Users.Commands.RegisterCustomer;
+using TechShelf.Application.Features.Users.Common;
+using TechShelf.Application.Features.Users.Queries.GetUserInfo;
 
 namespace TechShelf.API.Controllers;
 
@@ -43,6 +47,26 @@ public class UsersController : BaseApiController
 
         return result.Match(
             token => Ok(new TokenResponse(token)),
+            errors => Problem(errors));
+    }
+
+    [Authorize]
+    [HttpGet("me")]
+    [ProducesResponseType(statusCode: StatusCodes.Status200OK, type: typeof(UserDto))]
+    [ProducesResponseType(statusCode: StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetCurrentUser()
+    {
+        var email = User.FindFirstValue(ClaimTypes.Email);
+        if (email is null)
+        {
+            throw new InvalidOperationException("Email claim is missing from the authenticated user");
+        }
+
+        var query = new GetUserInfoQuery(email);
+        var result = await _mediator.Send(query);
+
+        return result.Match(
+            user => Ok(user),
             errors => Problem(errors));
     }
 }

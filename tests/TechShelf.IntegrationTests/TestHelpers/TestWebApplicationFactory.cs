@@ -42,7 +42,7 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
                 options.UseNpgsql(_connectionString, options => options.SetPostgresVersion(12, 0)));
             services.Configure<AdminOptions>(options =>
             {
-                options.SuperAdmins = [AdminHelper.SuperAdmin];
+                options.SuperAdmins = [AdminHelper.SuperAdminOptions];
             });
         });
     }
