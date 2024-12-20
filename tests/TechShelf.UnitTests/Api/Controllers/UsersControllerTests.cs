@@ -13,7 +13,6 @@ using TechShelf.Application.Features.Users.Commands.Login;
 using TechShelf.Application.Features.Users.Commands.RegisterCustomer;
 using TechShelf.Application.Features.Users.Common;
 using TechShelf.Application.Features.Users.Queries.GetUserInfo;
-using TechShelf.Domain.Errors;
 
 namespace TechShelf.UnitTests.Api.Controllers;
 
@@ -105,9 +104,7 @@ public class UsersControllerTests
     {
         // Arrange
         var request = _fixture.Create<LoginRequest>();
-        var expectedPropName = _fixture.Create<string>();
-        var expectedDescription = _fixture.Create<string>();
-        var error = Error.Validation(expectedPropName, expectedDescription);
+        var error = _fixture.Create<Error>();
 
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<LoginCommand>(), It.IsAny<CancellationToken>()))

@@ -11,7 +11,6 @@ using TechShelf.Application.Features.Users.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using TechShelf.Domain.Common;
-using TechShelf.Infrastructure.Identity;
 
 namespace TechShelf.IntegrationTests.Api.Controllers;
 

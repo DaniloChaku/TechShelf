@@ -74,8 +74,7 @@ public class UserService : IUserService
 
         if (user is null)
         {
-            // fix
-            return UserErrors.NotFound(email);
+            return UserErrors.LoginAttemptFailed;
         }
 
         return await _userManager.CheckPasswordAsync(user, password);

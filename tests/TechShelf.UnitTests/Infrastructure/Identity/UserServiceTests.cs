@@ -166,7 +166,7 @@ public class UserServiceTests
 
         // Assert
         result.IsError.Should().BeTrue();
-        result.FirstError.Should().Be(UserErrors.NotFound(email));
+        result.FirstError.Should().Be(UserErrors.LoginAttemptFailed);
     }
 
     [Theory]
