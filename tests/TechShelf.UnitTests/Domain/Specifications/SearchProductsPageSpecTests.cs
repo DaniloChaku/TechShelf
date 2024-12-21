@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using TechShelf.Domain.Entities;
+using TechShelf.Domain.Enums;
 using TechShelf.Domain.Specifications.Products;
 
 namespace TechShelf.UnitTests.Domain.Specifications;
@@ -13,18 +14,26 @@ public class SearchProductsPageSpecTests
         new Product { Id = 3, Name = "Tablet", Price = 500, BrandId = 1, CategoryId = 2 }
     ];
 
-    public static IEnumerable<object[]> PaginationTestCases()
+    public static TheoryData<int, int, int[]> PaginationTestCases => new()
     {
-        yield return new object[] { 0, 1, new List<int> { 1 } };
-        yield return new object[] { 1, 1, new List<int> { 2 } };
-        yield return new object[] { 2, 2, new List<int> { 3 } };
-        yield return new object[] { 0, 3, new List<int> { 1, 2, 3 } };
-        yield return new object[] { 3, 1, new List<int>() };
-    }
+        { 0, 1, [1] },
+        { 1, 1, [2] },
+        { 2, 2, [3] },
+        { 0, 3, [1, 2, 3] },
+        { 3, 1, [] }
+    };
+
+    public static TheoryData<ProductsSortBy, bool, int[]> SortingTestCases => new()
+    {
+        { ProductsSortBy.Name, false, [1, 2, 3 ] },
+        { ProductsSortBy.Name, true,  [3, 2, 1] },
+        { ProductsSortBy.Price, false, [3, 2, 1] },
+        { ProductsSortBy.Price, true, [1, 2, 3] }
+    };
 
     [Theory]
     [MemberData(nameof(PaginationTestCases))]
-    public void AppliesPagination(int skip, int take, List<int> expectedIds)
+    public void AppliesPagination(int skip, int take, int[] expectedIds)
     {
         // Arrange
         var spec = new SearchProductsPageSpec(skip, take);
@@ -99,5 +108,20 @@ public class SearchProductsPageSpecTests
         // Assert
         result.Should().HaveCount(2);
         result.All(p => p.Price <= 800).Should().BeTrue();
+    }
+
+    [Theory]
+    [MemberData(nameof(SortingTestCases))]
+
+    public void AppliesSorting(ProductsSortBy sortBy, bool isDescending, int[] expectedIds)
+    {
+        // Arrange
+        var spec = new SearchProductsPageSpec(0, 10, sortBy: sortBy, isDescending: isDescending);
+
+        // Act
+        var result = spec.Evaluate(_testProducts);
+
+        // Assert
+        result.Select(p => p.Id).Should().Equal(expectedIds);
     }
 }

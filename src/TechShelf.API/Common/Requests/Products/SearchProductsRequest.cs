@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using TechShelf.Domain.Enums;
 
 namespace TechShelf.API.Common.Requests.Products;
 
@@ -9,4 +10,6 @@ public record SearchProductsRequest(
     int? CategoryId = null,
     string? Name = null,
     int? MinPrice = null,
-    int? MaxPrice = null);
+    int? MaxPrice = null,
+    ProductsSortBy? SortBy = null,
+    bool IsDescending = false);

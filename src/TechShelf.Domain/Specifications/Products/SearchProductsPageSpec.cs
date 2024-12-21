@@ -1,5 +1,6 @@
 ﻿using Ardalis.Specification;
 using TechShelf.Domain.Entities;
+using TechShelf.Domain.Enums;
 
 namespace TechShelf.Domain.Specifications.Products;
 
@@ -12,7 +13,9 @@ public class SearchProductsPageSpec : Specification<Product>
         int? categoryId = null,
         string? name = null,
         int? minPrice = null,
-        int? maxPrice = null)
+        int? maxPrice = null,
+        ProductsSortBy? sortBy = null,
+        bool isDescending = false)
     {
         if (brandId.HasValue)
         {
@@ -38,6 +41,11 @@ public class SearchProductsPageSpec : Specification<Product>
         if (maxPrice.HasValue)
         {
             Query.Where(p => p.Price <= maxPrice.Value);
+        }
+
+        if (sortBy.HasValue)
+        {
+            Query.ApplySorting(sortBy.Value, isDescending);
         }
 
         Query.Include(p => p.Brand)
