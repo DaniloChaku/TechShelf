@@ -1,23 +1,23 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController } from '@angular/common/http/testing';
-import { CategoryServiceService } from './category-service.service';
+import { CategoryService } from './category-service.service';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 
-describe('CategoryServiceService', () => {
-  let service: CategoryServiceService;
+describe('CategoryService', () => {
+  let service: CategoryService;
   let httpMock: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        CategoryServiceService,
+        CategoryService,
         provideHttpClient(),
         provideHttpClientTesting(),
       ],
     });
 
-    service = TestBed.inject(CategoryServiceService);
+    service = TestBed.inject(CategoryService);
     httpMock = TestBed.inject(HttpTestingController);
   });
 

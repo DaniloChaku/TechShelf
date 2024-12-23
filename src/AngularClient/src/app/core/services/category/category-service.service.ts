@@ -4,7 +4,7 @@ import { inject, Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root',
 })
-export class CategoryServiceService {
+export class CategoryService {
   http = inject(HttpClient);
 
   getCategories() {
