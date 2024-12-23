@@ -1,0 +1,113 @@
+import { HttpTestingController } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { environment } from '../../../../environments/environment';
+import { TestBed } from '@angular/core/testing';
+import { ProductService } from './product.service';
+import { SearchProductsRequest } from './search-products-request';
+
+describe('ProductService', () => {
+  let service: ProductService;
+  let httpMock: HttpTestingController;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        ProductService,
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
+    });
+
+    service = TestBed.inject(ProductService);
+    httpMock = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    httpMock.verify();
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+
+  describe('getProducts', () => {
+    it('should make a GET request to the correct URL with the correct parameters', () => {
+      const mockProducts = [
+        { id: 1, name: 'Product 1' },
+        { id: 2, name: 'Product 2' },
+      ];
+
+      const request: SearchProductsRequest = {
+        pageIndex: 1,
+        pageSize: 10,
+        brandId: 1,
+        categoryId: 2,
+        name: 'Product',
+        minPrice: 10,
+        maxPrice: 100,
+        sortBy: 'name',
+        isDescending: true,
+      };
+
+      service.getProducts(request).subscribe((products) => {
+        expect(products).toEqual(mockProducts);
+      });
+
+      const req = httpMock.expectOne((req) => {
+        return (
+          req.url ===
+            environment.apiUrl + 'products/search' &&
+          req.params.get('pageIndex') ===
+            request.pageIndex.toString() &&
+          req.params.get('pageSize') ===
+            request.pageSize.toString() &&
+          req.params.get('brandId') ===
+            request.brandId!.toString() &&
+          req.params.get('categoryId') ===
+            request.categoryId!.toString() &&
+          req.params.get('name') === request.name &&
+          req.params.get('minPrice') ===
+            request.minPrice!.toString() &&
+          req.params.get('maxPrice') ===
+            request.maxPrice!.toString() &&
+          req.params.get('sortBy') === request.sortBy &&
+          req.params.get('isDescending') ===
+            request.isDescending!.toString()
+        );
+      });
+      expect(req.request.method).toBe('GET');
+      req.flush(mockProducts);
+    });
+
+    it('should handle errors appropriately', () => {
+      const errorMessage = 'Server error';
+
+      const request: SearchProductsRequest = {
+        pageIndex: 1,
+        pageSize: 10,
+      };
+
+      service.getProducts(request).subscribe({
+        error: (error) => {
+          expect(error.status).toBe(500);
+          expect(error.statusText).toBe(errorMessage);
+        },
+      });
+
+      const req = httpMock.expectOne(
+        (req) =>
+          req.url ===
+            environment.apiUrl + 'products/search' &&
+          req.params.get('pageIndex') ===
+            request.pageIndex!.toString() &&
+          req.params.get('pageSize') ===
+            request.pageSize!.toString()
+      );
+      req.flush('Server error', {
+        status: 500,
+        statusText: errorMessage,
+      });
+    });
+  });
+});
