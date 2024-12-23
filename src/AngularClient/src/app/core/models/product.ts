@@ -1,4 +1,7 @@
-interface ProductDto {
+import { Brand } from './brand';
+import { Category } from './category';
+
+export interface ProductDto {
   id: number;
   name: string;
   description: string;
