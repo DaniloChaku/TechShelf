@@ -1,15 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BrandService {
-  http = inject(HttpClient);
+  baseUrl = environment.apiUrl;
+  private http = inject(HttpClient);
 
   getBrands() {
-    return this.http.get(
-      'https://localhost:7281/api/brands'
-    );
+    return this.http.get(this.baseUrl + 'brands');
   }
 }

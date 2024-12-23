@@ -1,8 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpTestingController } from '@angular/common/http/testing';
-import { CategoryService } from './category-service.service';
+import { CategoryService } from './category.service';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { environment } from '../../../../environments/environment';
 
 describe('CategoryService', () => {
   let service: CategoryService;
@@ -41,7 +42,7 @@ describe('CategoryService', () => {
       });
 
       const req = httpMock.expectOne(
-        'https://localhost:7281/api/categories'
+        environment.apiUrl + 'categories'
       );
       expect(req.request.method).toBe('GET');
       req.flush(mockCategories);
@@ -58,7 +59,7 @@ describe('CategoryService', () => {
       });
 
       const req = httpMock.expectOne(
-        'https://localhost:7281/api/categories'
+        environment.apiUrl + 'categories'
       );
       req.flush('Server error', {
         status: 500,

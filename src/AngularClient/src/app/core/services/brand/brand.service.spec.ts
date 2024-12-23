@@ -3,6 +3,7 @@ import { HttpTestingController } from '@angular/common/http/testing';
 import { BrandService } from './brand.service';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { environment } from '../../../../environments/environment';
 
 describe('BrandService', () => {
   let service: BrandService;
@@ -42,7 +43,7 @@ describe('BrandService', () => {
       });
 
       const req = httpMock.expectOne(
-        'https://localhost:7281/api/brands'
+        environment.apiUrl + 'brands'
       );
       expect(req.request.method).toBe('GET');
       req.flush(mockBrands);
@@ -59,7 +60,7 @@ describe('BrandService', () => {
       });
 
       const req = httpMock.expectOne(
-        'https://localhost:7281/api/brands'
+        environment.apiUrl + 'brands'
       );
       req.flush('Server error', {
         status: 500,
