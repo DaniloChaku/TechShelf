@@ -5,6 +5,8 @@ import {
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { SearchProductsRequest } from './search-products-request';
+import { PagedResult } from '../../models/pagedResult';
+import { Product } from '../../models/product';
 
 @Injectable({
   providedIn: 'root',
@@ -68,8 +70,11 @@ export class ProductService {
       );
     }
 
-    return this.http.get(this.baseUrl + 'products/search', {
-      params,
-    });
+    return this.http.get<PagedResult<Product>>(
+      this.baseUrl + 'products/search',
+      {
+        params,
+      }
+    );
   }
 }

@@ -1,6 +1,6 @@
-export interface SearchProductsRequest {
-  pageIndex: number;
-  pageSize: number;
+export class SearchProductsRequest {
+  pageIndex = 1;
+  pageSize = 10;
   brandId?: number;
   categoryId?: number;
   name?: string;

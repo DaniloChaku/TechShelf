@@ -1,0 +1,27 @@
+<mat-card
+  class="p-1 cursor-pointer"
+  style="background-color: white">
+  <img
+    class="m-1"
+    mat-card-image
+    src="{{ product().thumbnailUrl }}"
+    alt="{{ product().name }}" />
+  <mat-card-content class="mt-2">
+    <h2 class="font-semibold uppercase">
+      {{ product().name }}
+    </h2>
+    <p class="font-light">
+      {{ product().price | currency }}
+    </p>
+  </mat-card-content>
+  <mat-card-actions
+    class="mt-1"
+    (click)="$event.stopPropagation()">
+    <button
+      mat-stroked-button
+      class="w-full flex align-middle justify-center gap-1">
+      <mat-icon>add_shopping_cart</mat-icon>
+      Add to cart
+    </button>
+  </mat-card-actions>
+</mat-card>
