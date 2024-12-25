@@ -1,4 +1,23 @@
 <div class="flex flex-col justify-center gap-3 px-10">
+  <div class="flex justify-end mb-4">
+    <mat-form-field appearance="fill">
+      <mat-label>Sort By</mat-label>
+      <mat-select
+        [(value)]="searchParams().sortBy"
+        (selectionChange)="onSortChange($event)">
+        <mat-option value="name">Name</mat-option>
+        <mat-option value="price">Price</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-icon-button (click)="toggleSortDirection()">
+      <mat-icon>{{
+        searchParams().isDescending
+          ? 'arrow_downward'
+          : 'arrow_upward'
+      }}</mat-icon>
+    </button>
+  </div>
+
   @if (products() && products()!.items.length != 0) {
   <div
     class="grid lg:grid-cols-5 sm:grid-cols-2 grid-cols-1 gap-5">

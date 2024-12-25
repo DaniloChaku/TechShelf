@@ -9,6 +9,11 @@ import { Product } from '../../core/models/product';
 import { SearchProductsRequest } from '../../core/services/product/search-products-request';
 import { ProductService } from '../../core/services/product/product.service';
 import { MatIconModule } from '@angular/material/icon';
+import { MatFormField } from '@angular/material/form-field';
+import {
+  MatSelectChange,
+  MatSelectModule,
+} from '@angular/material/select';
 import { ProductCardComponent } from './product-card/product-card.component';
 import {
   MatPaginator,
@@ -24,6 +29,8 @@ import { Category } from '../../core/models/category';
     MatIconModule,
     ProductCardComponent,
     MatPaginator,
+    MatFormField,
+    MatSelectModule,
   ],
   templateUrl: './products.component.html',
   styleUrl: './products.component.css',
@@ -55,11 +62,27 @@ export class ProductsComponent implements OnInit {
     return {
       pageIndex: 1,
       pageSize: 10,
+      sortBy: 'name',
+      isDescending: false,
     };
   }
 
   onPageChange(event: PageEvent) {
     this.searchParams().pageIndex = event.pageIndex + 1;
+    this.getProducts();
+  }
+
+  onSortChange(event: MatSelectChange) {
+    const searchParams = this.searchParams();
+    searchParams.sortBy = event.value;
+    this.searchParams.set(searchParams);
+    this.getProducts();
+  }
+
+  toggleSortDirection() {
+    const searchParams = this.searchParams();
+    searchParams.isDescending = !searchParams.isDescending;
+    this.searchParams.set(searchParams);
     this.getProducts();
   }
 }
