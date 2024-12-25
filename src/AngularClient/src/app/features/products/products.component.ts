@@ -21,6 +21,16 @@ import {
 } from '@angular/material/paginator';
 import { Brand } from '../../core/models/brand';
 import { Category } from '../../core/models/category';
+import { BrandService } from '../../core/services/brand/brand.service';
+import { CategoryService } from '../../core/services/category/category.service';
+import { MatButtonModule } from '@angular/material/button';
+import {
+  MatMenuModule,
+  MatMenuTrigger,
+} from '@angular/material/menu';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-products',
@@ -31,58 +41,93 @@ import { Category } from '../../core/models/category';
     MatPaginator,
     MatFormField,
     MatSelectModule,
+    MatButtonModule,
+    MatMenuModule,
+    MatInputModule,
+    MatFormFieldModule,
+    FormsModule,
   ],
   templateUrl: './products.component.html',
   styleUrl: './products.component.css',
 })
 export class ProductsComponent implements OnInit {
   private productService = inject(ProductService);
+  private brandService = inject(BrandService);
+  private categoryService = inject(CategoryService);
   products = signal<PagedResult<Product> | undefined>(
     undefined
   );
   brands = signal<Brand[]>([]);
   categories = signal<Category[]>([]);
-  searchParams = signal<SearchProductsRequest>(
-    this.getDefaultSearchParams()
-  );
+  searchParams = this.getDefaultSearchParams();
+  tempSearchParams = { ...this.searchParams };
 
   ngOnInit(): void {
     this.getProducts();
+    this.getBrands();
+    this.getCategories();
   }
 
   private getProducts() {
     this.productService
-      .getProducts(this.searchParams())
+      .getProducts(this.searchParams)
       .subscribe({
         next: (response) => this.products.set(response),
       });
+  }
+
+  private getCategories() {
+    this.categoryService.getCategories().subscribe({
+      next: (categories) => this.categories.set(categories),
+    });
+  }
+
+  private getBrands() {
+    this.brandService.getBrands().subscribe({
+      next: (brands) => this.brands.set(brands),
+    });
   }
 
   getDefaultSearchParams(): SearchProductsRequest {
     return {
       pageIndex: 1,
       pageSize: 10,
-      sortBy: 'name',
-      isDescending: false,
+      sortBy: this.tempSearchParams?.sortBy ?? 'name',
+      isDescending:
+        this.tempSearchParams?.isDescending ?? false,
     };
   }
 
   onPageChange(event: PageEvent) {
-    this.searchParams().pageIndex = event.pageIndex + 1;
+    this.searchParams.pageIndex = event.pageIndex + 1;
     this.getProducts();
   }
 
-  onSortChange(event: MatSelectChange) {
-    const searchParams = this.searchParams();
-    searchParams.sortBy = event.value;
-    this.searchParams.set(searchParams);
+  onSortChange() {
+    this.searchParams.sortBy = this.tempSearchParams.sortBy;
     this.getProducts();
   }
 
   toggleSortDirection() {
-    const searchParams = this.searchParams();
-    searchParams.isDescending = !searchParams.isDescending;
-    this.searchParams.set(searchParams);
+    this.tempSearchParams.isDescending =
+      !this.tempSearchParams.isDescending;
+    this.searchParams.isDescending =
+      this.tempSearchParams.isDescending;
     this.getProducts();
+  }
+
+  applyFilters(menuTrigger: MatMenuTrigger) {
+    this.searchParams = { ...this.tempSearchParams };
+    this.getProducts();
+    menuTrigger.closeMenu();
+  }
+
+  resetFilters(menuTrigger: MatMenuTrigger) {
+    this.searchParams = {
+      ...this.getDefaultSearchParams(),
+    };
+    this.tempSearchParams = { ...this.searchParams };
+    this.getProducts();
+    menuTrigger.closeMenu();
   }
 }

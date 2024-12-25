@@ -3,20 +3,88 @@
     <mat-form-field appearance="fill">
       <mat-label>Sort By</mat-label>
       <mat-select
-        [(value)]="searchParams().sortBy"
-        (selectionChange)="onSortChange($event)">
+        [(value)]="tempSearchParams.sortBy"
+        (selectionChange)="onSortChange()">
         <mat-option value="name">Name</mat-option>
         <mat-option value="price">Price</mat-option>
       </mat-select>
     </mat-form-field>
     <button mat-icon-button (click)="toggleSortDirection()">
       <mat-icon>{{
-        searchParams().isDescending
+        tempSearchParams.isDescending
           ? 'arrow_downward'
           : 'arrow_upward'
       }}</mat-icon>
     </button>
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="filterMenu"
+      #menuTrigger="matMenuTrigger">
+      <mat-icon>filter_list</mat-icon>
+    </button>
   </div>
+
+  <mat-menu #filterMenu="matMenu" class="custom-menu">
+    <div class="p-4" (click)="$event.stopPropagation()">
+      <div class="flex flex-col align-middle">
+        <mat-form-field appearance="fill">
+          <mat-label>Brand</mat-label>
+          <mat-select [(value)]="tempSearchParams.brandId">
+            <mat-option [value]="undefined"
+              >None</mat-option
+            >
+            @for (brand of brands(); track brand.id) {
+            <mat-option [value]="brand.id">
+              {{ brand.name }}
+            </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Category</mat-label>
+          <mat-select
+            [(value)]="tempSearchParams.categoryId">
+            <mat-option [value]="undefined"
+              >None</mat-option
+            >
+            @for (category of categories(); track
+            category.id) {
+            <mat-option [value]="category.id">
+              {{ category.name }}
+            </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Min Price</mat-label>
+          <input
+            matInput
+            type="number"
+            [(ngModel)]="tempSearchParams.minPrice" />
+        </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Max Price</mat-label>
+          <input
+            matInput
+            type="number"
+            [(ngModel)]="tempSearchParams.maxPrice" />
+        </mat-form-field>
+      </div>
+      <div class="flex justify-end mt-4 gap-2">
+        <button
+          mat-button
+          (click)="resetFilters(menuTrigger)">
+          Reset
+        </button>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="applyFilters(menuTrigger)">
+          Apply
+        </button>
+      </div>
+    </div>
+  </mat-menu>
 
   @if (products() && products()!.items.length != 0) {
   <div

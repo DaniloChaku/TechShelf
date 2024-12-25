@@ -1,3 +1,7 @@
 .mat-mdc-form-field {
   --mdc-filled-text-field-container-color: white;
 }
+
+::ng-deep .mat-mdc-menu-panel {
+  background: whitesmoke !important;
+}
