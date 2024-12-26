@@ -137,4 +137,51 @@ describe('ProductService', () => {
       });
     });
   });
+
+  describe('getProductById', () => {
+    it('should make a GET request to the correct URL with the product ID', () => {
+      const mockProduct: Product = {
+        id: 1,
+        name: 'Product 1',
+        description: 'product 1',
+        price: 100,
+        categoryId: 1,
+        brandId: 1,
+        stock: 1,
+        thumbnailUrl: '',
+        imageUrls: [],
+      };
+
+      service.getProductById(1).subscribe((product) => {
+        expect(product).toEqual(mockProduct);
+      });
+
+      const req = httpMock.expectOne(
+        environment.apiUrl + 'products/1'
+      );
+      expect(req.request.method).toBe('GET');
+      req.flush(mockProduct);
+    });
+
+    it('should handle errors when fetching a product by ID', () => {
+      const errorMessage = 'Product not found';
+      const productId = 999;
+
+      service.getProductById(productId).subscribe({
+        error: (error) => {
+          expect(error.status).toBe(404);
+          expect(error.statusText).toBe(errorMessage);
+        },
+      });
+
+      const req = httpMock.expectOne(
+        environment.apiUrl + 'products/999'
+      );
+      expect(req.request.method).toBe('GET');
+      req.flush('Product not found', {
+        status: 404,
+        statusText: errorMessage,
+      });
+    });
+  });
 });
