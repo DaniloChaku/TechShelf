@@ -11,6 +11,6 @@ export interface Product {
   stock: number;
   thumbnailUrl: string;
   imageUrls: string[];
-  category: Category;
-  brand: Brand;
+  category?: Category;
+  brand?: Brand;
 }
