@@ -5,6 +5,8 @@ import { environment } from '../../../../environments/environment';
 import { TestBed } from '@angular/core/testing';
 import { ProductService } from './product.service';
 import { SearchProductsRequest } from './search-products-request';
+import { PagedResult } from '../../models/pagedResult';
+import { Product } from '../../models/product';
 
 describe('ProductService', () => {
   let service: ProductService;
@@ -33,10 +35,35 @@ describe('ProductService', () => {
 
   describe('getProducts', () => {
     it('should make a GET request to the correct URL with the correct parameters', () => {
-      const mockProducts = [
-        { id: 1, name: 'Product 1' },
-        { id: 2, name: 'Product 2' },
-      ];
+      const mockProducts: PagedResult<Product> = {
+        items: [
+          {
+            id: 1,
+            name: 'Product 1',
+            description: 'product 1',
+            price: 100,
+            categoryId: 1,
+            brandId: 1,
+            stock: 1,
+            thumbnailUrl: '',
+            imageUrls: [],
+          },
+          {
+            id: 2,
+            name: 'Product 2',
+            description: 'product 2',
+            price: 200,
+            categoryId: 1,
+            brandId: 1,
+            stock: 1,
+            thumbnailUrl: '',
+            imageUrls: [],
+          },
+        ],
+        totalCount: 2,
+        pageIndex: 1,
+        pageSize: 5,
+      };
 
       const request: SearchProductsRequest = {
         pageIndex: 1,
