@@ -2,12 +2,18 @@
   class="border-b shadow-md p-3 w-full max-h-20 fixed top-0 z-50 bg-white">
   <div
     class="flex align-middle items-center justify-between max-w-screen-2xl mx-auto">
-    <img
-      routerLink="/"
-      src="/images/logo.png"
-      alt="app logo"
-      class="max-h-14" />
-    <nav class="flex gap-3 my-2 uppercase text-2xl">
+    <div>
+      <button class="lg:hidden" (click)="toggleMenu()">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <img
+        routerLink="/"
+        src="/images/logo.png"
+        alt="app logo"
+        class="max-h-14 max-lg:hidden" />
+    </div>
+    <nav
+      class="flex gap-3 my-2 uppercase text-2xl max-lg:hidden">
       <a
         routerLink="/"
         routerLinkActive="active"
@@ -27,3 +33,35 @@
     </div>
   </div>
 </header>
+
+<div
+  class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden transition-opacity duration-300"
+  [class.hidden]="!isMenuOpen"
+  (click)="toggleMenu()"></div>
+
+<nav
+  class="fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 transform transition-transform duration-300 lg:hidden"
+  [class.translate-x-0]="isMenuOpen"
+  [class.-translate-x-full]="!isMenuOpen">
+  <div class="flex flex-col p-4">
+    <img
+      src="/images/logo.png"
+      alt="app logo"
+      class="mb-8 px-9" />
+    <nav class="flex flex-col gap-4 uppercase text-xl">
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="toggleMenu()"
+        >Home</a
+      >
+      <a
+        routerLink="/catalog"
+        routerLinkActive="active"
+        (click)="toggleMenu()"
+        >Catalog</a
+      >
+    </nav>
+  </div>
+</nav>
