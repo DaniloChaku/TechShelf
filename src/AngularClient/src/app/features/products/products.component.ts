@@ -10,10 +10,7 @@ import { SearchProductsRequest } from '../../core/services/product/search-produc
 import { ProductService } from '../../core/services/product/product.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormField } from '@angular/material/form-field';
-import {
-  MatSelectChange,
-  MatSelectModule,
-} from '@angular/material/select';
+import { MatSelectModule } from '@angular/material/select';
 import { ProductCardComponent } from './product-card/product-card.component';
 import {
   MatPaginator,
@@ -129,5 +126,14 @@ export class ProductsComponent implements OnInit {
     this.tempSearchParams = { ...this.searchParams };
     this.getProducts();
     menuTrigger.closeMenu();
+  }
+
+  onSearch() {
+    this.getProducts();
+  }
+
+  clearSearch() {
+    this.searchParams.name = undefined;
+    this.getProducts();
   }
 }
