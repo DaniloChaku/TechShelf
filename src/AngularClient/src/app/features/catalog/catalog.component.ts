@@ -28,6 +28,7 @@ import {
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
+import { NotFoundComponent } from '../../shared/components/not-found/not-found.component';
 
 @Component({
   selector: 'app-products',
@@ -43,6 +44,7 @@ import { FormsModule } from '@angular/forms';
     MatInputModule,
     MatFormFieldModule,
     FormsModule,
+    NotFoundComponent,
   ],
   templateUrl: './catalog.component.html',
   styleUrl: './catalog.component.css',

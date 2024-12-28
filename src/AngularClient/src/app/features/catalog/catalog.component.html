@@ -120,15 +120,8 @@
     }
   </div>
   } @else {
-  <div class="flex justify-center">
-    <div
-      class="flex flex-col items-center justify-center py-12 w-full">
-      <mat-icon class="icon-display mb-5">error</mat-icon>
-      <p class="text-gray-600 text-lg font-semibold mb-4">
-        No items found matching your search criteria.
-      </p>
-    </div>
-  </div>
+  <app-not-found
+    errorText="No items found matching your search criteria."></app-not-found>
   }
 
   <mat-paginator

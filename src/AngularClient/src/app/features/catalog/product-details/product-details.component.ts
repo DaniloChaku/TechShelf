@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatDivider } from '@angular/material/divider';
+import { NotFoundComponent } from '../../../shared/components/not-found/not-found.component';
 
 @Component({
   selector: 'app-product-details',
@@ -21,6 +22,7 @@ import { MatDivider } from '@angular/material/divider';
     FormsModule,
     MatInputModule,
     MatDivider,
+    NotFoundComponent,
   ],
   templateUrl: './product-details.component.html',
   styleUrl: './product-details.component.css',

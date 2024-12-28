@@ -1,0 +1,11 @@
+@if (!loadingService.isLoading()){
+<div class="flex justify-center">
+  <div
+    class="flex flex-col items-center justify-center py-12 w-full">
+    <mat-icon class="icon-display mb-5">error</mat-icon>
+    <p class="text-gray-600 text-lg font-semibold mb-4">
+      {{ errorText() }}
+    </p>
+  </div>
+</div>
+}
