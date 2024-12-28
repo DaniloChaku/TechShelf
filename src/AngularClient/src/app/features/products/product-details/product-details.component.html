@@ -11,10 +11,17 @@
 <div
   class="grid lg:grid-cols-2 gap-x-16 gap-y-6 lg:px-28 md:px-24 px-6 mb-10">
   <div class="flex flex-col align-middle gap-3">
-    <div class="flex justify-center">
+    <div class="flex justify-center relative image-wrapper">
       <img
         [src]="product.imageUrls[0]"
-        [alt]="product.name" />
+        [alt]="product.name"
+        class="product-image" />
+      <!-- Gray Overlay for Unavailable Products -->
+      @if (unavailable) {
+      <div class="overlay">
+        <span class="overlay-text">Unavailable</span>
+      </div>
+      }
     </div>
     <div class="ms-5 flex gap-3">
       <span
@@ -39,10 +46,18 @@
     <div class="flex flex-col lg:w-1/2 mb-8">
       <mat-form-field appearance="outline">
         <mat-label>Quantity</mat-label>
-        <input matInput min="0" type="number" value="0" />
+        <input
+          matInput
+          min="0"
+          type="number"
+          value="0"
+          [disabled]="unavailable" />
       </mat-form-field>
 
-      <button mat-flat-button class="match-input-height">
+      <button
+        mat-flat-button
+        class="match-input-height"
+        [disabled]="unavailable">
         <mat-icon>shopping_cart</mat-icon>
         Add to cart
       </button>

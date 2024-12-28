@@ -2,11 +2,18 @@
   routerLink="/catalog/{{ product().id }}"
   class="p-1 cursor-pointer"
   style="background-color: white">
-  <img
-    class="m-1"
-    mat-card-image
-    src="{{ product().thumbnailUrl }}"
-    alt="{{ product().name }}" />
+  <div class="image-wrapper m-1">
+    <img
+      mat-card-image
+      src="{{ product().thumbnailUrl }}"
+      alt="{{ product().name }}" />
+    <!-- Gray Overlay for Unavailable Products -->
+    @if (product().stock === 0) {
+    <div class="overlay">
+      <span class="overlay-text">Unavailable</span>
+    </div>
+    }
+  </div>
   <mat-card-content class="mt-2">
     <h2 class="font-semibold uppercase">
       {{ product().name }}

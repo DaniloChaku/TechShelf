@@ -9,3 +9,24 @@ button.match-input-height {
 .mdc-notched-outline__notch {
   border-right-style: none !important;
 }
+
+.image-wrapper {
+  position: relative;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(128, 128, 128, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #efefef;
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  z-index: 1;
+}

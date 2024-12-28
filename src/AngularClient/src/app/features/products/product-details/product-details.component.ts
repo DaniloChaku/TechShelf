@@ -31,6 +31,10 @@ export class ProductDetailsComponent implements OnInit {
   private location = inject(Location);
   product?: Product;
 
+  get unavailable() {
+    return this.product?.stock === 0;
+  }
+
   ngOnInit(): void {
     var id =
       this.activatedRoute.snapshot.paramMap.get('id');
