@@ -38,8 +38,7 @@ public class SearchProductsQueryHandler
             name: request.Name,
             minPrice: request.MinPrice,
             maxPrice: request.MaxPrice,
-            sortBy: request.SortBy,
-            isDescending: request.IsDescending);
+            sortBy: request.SortBy);
 
         var (products, totalCount) = 
             await _unitOfWork.Repository<Product>().ListWithTotalCountAsync(spec, cancellationToken);

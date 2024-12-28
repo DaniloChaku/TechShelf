@@ -14,7 +14,6 @@ public record SearchProductsQuery(
     string? Name = null,
     int? MinPrice = null,
     int? MaxPrice = null,
-    ProductsSortBy? SortBy = null,
-    bool IsDescending = false
+    ProductsSortOption? SortBy = null
 ) : IRequest<ErrorOr<PagedResult<ProductDto>>>;
 

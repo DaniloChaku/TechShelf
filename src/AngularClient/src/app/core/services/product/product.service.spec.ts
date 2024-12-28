@@ -73,8 +73,7 @@ describe('ProductService', () => {
         name: 'Product',
         minPrice: 10,
         maxPrice: 100,
-        sortBy: 'name',
-        isDescending: true,
+        sortBy: 'priceAsc',
       };
 
       service.getProducts(request).subscribe((products) => {
@@ -98,9 +97,7 @@ describe('ProductService', () => {
             request.minPrice!.toString() &&
           req.params.get('maxPrice') ===
             request.maxPrice!.toString() &&
-          req.params.get('sortBy') === request.sortBy &&
-          req.params.get('isDescending') ===
-            request.isDescending!.toString()
+          req.params.get('sortBy') === request.sortBy
         );
       });
       expect(req.request.method).toBe('GET');

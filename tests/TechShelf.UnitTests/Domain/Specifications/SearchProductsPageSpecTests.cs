@@ -23,12 +23,11 @@ public class SearchProductsPageSpecTests
         { 3, 1, [] }
     };
 
-    public static TheoryData<ProductsSortBy, bool, int[]> SortingTestCases => new()
+    public static TheoryData<ProductsSortOption, int[]> SortingTestCases => new()
     {
-        { ProductsSortBy.Name, false, [1, 2, 3 ] },
-        { ProductsSortBy.Name, true,  [3, 2, 1] },
-        { ProductsSortBy.Price, false, [3, 2, 1] },
-        { ProductsSortBy.Price, true, [1, 2, 3] }
+        { ProductsSortOption.Alphabetically, [1, 2, 3 ] },
+        { ProductsSortOption.PriceAsc, [3, 2, 1] },
+        { ProductsSortOption.PriceDesc, [1, 2, 3] }
     };
 
     [Theory]
@@ -113,10 +112,10 @@ public class SearchProductsPageSpecTests
     [Theory]
     [MemberData(nameof(SortingTestCases))]
 
-    public void AppliesSorting(ProductsSortBy sortBy, bool isDescending, int[] expectedIds)
+    public void AppliesSorting(ProductsSortOption sortBy, int[] expectedIds)
     {
         // Arrange
-        var spec = new SearchProductsPageSpec(0, 10, sortBy: sortBy, isDescending: isDescending);
+        var spec = new SearchProductsPageSpec(0, 10, sortBy: sortBy);
 
         // Act
         var result = spec.Evaluate(_testProducts);

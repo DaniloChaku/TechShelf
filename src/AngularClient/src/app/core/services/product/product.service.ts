@@ -63,13 +63,6 @@ export class ProductService {
       params = params.append('sortBy', request.sortBy);
     }
 
-    if (request.isDescending) {
-      params = params.append(
-        'isDescending',
-        request.isDescending.toString()
-      );
-    }
-
     return this.http.get<PagedResult<Product>>(
       this.baseUrl + 'products/search',
       {

@@ -14,8 +14,7 @@ public class SearchProductsPageSpec : Specification<Product>
         string? name = null,
         int? minPrice = null,
         int? maxPrice = null,
-        ProductsSortBy? sortBy = null,
-        bool isDescending = false)
+        ProductsSortOption? sortBy = null)
     {
         if (brandId.HasValue)
         {
@@ -45,7 +44,7 @@ public class SearchProductsPageSpec : Specification<Product>
 
         if (sortBy.HasValue)
         {
-            Query.ApplySorting(sortBy.Value, isDescending);
+            Query.ApplySorting(sortBy.Value);
         }
 
         Query.Include(p => p.Brand)

@@ -89,9 +89,8 @@ export class ProductsComponent implements OnInit {
     return {
       pageIndex: 1,
       pageSize: 10,
-      sortBy: this.tempSearchParams?.sortBy ?? 'name',
-      isDescending:
-        this.tempSearchParams?.isDescending ?? false,
+      sortBy:
+        this.tempSearchParams?.sortBy ?? 'alphabetically',
     };
   }
 
@@ -102,14 +101,6 @@ export class ProductsComponent implements OnInit {
 
   onSortChange() {
     this.searchParams.sortBy = this.tempSearchParams.sortBy;
-    this.getProducts();
-  }
-
-  toggleSortDirection() {
-    this.tempSearchParams.isDescending =
-      !this.tempSearchParams.isDescending;
-    this.searchParams.isDescending =
-      this.tempSearchParams.isDescending;
     this.getProducts();
   }
 

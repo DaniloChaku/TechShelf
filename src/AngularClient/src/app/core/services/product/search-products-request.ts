@@ -1,3 +1,5 @@
+import { ProductSortOption } from './product-sort-option';
+
 export interface SearchProductsRequest {
   pageIndex: number;
   pageSize: number;
@@ -6,6 +8,5 @@ export interface SearchProductsRequest {
   name?: string;
   minPrice?: number;
   maxPrice?: number;
-  sortBy?: 'name' | 'price';
-  isDescending?: boolean;
+  sortBy?: ProductSortOption;
 }

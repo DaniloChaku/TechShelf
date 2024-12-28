@@ -5,27 +5,27 @@ using TechShelf.Domain.Entities;
 namespace TechShelf.Domain.Enums;
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
-public enum ProductsSortBy
+public enum ProductsSortOption
 {
-    Name,
-    Price
+    Alphabetically,
+    PriceAsc,
+    PriceDesc
 }
 
 public static class ISpecificationBuilderExtensions
 {
     public static IOrderedSpecificationBuilder<Product> ApplySorting(
         this ISpecificationBuilder<Product> builder, 
-        ProductsSortBy sortBy,
-        bool isDescending = false)
+        ProductsSortOption sortBy)
     {
         return sortBy switch
         {
-            ProductsSortBy.Name => isDescending
-                ? builder.OrderByDescending(p => p.Name)
-                : builder.OrderBy(p => p.Name),
-            ProductsSortBy.Price => isDescending
-                ? builder.OrderByDescending(p => p.Price)
-                : builder.OrderBy(p => p.Price),
+            ProductsSortOption.Alphabetically => 
+                builder.OrderBy(p => p.Name),
+            ProductsSortOption.PriceAsc =>
+                builder.OrderBy(p => p.Price),
+            ProductsSortOption.PriceDesc =>
+                builder.OrderByDescending(p => p.Price),
             _ => throw new NotImplementedException()
         };
     }
