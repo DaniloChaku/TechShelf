@@ -33,6 +33,11 @@
     </div>
   </div>
 </header>
+@if (loadingService.isLoading()) {
+<mat-progress-bar
+  mode="indeterminate"
+  class="fixed top-20 z-50"></mat-progress-bar>
+}
 
 <div
   class="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden transition-opacity duration-300"
