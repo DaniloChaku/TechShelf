@@ -44,10 +44,10 @@ import { FormsModule } from '@angular/forms';
     MatFormFieldModule,
     FormsModule,
   ],
-  templateUrl: './products.component.html',
-  styleUrl: './products.component.css',
+  templateUrl: './catalog.component.html',
+  styleUrl: './catalog.component.css',
 })
-export class ProductsComponent implements OnInit {
+export class CatalogComponent implements OnInit {
   private productService = inject(ProductService);
   private brandService = inject(BrandService);
   private categoryService = inject(CategoryService);
