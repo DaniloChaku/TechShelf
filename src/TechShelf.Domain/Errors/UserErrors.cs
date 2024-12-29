@@ -8,5 +8,7 @@ public static class UserErrors
     public static Error RegistrationFalied =>
         Error.Unexpected("User.Registration", "Registration failed.");
     public static Error LoginAttemptFailed =>
-        Error.Unauthorized("User.Login", "Invalid email or password");
+        Error.Unauthorized("User.Login", "Invalid email or password.");
+    public static Error InvalidRefreshToken =>
+        Error.Unauthorized("The refresh token is invalid or has expired. Please log in again.");
 }
