@@ -4,12 +4,18 @@ using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Moq;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
 using System.Security.Claims;
+using System.Text;
+using TechShelf.API.Common.Http;
 using TechShelf.API.Common.Requests.Users;
 using TechShelf.API.Common.Responses;
 using TechShelf.API.Controllers;
 using TechShelf.Application.Features.Users.Commands.Login;
+using TechShelf.Application.Features.Users.Commands.RefreshToken;
 using TechShelf.Application.Features.Users.Commands.RegisterCustomer;
 using TechShelf.Application.Features.Users.Common;
 using TechShelf.Application.Features.Users.Queries.GetUserInfo;
@@ -35,11 +41,19 @@ public class UsersControllerTests
         // Arrange
         var request = _fixture.Create<RegisterCustomerRequest>();
         var token = _fixture.Create<string>();
+        var refreshToken = _fixture.Create<string>();
         var expectedTokenResponse = new TokenResponse(token);
 
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<RegisterCustomerCommand>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(token);
+            .ReturnsAsync(new TokenDto(token, refreshToken));
+
+        var httpContext = new DefaultHttpContext();
+        var controllerContext = new ControllerContext()
+        {
+            HttpContext = httpContext
+        };
+        _controller.ControllerContext = controllerContext;
 
         // Act
         var result = await _controller.RegisterCustomer(request);
@@ -50,6 +64,9 @@ public class UsersControllerTests
         okResult!.Value.Should().BeEquivalentTo(expectedTokenResponse);
 
         _mediatorMock.Verify(m => m.Send(It.IsAny<RegisterCustomerCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+
+        var setCookieHeader = httpContext.Response.Headers.SetCookie.ToString();
+        setCookieHeader.Should().Contain(Cookies.RefreshToken);
     }
 
     [Fact]
@@ -84,10 +101,19 @@ public class UsersControllerTests
         // Arrange
         var request = _fixture.Create<LoginRequest>();
         var token = _fixture.Create<string>();
+        var refreshToken = _fixture.Create<string>();
         var expectedTokenResponse = new TokenResponse(token);
+
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<LoginCommand>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(token);
+            .ReturnsAsync(new TokenDto(token, refreshToken));
+
+        var httpContext = new DefaultHttpContext();
+        var controllerContext = new ControllerContext()
+        {
+            HttpContext = httpContext
+        };
+        _controller.ControllerContext = controllerContext;
 
         // Act
         var result = await _controller.Login(request);
@@ -97,6 +123,9 @@ public class UsersControllerTests
         var okResult = result as OkObjectResult;
         okResult!.Value.Should().BeEquivalentTo(expectedTokenResponse);
         _mediatorMock.Verify(m => m.Send(It.IsAny<LoginCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+
+        var setCookieHeader = httpContext.Response.Headers.SetCookie.ToString();
+        setCookieHeader.Should().Contain(Cookies.RefreshToken);
     }
 
     [Fact]
@@ -131,7 +160,7 @@ public class UsersControllerTests
         };
 
         // Act
-        Func<Task> act = async () => await _controller.GetCurrentUser();
+        Func<Task> act = _controller.GetCurrentUser;
 
         // Assert
         await act.Should().ThrowAsync<InvalidOperationException>()
@@ -194,5 +223,122 @@ public class UsersControllerTests
         result.Should().BeOfType<ObjectResult>();
         var problemResult = result as ObjectResult;
         problemResult!.Value.Should().BeAssignableTo<ProblemDetails>();
+    }
+
+    [Fact]
+    public async Task RefreshToken_ReturnsOk_WhenRefreshTokenSucceeds()
+    {
+        // Arrange
+        var email = _fixture.Create<string>();
+        var token = GetTestJwt(email);
+        var refreshToken = _fixture.Create<string>();
+        var expectedTokenResponse = new TokenResponse(token);
+
+        var authHeader = $"Bearer {token}";
+
+        var mockCookies = new Mock<IRequestCookieCollection>();
+        mockCookies.Setup(c => c[Cookies.RefreshToken]).Returns(refreshToken);
+
+        var httpContext = new DefaultHttpContext
+        {
+            Request = { Cookies = mockCookies.Object }
+        };
+        httpContext.Request.Headers.Authorization = authHeader;
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
+
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<RefreshTokenCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new TokenDto(token, refreshToken));
+
+        // Act
+        var result = await _controller.RefreshToken();
+
+        // Assert
+        result.Should().BeOfType<OkObjectResult>();
+        var okResult = result as OkObjectResult;
+        okResult!.Value.Should().BeEquivalentTo(expectedTokenResponse);
+        _mediatorMock.Verify(m => m.Send(It.IsAny<RefreshTokenCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task RefreshToken_ReturnsUnauthorized_WhenRefreshTokenIsMissing()
+    {
+        // Act
+        var httpContext = new DefaultHttpContext();
+        var mockCookies = new Mock<IRequestCookieCollection>();
+        httpContext.Request.Cookies = mockCookies.Object;
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
+
+        // Act
+        var result = await _controller.RefreshToken();
+
+        // Assert
+        result.Should().BeOfType<UnauthorizedResult>();
+    }
+
+    [Fact]
+    public async Task RefreshToken_ReturnsUnauthorized_WhenEmailClaimIsMissing()
+    {
+        // Arrange
+        var refreshToken = _fixture.Create<string>();
+        var token = GetTestJwt();
+
+        var httpContext = new DefaultHttpContext();
+        var authHeader = $"Bearer {token}";
+        httpContext.Request.Headers.Authorization = authHeader;
+
+        var mockCookies = new Mock<IRequestCookieCollection>();
+        mockCookies.Setup(c => c["refreshToken"]).Returns(refreshToken);
+        httpContext.Request.Cookies = mockCookies.Object;
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
+
+        // Act
+        var result = await _controller.RefreshToken();
+
+        // Assert
+        result.Should().BeOfType<UnauthorizedResult>();
+    }
+
+    private string GetTestJwt(string? email = null)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+
+        var claims = new List<Claim>()
+        {
+            new("test-calim", "")
+        };
+
+        if (email != null)
+        {
+            claims.Add(new(ClaimTypes.Email, email));
+        }
+
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(claims),
+            Expires = DateTime.UtcNow.AddMinutes(30),
+            SigningCredentials = new SigningCredentials(
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes("".PadRight(100, 'x'))),
+                SecurityAlgorithms.HmacSha256Signature)
+        };
+
+        return tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
     }
 }

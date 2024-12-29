@@ -2,10 +2,13 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using TechShelf.API.Common.Http;
 using TechShelf.API.Common.Requests.Users;
 using TechShelf.API.Common.Responses;
 using TechShelf.Application.Features.Users.Commands.Login;
+using TechShelf.Application.Features.Users.Commands.RefreshToken;
 using TechShelf.Application.Features.Users.Commands.RegisterCustomer;
 using TechShelf.Application.Features.Users.Common;
 using TechShelf.Application.Features.Users.Queries.GetUserInfo;
@@ -31,7 +34,11 @@ public class UsersController : BaseApiController
         var result = await _mediator.Send(command);
 
         return result.Match(
-            token => Ok(new TokenResponse(token)),
+            tokens => 
+            {
+                SetRefreshTokenCookie(tokens.RefreshToken);
+                return Ok(new TokenResponse(tokens.Token));
+                },
             errors => Problem(errors));
     }
 
@@ -46,7 +53,40 @@ public class UsersController : BaseApiController
         var result = await _mediator.Send(command);
 
         return result.Match(
-            token => Ok(new TokenResponse(token)),
+            tokens =>
+            {
+                SetRefreshTokenCookie(tokens.RefreshToken);
+                return Ok(new TokenResponse(tokens.Token));
+            },
+            errors => Problem(errors));
+    }
+
+    [HttpPost("refresh-token")]
+    [ProducesResponseType(statusCode: StatusCodes.Status200OK, type: typeof(TokenResponse))]
+    [ProducesResponseType(statusCode: StatusCodes.Status400BadRequest, type: typeof(ValidationProblemDetails))]
+    [ProducesResponseType(statusCode: StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> RefreshToken()
+    {
+        var refreshToken = Request.Cookies[Cookies.RefreshToken];
+        if (string.IsNullOrEmpty(refreshToken))
+        {
+            return Unauthorized();
+        }
+
+        var email = GetEmailClaimFromJwt();
+        if (email is null)
+        {
+            return Unauthorized();
+        }
+
+        var result = await _mediator.Send(new RefreshTokenCommand(email, refreshToken));
+
+        return result.Match(
+            tokens =>
+            {
+                SetRefreshTokenCookie(tokens.RefreshToken);
+                return Ok(new TokenResponse(tokens.Token));
+            },
             errors => Problem(errors));
     }
 
@@ -68,5 +108,35 @@ public class UsersController : BaseApiController
         return result.Match(
             user => Ok(user),
             errors => Problem(errors));
+    }
+
+    private void SetRefreshTokenCookie(string refreshToken)
+    {
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTime.UtcNow.AddDays(7)
+        };
+        Response.Cookies.Append(Cookies.RefreshToken, refreshToken, cookieOptions);
+    }
+
+    [Authorize]
+    [HttpGet]
+    public IActionResult Auth()
+    {
+        return NoContent();
+    }
+
+    private string? GetEmailClaimFromJwt()
+    {
+        var authHeader = Request.Headers.Authorization.ToString();
+        if (string.IsNullOrEmpty(authHeader)) return null;
+
+        var token = authHeader.Substring("Bearer ".Length);
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var jwtToken = tokenHandler.ReadJwtToken(token);
+        var emailClaim = jwtToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Email);
+        return emailClaim?.Value;
     }
 }
