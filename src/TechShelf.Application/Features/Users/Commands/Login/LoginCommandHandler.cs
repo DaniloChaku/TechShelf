@@ -1,12 +1,13 @@
 ﻿using ErrorOr;
 using MediatR;
+using TechShelf.Application.Features.Users.Common;
 using TechShelf.Application.Interfaces.Auth;
 using TechShelf.Domain.Errors;
 
 namespace TechShelf.Application.Features.Users.Commands.Login;
 
 public class LoginCommandHandler
-    : IRequestHandler<LoginCommand, ErrorOr<string>>
+    : IRequestHandler<LoginCommand, ErrorOr<TokenDto>>
 {
     private readonly IUserService _userService;
     private readonly ITokenService _tokenService;
@@ -17,10 +18,9 @@ public class LoginCommandHandler
         _tokenService = tokenService;
     }
 
-    public async Task<ErrorOr<string>> Handle(LoginCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<TokenDto>> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
         var passwordValidationResult = await _userService.ValidatePasswordAsync(request.Email, request.Password);
-
         if (passwordValidationResult.IsError) return passwordValidationResult.Errors;
 
         bool isPasswordValid = passwordValidationResult.Value;
@@ -30,9 +30,11 @@ public class LoginCommandHandler
         }
 
         var tokenResult = await _tokenService.GetTokenAsync(request.Email);
-
         if (tokenResult.IsError) return tokenResult.Errors;
 
-        return tokenResult.Value;
+        var refreshTokenResult = await _tokenService.GetRefreshTokenAsync(request.Email);
+        if (refreshTokenResult.IsError) return refreshTokenResult.Errors;
+
+        return new TokenDto(tokenResult.Value, refreshTokenResult.Value);
     }
 }
