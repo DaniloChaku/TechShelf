@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using TechShelf.Application.Interfaces.Auth;
 using TechShelf.Domain.Errors;
@@ -64,5 +65,32 @@ public class JwtService : ITokenService
             signingCredentials: signingCredentials);
 
         return new JwtSecurityTokenHandler().WriteToken(securityToken);
+    }
+
+    public async Task<ErrorOr<string>> GetRefreshTokenAsync(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if (user == null)
+        {
+            return UserErrors.NotFound(email);
+        }
+
+        var refreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpiryTime = _timeProvider.GetUtcNow().UtcDateTime.AddDays(7);
+
+        await _userManager.UpdateAsync(user);
+
+        return refreshToken;
+    }
+
+    public async Task<bool> ValidateRefreshTokenAsync(string email, string refreshToken)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+
+        return user != null && 
+            user.RefreshToken == refreshToken && 
+            user.RefreshTokenExpiryTime > _timeProvider.GetUtcNow().UtcDateTime;
     }
 }
