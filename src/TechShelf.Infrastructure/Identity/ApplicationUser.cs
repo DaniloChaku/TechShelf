@@ -11,4 +11,7 @@ public class ApplicationUser : IdentityUser
     public string LastName { get; set; } = string.Empty;
     [StringLength(20)]
     public override string? PhoneNumber { get => base.PhoneNumber; set => base.PhoneNumber = value; }
+    [StringLength(200)]
+    public string? RefreshToken { get; set; }
+    public DateTime? RefreshTokenExpiryTime { get; set; }
 }
