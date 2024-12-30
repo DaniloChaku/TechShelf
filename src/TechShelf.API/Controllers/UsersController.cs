@@ -125,13 +125,6 @@ public class UsersController : BaseApiController
         Response.Cookies.Append(Cookies.RefreshToken, refreshToken, cookieOptions);
     }
 
-    [Authorize]
-    [HttpGet]
-    public IActionResult Auth()
-    {
-        return NoContent();
-    }
-
     private string? GetEmailClaimFromJwt()
     {
         var authHeader = Request.Headers.Authorization.ToString();
