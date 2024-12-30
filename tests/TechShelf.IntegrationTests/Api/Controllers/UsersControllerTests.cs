@@ -8,23 +8,26 @@ using Microsoft.AspNetCore.Mvc;
 using TechShelf.IntegrationTests.TestHelpers.Seed;
 using System.Net.Http.Headers;
 using TechShelf.Application.Features.Users.Common;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
 using TechShelf.Domain.Common;
+using TechShelf.API.Common.Http;
+using Mapster;
+using TechShelf.Infrastructure.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Identity;
 
 namespace TechShelf.IntegrationTests.Api.Controllers;
 
-public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>
+public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, IDisposable
 {
     private readonly TestWebApplicationFactory _factory;
     private readonly JwtTestHelper _jwtHelper;
+    private readonly IServiceScope _scope;
 
     public UsersControllerTests(TestWebApplicationFactory factory)
     {
         _factory = factory;
-        _jwtHelper = new JwtTestHelper(
-            factory.Services.GetRequiredService<IConfiguration>(),
-            factory.Services.GetRequiredService<TimeProvider>());
+        _scope = _factory.Services.CreateScope();
+        _jwtHelper = new JwtTestHelper(_scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>());
     }
 
     [Fact]
@@ -32,22 +35,31 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>
     {
         // Arrange
         var client = _factory.CreateClient();
-        var request = new RegisterCustomerRequest(
+        var expectedUser = new RegisterCustomerRequest(
             FirstName: "John",
             LastName: "Doe",
             Email: "johndoe@example.com",
             PhoneNumber: "+1234567890",
             Password: "SecurePassword123!"
         );
+        var issuedTime = DateTime.UtcNow;
 
         // Act
-        var response = await client.PostAsJsonAsync(ApiUrls.RegisterCustomer, request);
+        var response = await client.PostAsJsonAsync(ApiUrls.RegisterCustomer, expectedUser);
 
         // Assert
         response.EnsureSuccessStatusCode();
         var responseData = await response.Content.ReadFromJsonAsync<TokenResponse>();
         responseData.Should().NotBeNull();
         responseData!.Token.Should().NotBeNullOrEmpty();
+
+        _jwtHelper.ValidateJwt(responseData.Token, issuedTime, expectedUser.Adapt<ApplicationUser>(), UserRoles.Customer);
+
+        response.Headers.TryGetValues("Set-Cookie", out var cookies).Should().BeTrue();
+        cookies.Should().ContainSingle(cookie => cookie.Contains($"{Cookies.RefreshToken}="));
+        var refreshTokenCookie = cookies!.First(c => c.StartsWith($"{Cookies.RefreshToken}="));
+        refreshTokenCookie.Should().Contain("httponly");
+        refreshTokenCookie.Should().Contain("samesite=strict");
     }
 
     [Fact]
@@ -82,6 +94,7 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>
             Email: AdminHelper.SuperAdminOptions.Email,
             Password: AdminHelper.SuperAdminOptions.Password
         );
+        var issuedTime = DateTime.UtcNow;
 
         // Act
         var response = await client.PostAsJsonAsync(ApiUrls.Login, loginRequest);
@@ -91,6 +104,14 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>
         var responseData = await response.Content.ReadFromJsonAsync<TokenResponse>();
         responseData.Should().NotBeNull();
         responseData!.Token.Should().NotBeNullOrEmpty();
+
+        _jwtHelper.ValidateJwt(responseData.Token, issuedTime, AdminHelper.SuperAdmin, UserRoles.SuperAdmin);
+
+                response.Headers.TryGetValues("Set-Cookie", out var cookies).Should().BeTrue();
+        cookies.Should().ContainSingle(cookie => cookie.Contains($"{Cookies.RefreshToken}="));
+        var refreshTokenCookie = cookies!.First(c => c.StartsWith($"{Cookies.RefreshToken}="));
+        refreshTokenCookie.Should().Contain("httponly");
+        refreshTokenCookie.Should().Contain("samesite=strict");
     }
 
     [Fact]
@@ -179,5 +200,115 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task RefreshToken_ReturnsOk_WhenRefreshTokenIsValid()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        var user = AdminHelper.SuperAdmin;
+
+        var refreshToken = await _jwtHelper.GenerateRefreshToken(user.Email!);
+        var accessToken = _jwtHelper.GenerateToken(user, [UserRoles.SuperAdmin]);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        client.DefaultRequestHeaders.Add("Cookie", $"{Cookies.RefreshToken}={refreshToken}");
+
+        // Act
+        var response = await client.PostAsync(ApiUrls.RefreshToken, null);
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var responseData = await response.Content.ReadFromJsonAsync<TokenResponse>();
+        responseData.Should().NotBeNull();
+        responseData!.Token.Should().NotBeNullOrEmpty();
+
+        _jwtHelper.ValidateJwt(responseData.Token, DateTime.UtcNow, user, UserRoles.SuperAdmin);
+
+        response.Headers.TryGetValues("Set-Cookie", out var cookies).Should().BeTrue();
+        cookies.Should().ContainSingle(cookie => cookie.Contains($"{Cookies.RefreshToken}="));
+        var refreshTokenCookie = cookies!.First(c => c.StartsWith($"{Cookies.RefreshToken}="));
+        refreshTokenCookie.Should().Contain("httponly");
+        refreshTokenCookie.Should().Contain("samesite=strict");
+    }
+
+    [Fact]
+    public async Task RefreshToken_ReturnsUnauthorized_WhenNoRefreshTokenCookie()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        var user = AdminHelper.SuperAdmin;
+        var accessToken = _jwtHelper.GenerateToken(user, [UserRoles.SuperAdmin]);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+
+        // Act
+        var response = await client.PostAsync(ApiUrls.RefreshToken, null);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task RefreshToken_ReturnsUnauthorized_WhenRefreshTokenIsInvalid()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        var user = AdminHelper.SuperAdmin;
+        var accessToken = _jwtHelper.GenerateToken(user, [UserRoles.SuperAdmin]);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        client.DefaultRequestHeaders.Add("Cookie", $"{Cookies.RefreshToken}=invalid-refresh-token");
+
+        // Act
+        var response = await client.PostAsync(ApiUrls.RefreshToken, null);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task RefreshToken_ReturnsUnauthorized_WhenJwtTokenIsMissingEmailClaim()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        var user = AdminHelper.SuperAdmin;
+
+        var refreshToken = await _jwtHelper.GenerateRefreshToken(user.Email!);
+
+        var invalidJwtToken = _jwtHelper.GenerateToken(user, [UserRoles.SuperAdmin], false);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", invalidJwtToken);
+        client.DefaultRequestHeaders.Add("Cookie", $"{Cookies.RefreshToken}={refreshToken}");
+
+        // Act
+        var response = await client.PostAsync(ApiUrls.RefreshToken, null);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    private bool _disposed;
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    // Protected implementation of Dispose pattern
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed)
+            return;
+
+        if (disposing)
+        {
+#pragma warning disable S1066 // Mergeable "if" statements should be combined
+            if (_scope != null)
+            {
+                _scope.Dispose();
+            }
+#pragma warning restore S1066 // Mergeable "if" statements should be combined
+        }
+
+        _disposed = true;
     }
 }

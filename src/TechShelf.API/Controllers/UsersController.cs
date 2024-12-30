@@ -87,7 +87,7 @@ public class UsersController : BaseApiController
                 SetRefreshTokenCookie(tokens.RefreshToken);
                 return Ok(new TokenResponse(tokens.Token));
             },
-            errors => Problem(errors));
+            Problem);
     }
 
     [Authorize]

@@ -6,7 +6,6 @@ using TechShelf.API.Common.Http;
 using TechShelf.API.Common;
 using TechShelf.Infrastructure.Identity;
 using Microsoft.OpenApi.Models;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
