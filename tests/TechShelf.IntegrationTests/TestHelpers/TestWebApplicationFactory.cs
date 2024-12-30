@@ -24,10 +24,11 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
         {
             var configuration = new Dictionary<string, string?>
             {
-                ["Jwt:SecretKey"] = JwtTestHelper.Key,
-                ["Jwt:Issuer"] = JwtTestHelper.Issuer,
-                ["Jwt:Audience"] = JwtTestHelper.Audience,
-                ["Jwt:ExpiresInMinutes"] = JwtTestHelper.ExpiresInMinutes.ToString()
+                [$"Jwt:{nameof(JwtOptions.SecretKey)}"] = JwtTestHelper.Key,
+                [$"Jwt:{nameof(JwtOptions.Issuer)}"] = JwtTestHelper.Issuer,
+                [$"Jwt:{nameof(JwtOptions.Audience)}"] = JwtTestHelper.Audience,
+                [$"Jwt:{nameof(JwtOptions.ExpiresInMinutes)}"] = JwtTestHelper.ExpiresInMinutes.ToString(),
+                [$"Jwt:{nameof(JwtOptions.RefreshExpiresInDays)}"] = JwtTestHelper.RefreshExpiresInDays.ToString(),
             };
 
             configBuilder.AddInMemoryCollection(configuration);

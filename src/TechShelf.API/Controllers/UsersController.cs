@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using TechShelf.API.Common.Http;
@@ -12,16 +13,19 @@ using TechShelf.Application.Features.Users.Commands.RefreshToken;
 using TechShelf.Application.Features.Users.Commands.RegisterCustomer;
 using TechShelf.Application.Features.Users.Common;
 using TechShelf.Application.Features.Users.Queries.GetUserInfo;
+using TechShelf.Infrastructure.Identity.Options;
 
 namespace TechShelf.API.Controllers;
 
 public class UsersController : BaseApiController
 {
     private readonly IMediator _mediator;
+    private readonly JwtOptions _jwtOptions;
 
-    public UsersController(IMediator mediator)
+    public UsersController(IMediator mediator, IOptions<JwtOptions> jwtOptions)
     {
         _mediator = mediator;
+        _jwtOptions = jwtOptions.Value;
     }
 
     [HttpPost("register")]
@@ -116,7 +120,7 @@ public class UsersController : BaseApiController
         {
             HttpOnly = true,
             SameSite = SameSiteMode.Strict,
-            Expires = DateTime.UtcNow.AddDays(7)
+            Expires = DateTime.UtcNow.AddDays(_jwtOptions.RefreshExpiresInDays)
         };
         Response.Cookies.Append(Cookies.RefreshToken, refreshToken, cookieOptions);
     }

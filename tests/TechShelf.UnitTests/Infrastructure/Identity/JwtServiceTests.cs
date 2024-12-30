@@ -136,7 +136,7 @@ public class JwtServiceTests
         result.IsError.Should().BeFalse();
         result.Value.Should().NotBeNullOrEmpty();
 
-        var expectedExpiryTime = _fakeTimeProvider.GetUtcNow().UtcDateTime.AddDays(7);
+        var expectedExpiryTime = _fakeTimeProvider.GetUtcNow().UtcDateTime.AddDays(_jwtOptions.RefreshExpiresInDays);
         user.RefreshToken.Should().Be(result.Value);
         user.RefreshTokenExpiryTime.Should().BeCloseTo(expectedExpiryTime, TimeSpan.FromSeconds(1));
 

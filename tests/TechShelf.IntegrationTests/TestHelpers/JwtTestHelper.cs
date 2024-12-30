@@ -2,10 +2,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using TechShelf.API.Common.Http;
 using TechShelf.Domain.Errors;
 using TechShelf.Infrastructure.Identity;
 
@@ -114,5 +116,29 @@ public class JwtTestHelper
         {
             token.Claims.Should().Contain(c => c.Type == ClaimTypes.Role && c.Value == role);
         }
+    }
+
+    public void ValidateRefreshToken(HttpResponseMessage response, DateTime issuedTime)
+    {
+        response.Headers.TryGetValues("Set-Cookie", out var cookies).Should().BeTrue();
+        cookies.Should().ContainSingle(cookie => cookie.Contains($"{Cookies.RefreshToken}="));
+        var refreshTokenCookie = cookies!.First(c => c.StartsWith($"{Cookies.RefreshToken}="));
+        refreshTokenCookie.Should().Contain("httponly");
+        refreshTokenCookie.Should().Contain("samesite=strict");
+
+        // sample format: expires=Tue, 31 Dec 2024
+        var expiresSegment = refreshTokenCookie
+            .Split(';')
+            .First(s => s.TrimStart().StartsWith("expires=", StringComparison.OrdinalIgnoreCase))
+            .TrimStart();
+
+        var expirationTime = DateTime.ParseExact(
+            expiresSegment.Substring("expires=".Length),
+            "ddd, dd MMM yyyy HH:mm:ss 'GMT'",
+            CultureInfo.InvariantCulture,
+            DateTimeStyles.AssumeUniversal);
+
+        var expectedExpiration = issuedTime.AddDays(JwtTestHelper.RefreshExpiresInDays).Date;
+        expirationTime.Date.Should().BeCloseTo(expectedExpiration, TimeSpan.FromMinutes(1));
     }
 }

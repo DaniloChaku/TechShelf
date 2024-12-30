@@ -78,7 +78,7 @@ public class JwtService : ITokenService
 
         var refreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
         user.RefreshToken = refreshToken;
-        user.RefreshTokenExpiryTime = _timeProvider.GetUtcNow().UtcDateTime.AddDays(7);
+        user.RefreshTokenExpiryTime = _timeProvider.GetUtcNow().UtcDateTime.AddDays(_jwtOptions.RefreshExpiresInDays);
 
         await _userManager.UpdateAsync(user);
 

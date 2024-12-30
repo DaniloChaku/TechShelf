@@ -14,6 +14,7 @@ using Mapster;
 using TechShelf.Infrastructure.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
+using System.Globalization;
 
 namespace TechShelf.IntegrationTests.Api.Controllers;
 
@@ -54,12 +55,7 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
         responseData!.Token.Should().NotBeNullOrEmpty();
 
         _jwtHelper.ValidateJwt(responseData.Token, issuedTime, expectedUser.Adapt<ApplicationUser>(), UserRoles.Customer);
-
-        response.Headers.TryGetValues("Set-Cookie", out var cookies).Should().BeTrue();
-        cookies.Should().ContainSingle(cookie => cookie.Contains($"{Cookies.RefreshToken}="));
-        var refreshTokenCookie = cookies!.First(c => c.StartsWith($"{Cookies.RefreshToken}="));
-        refreshTokenCookie.Should().Contain("httponly");
-        refreshTokenCookie.Should().Contain("samesite=strict");
+        _jwtHelper.ValidateRefreshToken(response, issuedTime);
     }
 
     [Fact]
@@ -106,12 +102,7 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
         responseData!.Token.Should().NotBeNullOrEmpty();
 
         _jwtHelper.ValidateJwt(responseData.Token, issuedTime, AdminHelper.SuperAdmin, UserRoles.SuperAdmin);
-
-                response.Headers.TryGetValues("Set-Cookie", out var cookies).Should().BeTrue();
-        cookies.Should().ContainSingle(cookie => cookie.Contains($"{Cookies.RefreshToken}="));
-        var refreshTokenCookie = cookies!.First(c => c.StartsWith($"{Cookies.RefreshToken}="));
-        refreshTokenCookie.Should().Contain("httponly");
-        refreshTokenCookie.Should().Contain("samesite=strict");
+        _jwtHelper.ValidateRefreshToken(response, issuedTime);
     }
 
     [Fact]
@@ -213,6 +204,7 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
         var accessToken = _jwtHelper.GenerateToken(user, [UserRoles.SuperAdmin]);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
         client.DefaultRequestHeaders.Add("Cookie", $"{Cookies.RefreshToken}={refreshToken}");
+        var issuedTime = DateTime.UtcNow;
 
         // Act
         var response = await client.PostAsync(ApiUrls.RefreshToken, null);
@@ -223,13 +215,8 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
         responseData.Should().NotBeNull();
         responseData!.Token.Should().NotBeNullOrEmpty();
 
-        _jwtHelper.ValidateJwt(responseData.Token, DateTime.UtcNow, user, UserRoles.SuperAdmin);
-
-        response.Headers.TryGetValues("Set-Cookie", out var cookies).Should().BeTrue();
-        cookies.Should().ContainSingle(cookie => cookie.Contains($"{Cookies.RefreshToken}="));
-        var refreshTokenCookie = cookies!.First(c => c.StartsWith($"{Cookies.RefreshToken}="));
-        refreshTokenCookie.Should().Contain("httponly");
-        refreshTokenCookie.Should().Contain("samesite=strict");
+        _jwtHelper.ValidateJwt(responseData.Token, issuedTime, user, UserRoles.SuperAdmin);
+        _jwtHelper.ValidateRefreshToken(response, issuedTime);
     }
 
     [Fact]

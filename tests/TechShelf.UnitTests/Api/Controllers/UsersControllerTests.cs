@@ -4,9 +4,11 @@ using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using TechShelf.API.Common.Http;
@@ -18,6 +20,7 @@ using TechShelf.Application.Features.Users.Commands.RefreshToken;
 using TechShelf.Application.Features.Users.Commands.RegisterCustomer;
 using TechShelf.Application.Features.Users.Common;
 using TechShelf.Application.Features.Users.Queries.GetUserInfo;
+using TechShelf.Infrastructure.Identity.Options;
 
 namespace TechShelf.UnitTests.Api.Controllers;
 
@@ -25,13 +28,17 @@ public class UsersControllerTests
 {
     private readonly Fixture _fixture;
     private readonly Mock<IMediator> _mediatorMock;
+    private readonly JwtOptions _jwtOptions;
     private readonly UsersController _controller;
 
     public UsersControllerTests()
     {
         _fixture = new Fixture();
         _mediatorMock = new Mock<IMediator>();
-        _controller = new UsersController(_mediatorMock.Object);
+        var _jwtOptionsMock = new Mock<IOptions<JwtOptions>>();
+        _jwtOptions = _fixture.Create<JwtOptions>();
+        _jwtOptionsMock.Setup(o => o.Value).Returns(_jwtOptions); 
+        _controller = new UsersController(_mediatorMock.Object, _jwtOptionsMock.Object);
     }
 
     [Fact]
@@ -64,8 +71,7 @@ public class UsersControllerTests
 
         _mediatorMock.Verify(m => m.Send(It.IsAny<RegisterCustomerCommand>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        var setCookieHeader = httpContext.Response.Headers.SetCookie.ToString();
-        setCookieHeader.Should().Contain(Cookies.RefreshToken);
+        VerifyRefreshTokenBeingSet(httpContext);
     }
 
     [Fact]
@@ -121,10 +127,10 @@ public class UsersControllerTests
         result.Should().BeOfType<OkObjectResult>();
         var okResult = result as OkObjectResult;
         okResult!.Value.Should().BeEquivalentTo(expectedTokenResponse);
+
         _mediatorMock.Verify(m => m.Send(It.IsAny<LoginCommand>(), It.IsAny<CancellationToken>()), Times.Once);
 
-        var setCookieHeader = httpContext.Response.Headers.SetCookie.ToString();
-        setCookieHeader.Should().Contain(Cookies.RefreshToken);
+        VerifyRefreshTokenBeingSet(httpContext);
     }
 
     [Fact]
@@ -265,7 +271,10 @@ public class UsersControllerTests
         result.Should().BeOfType<OkObjectResult>();
         var okResult = result as OkObjectResult;
         okResult!.Value.Should().BeEquivalentTo(expectedTokenResponse);
+
         _mediatorMock.Verify(m => m.Send(It.IsAny<RefreshTokenCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+
+        VerifyRefreshTokenBeingSet(httpContext);
     }
 
     [Fact]
@@ -300,7 +309,7 @@ public class UsersControllerTests
         httpContext.Request.Headers.Authorization = authHeader;
 
         var mockCookies = new Mock<IRequestCookieCollection>();
-        mockCookies.Setup(c => c["refreshToken"]).Returns(refreshToken);
+        mockCookies.Setup(c => c[Cookies.RefreshToken]).Returns(refreshToken);
         httpContext.Request.Cookies = mockCookies.Object;
 
         _controller.ControllerContext = new ControllerContext
@@ -339,5 +348,11 @@ public class UsersControllerTests
         };
 
         return tokenHandler.WriteToken(tokenHandler.CreateToken(tokenDescriptor));
+    }
+
+    private void VerifyRefreshTokenBeingSet(HttpContext httpContext)
+    {
+        var setCookieHeader = httpContext.Response.Headers.SetCookie.ToString();
+        setCookieHeader.Should().Contain(Cookies.RefreshToken);
     }
 }
