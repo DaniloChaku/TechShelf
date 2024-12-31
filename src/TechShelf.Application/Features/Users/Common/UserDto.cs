@@ -4,4 +4,5 @@ public record UserDto(
     string FirstName,
     string LastName,
     string Email,
-    string PhoneNumber);
+    string PhoneNumber,
+    IEnumerable<string> Roles);

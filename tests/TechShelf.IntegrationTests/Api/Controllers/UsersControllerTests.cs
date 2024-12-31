@@ -14,7 +14,6 @@ using Mapster;
 using TechShelf.Infrastructure.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
-using System.Globalization;
 
 namespace TechShelf.IntegrationTests.Api.Controllers;
 
@@ -160,9 +159,10 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
         var userDto = await response.Content.ReadFromJsonAsync<UserDto>();
         userDto.Should().NotBeNull();
         userDto!.FirstName.Should().Be(user.FirstName);
-        userDto!.LastName.Should().Be(user.LastName);
-        userDto!.Email.Should().Be(user.Email);
-        userDto!.PhoneNumber.Should().Be(user.PhoneNumber);
+        userDto.LastName.Should().Be(user.LastName);
+        userDto.Email.Should().Be(user.Email);
+        userDto.PhoneNumber.Should().Be(user.PhoneNumber);
+        userDto.Roles.Should().BeEquivalentTo(UserRoles.SuperAdmin);
     }
 
     [Fact]

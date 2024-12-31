@@ -212,21 +212,26 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task GetUserByEmailAsync_ReturnsUserDto_WhenUserFound()
+    public async Task GetUserByEmailAsync_ReturnsUserDto_WhenUserIsFound()
     {
         // Arrange
         var email = _fixture.Create<string>();
         var user = _fixture.Create<ApplicationUser>();
         var userDto = user.Adapt<UserDto>();
+        var roles = _fixture.CreateMany<string>().ToList();
+        var expectedUserDto = userDto with { Roles = roles };
 
         _userManagerMock.Setup(um => um.FindByEmailAsync(email))
             .ReturnsAsync(user);
+
+        _userManagerMock.Setup(um => um.GetRolesAsync(user))
+            .ReturnsAsync(roles);
 
         // Act
         var result = await _authService.GetUserByEmailAsync(email);
 
         // Assert
         result.IsError.Should().BeFalse();
-        result.Value.Should().BeEquivalentTo(userDto);
+        result.Value.Should().BeEquivalentTo(expectedUserDto);
     }
 }
