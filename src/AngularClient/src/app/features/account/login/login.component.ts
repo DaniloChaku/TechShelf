@@ -1,4 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -45,13 +50,46 @@ export class LoginComponent {
       nonNullable: true,
     }),
     password: new FormControl('', {
-      validators: [Validators.required],
+      validators: [
+        Validators.required,
+        Validators.minLength(8),
+      ],
       nonNullable: true,
     }),
   });
-  emailErrors = signal<string[]>([]);
-  passwordErrors = signal<string[]>([]);
+  private emailErrors = signal<string[]>([]);
+  private passwordErrors = signal<string[]>([]);
   errorMessage = signal<string | null>(null);
+
+  get emailError() {
+    const email = this.loginForm.get('email');
+    if (!email) return null;
+
+    console.log(email);
+    if (email.hasError('required'))
+      return 'Email address is required.';
+    if (email.hasError('email'))
+      return 'Please enter a valid email address.';
+    if (this.passwordErrors())
+      return this.passwordErrors()[0];
+
+    return null;
+  }
+
+  get passwordError() {
+    const password = this.loginForm.get('password');
+    if (!password) return null;
+
+    console.log(password);
+    if (password.hasError('required'))
+      return 'Password is required.';
+    if (password.hasError('minlength'))
+      return 'Password should contain at least 8 characters.';
+    if (this.passwordErrors())
+      return this.passwordErrors()[0];
+
+    return null;
+  }
 
   constructor() {
     const returnUrl =
@@ -66,11 +104,6 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
-      return;
-    }
-
     this.errorMessage.set(null);
 
     this.userService

@@ -17,15 +17,8 @@
           type="email"
           placeholder="name@example.com"
           matInput />
-        @if (loginForm.get('email')!.hasError('required')) {
-        <mat-error>Email is required</mat-error>
-        } @else if
-        (loginForm.get('email')!.hasError('email')) {
-        <mat-error
-          >Please enter a valid email address</mat-error
-        >
-        } @else if (emailErrors().length > 0) {
-        <mat-error>{{ emailErrors()[0] }}</mat-error>
+        @if (emailError) {
+        <mat-error>{{ emailError }}</mat-error>
         }
       </mat-form-field>
       <mat-form-field
@@ -37,15 +30,13 @@
           type="password"
           placeholder="Password"
           matInput />
-        @if
-        (loginForm.get('password')!.hasError('required')) {
-        <mat-error>Password is required</mat-error>
-        } @else if (passwordErrors().length > 0) {
-        <mat-error>{{ passwordErrors()[0] }}</mat-error>
+        @if (passwordError) {
+        <mat-error>{{ passwordError }}</mat-error>
         }
       </mat-form-field>
       <button
         mat-flat-button
+        [disabled]="!loginForm.valid"
         type="submit"
         class="w-full py-2 mb-2">
         Sign in
