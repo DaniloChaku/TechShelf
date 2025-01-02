@@ -1,9 +1,4 @@
-import {
-  Component,
-  computed,
-  inject,
-  signal,
-} from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -23,6 +18,10 @@ import { UserService } from '../../../core/services/user/user.service';
 import { TOKEN } from '../../../core/constants/token';
 import { ApiError } from '../../../core/models/api-error';
 import { HttpErrorResponse } from '@angular/common/http';
+import { containsLowercase } from '../../../shared/validators/contains-lowercase';
+import { containsUppercase } from '../../../shared/validators/contains-uppercase';
+import { containsNumber } from '../../../shared/validators/contains-number';
+import { containsSpecial } from '../../../shared/validators/contains-special';
 
 @Component({
   selector: 'app-login',
@@ -53,6 +52,10 @@ export class LoginComponent {
       validators: [
         Validators.required,
         Validators.minLength(8),
+        containsLowercase,
+        containsUppercase,
+        containsNumber,
+        containsSpecial,
       ],
       nonNullable: true,
     }),
@@ -85,6 +88,14 @@ export class LoginComponent {
       return 'Password is required.';
     if (password.hasError('minlength'))
       return 'Password should contain at least 8 characters.';
+    if (password.hasError('containsLowercase'))
+      return 'Password must contain at least one lowercase letter.';
+    if (password.hasError('containsUppercase'))
+      return 'Password must contain at least one uppercase letter.';
+    if (password.hasError('containsNumber'))
+      return 'Password must contain at least one number.';
+    if (password.hasError('containsSpecial'))
+      return 'Password must contain at least one special character.';
     if (this.passwordErrors())
       return this.passwordErrors()[0];
 
