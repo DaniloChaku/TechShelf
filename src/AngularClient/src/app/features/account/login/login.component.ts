@@ -7,11 +7,7 @@ import {
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import {
-  MatError,
-  MatFormFieldModule,
-  MatLabel,
-} from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../core/services/user/user.service';
@@ -30,9 +26,7 @@ import { containsSpecial } from '../../../shared/validators/contains-special';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
-    MatLabel,
     MatButtonModule,
-    MatError,
     ReactiveFormsModule,
   ],
   templateUrl: './login.component.html',
