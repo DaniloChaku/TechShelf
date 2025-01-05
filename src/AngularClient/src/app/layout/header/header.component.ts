@@ -12,6 +12,8 @@ import {
   RouterLinkActive,
 } from '@angular/router';
 import { LoadingService } from '../../core/services/loading.service';
+import { UserService } from '../../core/services/user/user.service';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-header',
@@ -23,15 +25,21 @@ import { LoadingService } from '../../core/services/loading.service';
     RouterLinkActive,
     MatSidenavModule,
     MatProgressBarModule,
+    MatMenuModule,
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })
 export class HeaderComponent {
   loadingService = inject(LoadingService);
+  userService = inject(UserService);
   isMenuOpen = false;
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  logout() {
+    this.userService.logout();
   }
 }
