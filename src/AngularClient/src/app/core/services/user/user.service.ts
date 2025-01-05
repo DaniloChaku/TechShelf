@@ -16,14 +16,20 @@ export class UserService {
   register(request: RegisterCustomerRequest) {
     return this.http.post<TokenResponse>(
       `${this.baseUrl}register`,
-      request
+      request,
+      {
+        withCredentials: true,
+      }
     );
   }
 
   login(request: LoginRequest) {
     return this.http.post<TokenResponse>(
       `${this.baseUrl}login`,
-      request
+      request,
+      {
+        withCredentials: true,
+      }
     );
   }
 
