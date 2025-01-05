@@ -119,7 +119,7 @@ public class UsersController : BaseApiController
         var cookieOptions = new CookieOptions
         {
             HttpOnly = true,
-            SameSite = SameSiteMode.Strict,
+            SameSite = SameSiteMode.Lax,
             Expires = DateTime.UtcNow.AddDays(_jwtOptions.RefreshExpiresInDays)
         };
         Response.Cookies.Append(Cookies.RefreshToken, refreshToken, cookieOptions);

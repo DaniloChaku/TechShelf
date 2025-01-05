@@ -124,7 +124,7 @@ public class JwtTestHelper
         cookies.Should().ContainSingle(cookie => cookie.Contains($"{Cookies.RefreshToken}="));
         var refreshTokenCookie = cookies!.First(c => c.StartsWith($"{Cookies.RefreshToken}="));
         refreshTokenCookie.Should().Contain("httponly");
-        refreshTokenCookie.Should().Contain("samesite=strict");
+        refreshTokenCookie.Should().Contain("samesite=lax");
 
         // sample format: expires=Tue, 31 Dec 2024
         var expiresSegment = refreshTokenCookie
