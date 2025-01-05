@@ -116,8 +116,7 @@ export class LoginComponent {
         ...this.loginForm.getRawValue(),
       })
       .subscribe({
-        next: (tokenResponse) => {
-          localStorage.setItem(TOKEN, tokenResponse.token);
+        next: () => {
           this.router.navigateByUrl(this.returnUrl);
         },
         error: (error: HttpErrorResponse) => {

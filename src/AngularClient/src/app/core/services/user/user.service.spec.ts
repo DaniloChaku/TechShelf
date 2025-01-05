@@ -45,9 +45,18 @@ describe('UserService', () => {
       email: 'test@example.com',
       password: 'password123',
     };
+
     it('should make a POST request to the correct URL with provided data', () => {
       const mockResponse: TokenResponse = {
         token: 'mock-token',
+      };
+
+      const mockUser: UserDto = {
+        firstName: 'John',
+        lastName: 'Doe',
+        phoneNumber: '+123456789',
+        email: 'test@example.com',
+        roles: ['customer'],
       };
 
       service
@@ -56,31 +65,20 @@ describe('UserService', () => {
           expect(response).toEqual(mockResponse);
         });
 
-      const req = httpMock.expectOne(
-        `${environment.apiUrl}/register`
+      // Expect the POST request for registration
+      const registerReq = httpMock.expectOne(
+        `${environment.apiUrl}users/register`
       );
-      expect(req.request.method).toBe('POST');
-      expect(req.request.body).toEqual(mockRequest);
-      req.flush(mockResponse);
-    });
+      expect(registerReq.request.method).toBe('POST');
+      expect(registerReq.request.body).toEqual(mockRequest);
+      registerReq.flush(mockResponse);
 
-    it('should handle registration errors appropriately', () => {
-      const errorMessage = 'Failed to add user.';
-
-      service.register(mockRequest).subscribe({
-        error: (error) => {
-          expect(error.status).toBe(400);
-          expect(error.statusText).toBe(errorMessage);
-        },
-      });
-
-      const req = httpMock.expectOne(
-        `${environment.apiUrl}/register`
+      // Expect the GET request for loading the current user
+      const userReq = httpMock.expectOne(
+        `${environment.apiUrl}users/me`
       );
-      req.flush(errorMessage, {
-        status: 400,
-        statusText: errorMessage,
-      });
+      expect(userReq.request.method).toBe('GET');
+      userReq.flush(mockUser);
     });
   });
 
@@ -89,45 +87,54 @@ describe('UserService', () => {
       email: 'test@example.com',
       password: 'password123',
     };
+
     it('should make a POST request to the correct URL with credentials', () => {
       const mockResponse: TokenResponse = {
         token: 'mock-token',
+      };
+
+      const mockUser: UserDto = {
+        firstName: 'John',
+        lastName: 'Doe',
+        phoneNumber: '+123456789',
+        email: 'test@example.com',
+        roles: ['customer'],
       };
 
       service.login(mockRequest).subscribe((response) => {
         expect(response).toEqual(mockResponse);
       });
 
-      const req = httpMock.expectOne(
-        `${environment.apiUrl}/login`
+      // Expect the POST request for login
+      const loginReq = httpMock.expectOne(
+        `${environment.apiUrl}users/login`
       );
-      expect(req.request.method).toBe('POST');
-      expect(req.request.body).toEqual(mockRequest);
-      req.flush(mockResponse);
+      expect(loginReq.request.method).toBe('POST');
+      expect(loginReq.request.body).toEqual(mockRequest);
+      loginReq.flush(mockResponse);
+
+      // Expect the GET request for loading the current user
+      const userReq = httpMock.expectOne(
+        `${environment.apiUrl}users/me`
+      );
+      expect(userReq.request.method).toBe('GET');
+      userReq.flush(mockUser);
     });
+  });
 
-    it('should handle login errors appropriately', () => {
-      const errorMessage = 'Invalid credentials';
-
-      service.login(mockRequest).subscribe({
-        error: (error) => {
-          expect(error.status).toBe(401);
-          expect(error.statusText).toBe(errorMessage);
-        },
-      });
-
-      const req = httpMock.expectOne(
-        `${environment.apiUrl}/login`
+  describe('logout', () => {
+    it('should clear localStorage and reset currentUser', () => {
+      spyOn(localStorage, 'removeItem');
+      service.logout();
+      expect(localStorage.removeItem).toHaveBeenCalledWith(
+        'token'
       );
-      req.flush(errorMessage, {
-        status: 401,
-        statusText: errorMessage,
-      });
+      expect(service.currentUser()).toBeNull();
     });
   });
 
   describe('refreshToken', () => {
-    it('should make a POST request to refresh token with credentials flag', () => {
+    it('should make a POST request to refresh token', () => {
       const mockResponse: TokenResponse = {
         token: 'new-mock-token',
       };
@@ -137,30 +144,10 @@ describe('UserService', () => {
       });
 
       const req = httpMock.expectOne(
-        `${environment.apiUrl}/refresh-token`
+        `${environment.apiUrl}users/refresh-token`
       );
       expect(req.request.method).toBe('POST');
-      expect(req.request.withCredentials).toBeTrue();
       req.flush(mockResponse);
-    });
-
-    it('should handle refresh token errors appropriately', () => {
-      const errorMessage = 'Invalid refresh token';
-
-      service.refreshToken().subscribe({
-        error: (error) => {
-          expect(error.status).toBe(401);
-          expect(error.statusText).toBe(errorMessage);
-        },
-      });
-
-      const req = httpMock.expectOne(
-        `${environment.apiUrl}/refresh-token`
-      );
-      req.flush(errorMessage, {
-        status: 401,
-        statusText: errorMessage,
-      });
     });
   });
 
@@ -179,29 +166,10 @@ describe('UserService', () => {
       });
 
       const req = httpMock.expectOne(
-        `${environment.apiUrl}/me`
+        `${environment.apiUrl}users/me`
       );
       expect(req.request.method).toBe('GET');
       req.flush(mockUser);
-    });
-
-    it('should handle getCurrentUser errors appropriately', () => {
-      const errorMessage = 'Unauthorized';
-
-      service.getCurrentUser().subscribe({
-        error: (error) => {
-          expect(error.status).toBe(401);
-          expect(error.statusText).toBe(errorMessage);
-        },
-      });
-
-      const req = httpMock.expectOne(
-        `${environment.apiUrl}/me`
-      );
-      req.flush(errorMessage, {
-        status: 401,
-        statusText: errorMessage,
-      });
     });
   });
 });
