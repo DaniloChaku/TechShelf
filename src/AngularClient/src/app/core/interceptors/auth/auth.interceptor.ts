@@ -24,7 +24,6 @@ import {
 } from '../../constants/token';
 
 @Injectable()
-@Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   private userService = inject(UserService);
   private refreshTokenInProgress = false;
