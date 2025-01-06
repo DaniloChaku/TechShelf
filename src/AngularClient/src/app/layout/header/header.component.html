@@ -43,6 +43,10 @@
         <mat-icon>account_circle</mat-icon>
       </button>
       <mat-menu #accountMenu="matMenu">
+        <div class="text-center py-2 font-semibold">
+          {{ userService.currentUser()?.firstName }}
+          {{ userService.currentUser()?.lastName }}
+        </div>
         <button mat-menu-item>Profile</button>
         <button mat-menu-item>History</button>
         <button mat-menu-item (click)="logout()">
