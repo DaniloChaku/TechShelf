@@ -172,4 +172,38 @@ describe('UserService', () => {
       req.flush(mockUser);
     });
   });
+
+  describe('loadCurrentUser', () => {
+    it('should fetch the current user and update the currentUser signal on success', () => {
+      const mockUser: UserDto = {
+        firstName: 'Jane',
+        lastName: 'Doe',
+        phoneNumber: '+1234567890',
+        email: 'jane.doe@example.com',
+        roles: ['customer'],
+      };
+
+      service.loadCurrentUser();
+
+      const req = httpMock.expectOne(
+        `${environment.apiUrl}users/me`
+      );
+      expect(req.request.method).toBe('GET');
+      req.flush(mockUser);
+
+      expect(service.currentUser()).toEqual(mockUser);
+    });
+
+    it('should set currentUser to null on error', () => {
+      service.loadCurrentUser();
+
+      const req = httpMock.expectOne(
+        `${environment.apiUrl}users/me`
+      );
+      expect(req.request.method).toBe('GET');
+      req.error(new ErrorEvent('Network error'));
+
+      expect(service.currentUser()).toBeNull();
+    });
+  });
 });

@@ -82,7 +82,7 @@ export class UserService {
     return this.http.get<UserDto>(`${this.baseUrl}me`);
   }
 
-  private loadCurrentUser() {
+  loadCurrentUser() {
     this.getCurrentUser().subscribe({
       next: (user) => this.currentUser.set(user),
       error: () => this.currentUser.set(null),
