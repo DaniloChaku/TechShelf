@@ -6,7 +6,7 @@ import {
 } from '@angular/common/http';
 
 import { loadingInterceptor } from './loading.interceptor';
-import { LoadingService } from '../../services/loading.service';
+import { LoadingService } from '../../services/loading/loading.service';
 import { map, of } from 'rxjs';
 
 describe('loadingInterceptor', () => {

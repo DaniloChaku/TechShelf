@@ -7,7 +7,7 @@ import {
   RouterLink,
   RouterLinkActive,
 } from '@angular/router';
-import { LoadingService } from '../../core/services/loading.service';
+import { LoadingService } from '../../core/services/loading/loading.service';
 import { UserService } from '../../core/services/user/user.service';
 import { MatMenuModule } from '@angular/material/menu';
 

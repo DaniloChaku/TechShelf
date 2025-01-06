@@ -1,5 +1,5 @@
 import { Component, inject, input } from '@angular/core';
-import { LoadingService } from '../../../core/services/loading.service';
+import { LoadingService } from '../../../core/services/loading/loading.service';
 import { MatIconModule } from '@angular/material/icon';
 
 @Component({
