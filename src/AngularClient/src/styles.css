@@ -10,6 +10,10 @@ button.match-input-height {
   border-right-style: none !important;
 }
 
+.mat-mdc-menu-panel {
+  background: whitesmoke !important;
+}
+
 .image-wrapper {
   position: relative;
 }
