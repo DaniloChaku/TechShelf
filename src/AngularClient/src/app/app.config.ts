@@ -12,8 +12,9 @@ import {
   withInterceptors,
   withInterceptorsFromDi,
 } from '@angular/common/http';
-import { loadingInterceptor } from './core/interceptors/loading.interceptor';
+
 import { AuthInterceptor } from './core/interceptors/auth/auth.interceptor';
+import { loadingInterceptor } from './core/interceptors/loading/loading.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
