@@ -1,4 +1,5 @@
 import {
+  APP_INITIALIZER,
   ApplicationConfig,
   provideZoneChangeDetection,
 } from '@angular/core';
@@ -15,6 +16,11 @@ import {
 
 import { AuthInterceptor } from './core/interceptors/auth/auth.interceptor';
 import { loadingInterceptor } from './core/interceptors/loading/loading.interceptor';
+import { UserService } from './core/services/user/user.service';
+
+export function initializeApp(userService: UserService) {
+  return () => userService.loadCurrentUser();
+}
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,6 +34,12 @@ export const appConfig: ApplicationConfig = {
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
+      multi: true,
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeApp,
+      deps: [UserService],
       multi: true,
     },
   ],
