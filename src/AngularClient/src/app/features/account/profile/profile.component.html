@@ -1,0 +1,47 @@
+@if (userService.currentUser(); as user){
+<mat-card class="max-w-md mx-auto mt-8 shadow-lg">
+  <div class="flex flex-col items-center p-6">
+    <div
+      class="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center mb-1">
+      <mat-icon class="transform scale-[3] text-gray-400"
+        >account_circle</mat-icon
+      >
+    </div>
+
+    <h2 class="text-2xl font-semibold text-gray-800 mb-3">
+      {{ user.firstName }} {{ user.lastName }}
+    </h2>
+
+    <div class="flex flex-wrap gap-2 mb-6">
+      @for (role of user.roles; track role) {
+      <mat-chip class="text-sm">{{ role }}</mat-chip>
+      }
+    </div>
+
+    <mat-divider class="w-full"></mat-divider>
+
+    <div class="w-full space-y-3 mt-4">
+      <div class="flex items-center gap-3">
+        <mat-icon class="text-gray-500">email</mat-icon>
+        <div>
+          <p class="text-sm text-gray-500">Email</p>
+          <p class="text-gray-700">{{ user.email }}</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <mat-icon class="text-gray-500">phone</mat-icon>
+        <div>
+          <p class="text-sm text-gray-500">Phone</p>
+          <p class="text-gray-700">
+            {{ user.phoneNumber }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-card>
+} @else {
+<app-not-found
+  errorText="You need to log in to access this page."></app-not-found>
+}

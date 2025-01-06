@@ -4,6 +4,7 @@ import { ProductDetailsComponent } from './features/catalog/product-details/prod
 import { HomeComponent } from './features/home/home.component';
 import { LoginComponent } from './features/account/login/login.component';
 import { RegisterComponent } from './features/account/register/register.component';
+import { ProfileComponent } from './features/account/profile/profile.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -19,5 +20,9 @@ export const routes: Routes = [
   {
     path: 'register',
     component: RegisterComponent,
+  },
+  {
+    path: 'profile',
+    component: ProfileComponent,
   },
 ];
