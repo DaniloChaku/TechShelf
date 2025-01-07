@@ -62,7 +62,6 @@ export class LoginComponent {
     const email = this.loginForm.get('email');
     if (!email) return null;
 
-    console.log(email);
     if (email.hasError('required'))
       return 'Email address is required.';
     if (email.hasError('email'))
@@ -77,7 +76,6 @@ export class LoginComponent {
     const password = this.loginForm.get('password');
     if (!password) return null;
 
-    console.log(password);
     if (password.hasError('required'))
       return 'Password is required.';
     if (password.hasError('minlength'))
