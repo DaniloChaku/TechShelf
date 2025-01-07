@@ -31,26 +31,45 @@ describe('UserService', () => {
 
   afterEach(() => {
     httpMock.verify();
+    localStorage.clear();
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
+  describe('isAuthenticated', () => {
+    it('should return true when currentUser is set', () => {
+      service.currentUser.set({
+        firstName: 'Test',
+        lastName: 'User',
+        phoneNumber: '+1234567890',
+        email: 'test@example.com',
+        roles: ['customer'],
+      });
+
+      expect(service.isAuthenticated()).toBeTrue();
+    });
+
+    it('should return false when currentUser is null', () => {
+      service.currentUser.set(null);
+      expect(service.isAuthenticated()).toBeFalse();
+    });
+  });
+
   describe('register', () => {
     const mockRequest: RegisterCustomerRequest = {
-      firstName: 'name',
-      lastName: 'last name',
+      firstName: 'John',
+      lastName: 'Doe',
       phoneNumber: '+123456789',
       email: 'test@example.com',
       password: 'password123',
     };
 
-    it('should make a POST request to the correct URL with provided data', () => {
+    it('should register and load the current user', () => {
       const mockResponse: TokenResponse = {
         token: 'mock-token',
       };
-
       const mockUser: UserDto = {
         firstName: 'John',
         lastName: 'Doe',
@@ -59,13 +78,10 @@ describe('UserService', () => {
         roles: ['customer'],
       };
 
-      service
-        .register(mockRequest)
-        .subscribe((response) => {
-          expect(response).toEqual(mockResponse);
-        });
+      service.register(mockRequest).subscribe((user) => {
+        expect(service.currentUser()).toEqual(mockUser);
+      });
 
-      // Expect the POST request for registration
       const registerReq = httpMock.expectOne(
         `${environment.apiUrl}users/register`
       );
@@ -73,12 +89,30 @@ describe('UserService', () => {
       expect(registerReq.request.body).toEqual(mockRequest);
       registerReq.flush(mockResponse);
 
-      // Expect the GET request for loading the current user
       const userReq = httpMock.expectOne(
         `${environment.apiUrl}users/me`
       );
       expect(userReq.request.method).toBe('GET');
       userReq.flush(mockUser);
+    });
+
+    it('should handle registration error', () => {
+      service.register(mockRequest).subscribe({
+        error: (error) => {
+          expect(error.status).toBe(400);
+          expect(error.statusText).toBe('Bad Request');
+          expect(localStorage.getItem('token')).toBeNull();
+          expect(service.currentUser()).toBeNull();
+        },
+      });
+
+      const registerReq = httpMock.expectOne(
+        `${environment.apiUrl}users/register`
+      );
+      registerReq.flush('Registration failed', {
+        status: 400,
+        statusText: 'Bad Request',
+      });
     });
   });
 
@@ -88,24 +122,22 @@ describe('UserService', () => {
       password: 'password123',
     };
 
-    it('should make a POST request to the correct URL with credentials', () => {
+    it('should log in and load the current user', () => {
       const mockResponse: TokenResponse = {
         token: 'mock-token',
       };
-
       const mockUser: UserDto = {
-        firstName: 'John',
+        firstName: 'Jane',
         lastName: 'Doe',
-        phoneNumber: '+123456789',
+        phoneNumber: '+987654321',
         email: 'test@example.com',
-        roles: ['customer'],
+        roles: ['admin'],
       };
 
-      service.login(mockRequest).subscribe((response) => {
-        expect(response).toEqual(mockResponse);
+      service.login(mockRequest).subscribe((user) => {
+        expect(service.currentUser()).toEqual(mockUser);
       });
 
-      // Expect the POST request for login
       const loginReq = httpMock.expectOne(
         `${environment.apiUrl}users/login`
       );
@@ -113,12 +145,30 @@ describe('UserService', () => {
       expect(loginReq.request.body).toEqual(mockRequest);
       loginReq.flush(mockResponse);
 
-      // Expect the GET request for loading the current user
       const userReq = httpMock.expectOne(
         `${environment.apiUrl}users/me`
       );
       expect(userReq.request.method).toBe('GET');
       userReq.flush(mockUser);
+    });
+
+    it('should handle login error', () => {
+      service.login(mockRequest).subscribe({
+        error: (error) => {
+          expect(error.status).toBe(401);
+          expect(error.statusText).toBe('Unauthorized');
+          expect(localStorage.getItem('token')).toBeNull();
+          expect(service.currentUser()).toBeNull();
+        },
+      });
+
+      const loginReq = httpMock.expectOne(
+        `${environment.apiUrl}users/login`
+      );
+      loginReq.flush('Login failed', {
+        status: 401,
+        statusText: 'Unauthorized',
+      });
     });
   });
 
@@ -151,30 +201,8 @@ describe('UserService', () => {
     });
   });
 
-  describe('getCurrentUser', () => {
-    it('should make a GET request to fetch current user', () => {
-      const mockUser: UserDto = {
-        firstName: 'first name',
-        lastName: 'last name',
-        phoneNumber: '+1234567890',
-        email: 'test@example.com',
-        roles: ['customer'],
-      };
-
-      service.getCurrentUser().subscribe((user) => {
-        expect(user).toEqual(mockUser);
-      });
-
-      const req = httpMock.expectOne(
-        `${environment.apiUrl}users/me`
-      );
-      expect(req.request.method).toBe('GET');
-      req.flush(mockUser);
-    });
-  });
-
   describe('loadCurrentUser', () => {
-    it('should fetch the current user and update the currentUser signal on success', () => {
+    it('should update currentUser signal on successful load', (done) => {
       const mockUser: UserDto = {
         firstName: 'Jane',
         lastName: 'Doe',
@@ -191,17 +219,32 @@ describe('UserService', () => {
       expect(req.request.method).toBe('GET');
       req.flush(mockUser);
 
-      expect(service.currentUser()).toEqual(mockUser);
+      // Use setTimeout to allow for signal update
+      setTimeout(() => {
+        expect(service.currentUser()).toEqual(mockUser);
+        done();
+      });
     });
 
     it('should set currentUser to null on error', () => {
+      // Set an initial user to verify it gets cleared
+      service.currentUser.set({
+        firstName: 'Initial',
+        lastName: 'User',
+        phoneNumber: '+1234567890',
+        email: 'initial@example.com',
+        roles: ['customer'],
+      });
+
       service.loadCurrentUser();
 
       const req = httpMock.expectOne(
         `${environment.apiUrl}users/me`
       );
-      expect(req.request.method).toBe('GET');
-      req.error(new ErrorEvent('Network error'));
+      req.flush('Server error', {
+        status: 500,
+        statusText: 'Internal Server Error',
+      });
 
       expect(service.currentUser()).toBeNull();
     });

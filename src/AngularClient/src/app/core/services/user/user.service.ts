@@ -13,7 +13,13 @@ import { RegisterCustomerRequest } from '../../models/register-customer-request'
 import { TokenResponse } from '../../models/token-response';
 import { LoginRequest } from '../../models/login-request';
 import { UserDto } from '../../models/user-dto';
-import { tap } from 'rxjs';
+import {
+  catchError,
+  Observable,
+  of,
+  switchMap,
+  tap,
+} from 'rxjs';
 import {
   IS_REFRESH_TOKEN,
   TOKEN,
@@ -30,6 +36,25 @@ export class UserService {
     () => this.currentUser() !== null
   );
 
+  private handleUserResponse(
+    userResponse$: Observable<UserDto>
+  ) {
+    return userResponse$.pipe(
+      tap({
+        next: (user) => this.currentUser.set(user),
+      }),
+      catchError(() => {
+        this.currentUser.set(null);
+        return of(null);
+      })
+    );
+  }
+
+  private handleAuthentication(response: TokenResponse) {
+    localStorage.setItem(TOKEN, response.token);
+    return this.handleUserResponse(this.getCurrentUser());
+  }
+
   register(request: RegisterCustomerRequest) {
     return this.http
       .post<TokenResponse>(
@@ -40,10 +65,9 @@ export class UserService {
         }
       )
       .pipe(
-        tap((respose) => {
-          localStorage.setItem(TOKEN, respose.token);
-          this.loadCurrentUser();
-        })
+        switchMap((response) =>
+          this.handleAuthentication(response)
+        )
       );
   }
 
@@ -57,10 +81,9 @@ export class UserService {
         }
       )
       .pipe(
-        tap((respose) => {
-          localStorage.setItem(TOKEN, respose.token);
-          this.loadCurrentUser();
-        })
+        switchMap((response) =>
+          this.handleAuthentication(response)
+        )
       );
   }
 
@@ -78,15 +101,14 @@ export class UserService {
     );
   }
 
-  getCurrentUser() {
+  private getCurrentUser() {
     return this.http.get<UserDto>(`${this.baseUrl}me`);
   }
 
   loadCurrentUser() {
-    this.getCurrentUser().subscribe({
-      next: (user) => this.currentUser.set(user),
-      error: () => this.currentUser.set(null),
-    });
+    return this.handleUserResponse(
+      this.getCurrentUser()
+    ).subscribe();
   }
 
   logout() {
