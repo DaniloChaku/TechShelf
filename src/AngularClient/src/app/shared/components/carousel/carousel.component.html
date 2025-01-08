@@ -1,0 +1,48 @@
+<div class="relative w-full overflow-hidden">
+  <!-- Main carousel container -->
+  <div class="relative h-full">
+    <!-- Slides container -->
+    <div
+      class="flex transition-transform duration-500 ease-in-out"
+      [style.transform]="
+        'translateX(-' + currentSlide * 100 + '%)'
+      ">
+      @for (item of items; track $index) {
+      <div class="w-full flex-shrink-0">
+        <img
+          [src]="item"
+          class="w-full h-full object-cover" />
+      </div>
+      }
+    </div>
+
+    <!-- Navigation buttons -->
+    <div
+      (click)="prev()"
+      class="absolute left-4 top-1/2 -translate-y-1/2 bg-white/40 hover:bg-white/70 cursor-pointer p-3 flex justify-center content-center rounded-full duration-200">
+      <mat-icon class="text-black/20"
+        >chevron_left</mat-icon
+      >
+    </div>
+    <div
+      (click)="next()"
+      class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/40 hover:bg-white/70 p-3 cursor-pointer flex justify-center content-center rounded-full duration-200">
+      <mat-icon class="text-black/20"
+        >chevron_right</mat-icon
+      >
+    </div>
+
+    <!-- Dots indicator -->
+    <div
+      class="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+      @for (item of items; track $index; let i = $index) {
+      <button
+        (click)="goToSlide(i)"
+        class="w-2 h-2 rounded-full transition-all duration-300 ease-in-out"
+        [class.bg-white]="currentSlide === i"
+        [class.w-4]="currentSlide === i"
+        [class.bg-gray-400]="currentSlide !== i"></button>
+      }
+    </div>
+  </div>
+</div>

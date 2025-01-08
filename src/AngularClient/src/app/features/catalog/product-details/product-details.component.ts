@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatDivider } from '@angular/material/divider';
 import { NotFoundComponent } from '../../../shared/components/not-found/not-found.component';
+import { CarouselComponent } from '../../../shared/components/carousel/carousel.component';
 
 @Component({
   selector: 'app-product-details',
@@ -23,6 +24,7 @@ import { NotFoundComponent } from '../../../shared/components/not-found/not-foun
     MatInputModule,
     MatDivider,
     NotFoundComponent,
+    CarouselComponent,
   ],
   templateUrl: './product-details.component.html',
   styleUrl: './product-details.component.css',

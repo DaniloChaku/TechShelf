@@ -12,10 +12,8 @@
   class="grid lg:grid-cols-2 gap-x-16 gap-y-6 lg:px-28 md:px-24 px-6 mb-10">
   <div class="flex flex-col align-middle gap-3">
     <div class="flex justify-center relative image-wrapper">
-      <img
-        [src]="product.imageUrls[0]"
-        [alt]="product.name"
-        class="product-image" />
+      <app-carousel
+        [items]="product.imageUrls"></app-carousel>
       @if (unavailable) {
       <div class="overlay">
         <span class="overlay-text">Unavailable</span>
