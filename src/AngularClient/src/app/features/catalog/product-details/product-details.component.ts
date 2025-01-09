@@ -1,6 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ProductService } from '../../../core/services/product/product.service';
-import { ActivatedRoute } from '@angular/router';
+import {
+  ActivatedRoute,
+  RouterLink,
+} from '@angular/router';
 import { Product } from '../../../core/models/product';
 import { CurrencyPipe, Location } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -25,6 +28,7 @@ import { CarouselComponent } from '../../../shared/components/carousel/carousel.
     MatDivider,
     NotFoundComponent,
     CarouselComponent,
+    RouterLink,
   ],
   templateUrl: './product-details.component.html',
   styleUrl: './product-details.component.css',
@@ -32,7 +36,6 @@ import { CarouselComponent } from '../../../shared/components/carousel/carousel.
 export class ProductDetailsComponent implements OnInit {
   private productService = inject(ProductService);
   private activatedRoute = inject(ActivatedRoute);
-  private location = inject(Location);
   product?: Product;
 
   get unavailable() {
@@ -47,9 +50,5 @@ export class ProductDetailsComponent implements OnInit {
         next: (product) => (this.product = product),
       });
     }
-  }
-
-  goBack() {
-    this.location.back();
   }
 }
