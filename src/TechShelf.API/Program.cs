@@ -6,7 +6,6 @@ using TechShelf.API.Common.Http;
 using TechShelf.API.Common;
 using TechShelf.Infrastructure.Identity;
 using Microsoft.OpenApi.Models;
-using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -83,7 +82,7 @@ if (app.Environment.IsDevelopment())
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials()
-        .WithOrigins("http://localhost:4200"));
+        .WithOrigins("https://localhost:4200"));
 }
 
 app.UseAuthorization();

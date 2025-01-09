@@ -89,6 +89,10 @@ public class UserService : IUserService
             return UserErrors.NotFound(email);
         }
 
-        return user!.Adapt<UserDto>();
+        var userDto = user.Adapt<UserDto>();
+
+        var roles = await _userManager.GetRolesAsync(user);
+
+        return userDto with { Roles = roles ?? [] };
     }
 }

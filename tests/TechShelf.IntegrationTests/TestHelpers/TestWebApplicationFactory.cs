@@ -20,6 +20,20 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
+        builder.ConfigureAppConfiguration((context, configBuilder) =>
+        {
+            var configuration = new Dictionary<string, string?>
+            {
+                [$"Jwt:{nameof(JwtOptions.SecretKey)}"] = JwtTestHelper.Key,
+                [$"Jwt:{nameof(JwtOptions.Issuer)}"] = JwtTestHelper.Issuer,
+                [$"Jwt:{nameof(JwtOptions.Audience)}"] = JwtTestHelper.Audience,
+                [$"Jwt:{nameof(JwtOptions.ExpiresInMinutes)}"] = JwtTestHelper.ExpiresInMinutes.ToString(),
+                [$"Jwt:{nameof(JwtOptions.RefreshExpiresInDays)}"] = JwtTestHelper.RefreshExpiresInDays.ToString(),
+            };
+
+            configBuilder.AddInMemoryCollection(configuration);
+        });
+
         builder.ConfigureTestServices(services =>
         {
             services.RemoveAll<DbContextOptions<ApplicationDbContext>>();

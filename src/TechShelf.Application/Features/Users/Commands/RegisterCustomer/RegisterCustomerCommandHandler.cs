@@ -8,7 +8,7 @@ using TechShelf.Domain.Common;
 namespace TechShelf.Application.Features.Users.Commands.RegisterCustomer;
 
 public class RegisterCustomerCommandHandler
-    : IRequestHandler<RegisterCustomerCommand, ErrorOr<string>>
+    : IRequestHandler<RegisterCustomerCommand, ErrorOr<TokenDto>>
 {
     private readonly IUserService _authService;
     private readonly ITokenService _tokenService;
@@ -19,7 +19,7 @@ public class RegisterCustomerCommandHandler
         _tokenService = tokenService;
     }
 
-    public async Task<ErrorOr<string>> Handle(RegisterCustomerCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<TokenDto>> Handle(RegisterCustomerCommand request, CancellationToken cancellationToken)
     {
         var userDto = request.Adapt<UserDto>();
 
@@ -31,7 +31,11 @@ public class RegisterCustomerCommandHandler
         }
 
         var tokenResult = await _tokenService.GetTokenAsync(userDto.Email);
+        if (tokenResult.IsError) return tokenResult.Errors;
 
-        return tokenResult;
+        var refreshTokenResult = await _tokenService.GetRefreshTokenAsync(userDto.Email);
+        if (refreshTokenResult.IsError) return refreshTokenResult.Errors;
+
+        return new TokenDto(tokenResult.Value, refreshTokenResult.Value);
     }
 }

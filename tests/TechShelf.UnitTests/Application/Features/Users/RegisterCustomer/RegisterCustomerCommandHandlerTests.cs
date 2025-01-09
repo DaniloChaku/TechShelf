@@ -26,12 +26,13 @@ public class RegisterCustomerCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ReturnsToken_WhenRegistrationAndTokenCreationSucceeds()
+    public async Task Handle_ReturnsTokenDto_WhenRegistrationAndTokenCreationSucceeds()
     {
         // Arrange
         var command = _fixture.Create<RegisterCustomerCommand>();
         var userDto = command.Adapt<UserDto>();
         var token = _fixture.Create<string>();
+        var refreshToken = _fixture.Create<string>();
 
         _authServiceMock.Setup(s => s.RegisterAsync(userDto, command.Password, UserRoles.Customer))
             .ReturnsAsync(true);
@@ -39,15 +40,19 @@ public class RegisterCustomerCommandHandlerTests
         _tokenServiceMock.Setup(s => s.GetTokenAsync(userDto.Email))
             .ReturnsAsync(token);
 
+        _tokenServiceMock.Setup(s => s.GetRefreshTokenAsync(userDto.Email))
+            .ReturnsAsync(refreshToken);
+
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.IsError.Should().BeFalse();
-        result.Value.Should().Be(token);
+        result.Value.Should().BeEquivalentTo(new TokenDto(token, refreshToken));
 
         _authServiceMock.Verify(s => s.RegisterAsync(userDto, command.Password, UserRoles.Customer), Times.Once);
         _tokenServiceMock.Verify(s => s.GetTokenAsync(userDto.Email), Times.Once);
+        _tokenServiceMock.Verify(s => s.GetRefreshTokenAsync(userDto.Email), Times.Once);
     }
 
     [Fact]
@@ -97,5 +102,36 @@ public class RegisterCustomerCommandHandlerTests
 
         _authServiceMock.Verify(s => s.RegisterAsync(userDto, command.Password, UserRoles.Customer), Times.Once);
         _tokenServiceMock.Verify(s => s.GetTokenAsync(userDto.Email), Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_ReturnsError_WhenRefreshTokenCreationFails()
+    {
+        // Arrange
+        var command = _fixture.Create<RegisterCustomerCommand>();
+
+        var userDto = command.Adapt<UserDto>();
+        var token = _fixture.Create<string>();
+        var refreshTokenError = Error.Failure();
+
+        _authServiceMock.Setup(s => s.RegisterAsync(userDto, command.Password, UserRoles.Customer))
+            .ReturnsAsync(true);
+
+        _tokenServiceMock.Setup(s => s.GetTokenAsync(userDto.Email))
+            .ReturnsAsync(token);
+
+        _tokenServiceMock.Setup(s => s.GetRefreshTokenAsync(userDto.Email))
+            .ReturnsAsync(refreshTokenError);
+
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsError.Should().BeTrue();
+        result.FirstError.Should().Be(refreshTokenError);
+
+        _authServiceMock.Verify(s => s.RegisterAsync(userDto, command.Password, UserRoles.Customer), Times.Once);
+        _tokenServiceMock.Verify(s => s.GetTokenAsync(userDto.Email), Times.Once);
+        _tokenServiceMock.Verify(s => s.GetRefreshTokenAsync(userDto.Email), Times.Once);
     }
 }

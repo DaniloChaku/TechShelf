@@ -100,4 +100,123 @@ public class JwtServiceTests
             token.Claims.Should().Contain(c => c.Type == ClaimTypes.Role && c.Value == role);
         }
     }
+
+    [Fact]
+    public async Task GetRefreshTokenAsync_ReturnsError_WhenUserNotFound()
+    {
+        // Arrange
+        var email = _fixture.Create<string>();
+        _userManagerMock.Setup(um => um.FindByEmailAsync(email))
+            .ReturnsAsync((ApplicationUser?)null);
+        var expectedError = UserErrors.NotFound(email);
+
+        // Act
+        var result = await _jwtService.GetRefreshTokenAsync(email);
+
+        // Assert
+        result.IsError.Should().BeTrue();
+        result.FirstError.Should().Be(expectedError);
+
+        _userManagerMock.Verify(um => um.UpdateAsync(It.IsAny<ApplicationUser>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task GetRefreshTokenAsync_ReturnsRefreshToken_WhenUserExists()
+    {
+        // Arrange
+        var user = _fixture.Create<ApplicationUser>();
+
+        _userManagerMock.Setup(um => um.FindByEmailAsync(user.Email!))
+            .ReturnsAsync(user);
+
+        // Act
+        var result = await _jwtService.GetRefreshTokenAsync(user.Email!);
+
+        // Assert
+        result.IsError.Should().BeFalse();
+        result.Value.Should().NotBeNullOrEmpty();
+
+        var expectedExpiryTime = _fakeTimeProvider.GetUtcNow().UtcDateTime.AddDays(_jwtOptions.RefreshExpiresInDays);
+        user.RefreshToken.Should().Be(result.Value);
+        user.RefreshTokenExpiryTime.Should().BeCloseTo(expectedExpiryTime, TimeSpan.FromSeconds(1));
+
+        _userManagerMock.Verify(um => um.UpdateAsync(user), Times.Once);
+    }
+
+    [Fact]
+    public async Task ValidateRefreshTokenAsync_ReturnsFalse_WhenUserNotFound()
+    {
+        // Arrange
+        var email = _fixture.Create<string>();
+        var refreshToken = _fixture.Create<string>();
+
+        _userManagerMock.Setup(um => um.FindByEmailAsync(email))
+            .ReturnsAsync((ApplicationUser?)null);
+
+        // Act
+        var result = await _jwtService.ValidateRefreshTokenAsync(email, refreshToken);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task ValidateRefreshTokenAsync_ReturnsFalse_WhenTokenDoesNotMatchTheOneInDb()
+    {
+        // Arrange
+        var user = _fixture.Create<ApplicationUser>();
+        var refreshToken = _fixture.Create<string>();
+
+        user.RefreshToken = _fixture.Create<string>();
+        user.RefreshTokenExpiryTime = _fakeTimeProvider.GetUtcNow().UtcDateTime.AddDays(1);
+
+        _userManagerMock.Setup(um => um.FindByEmailAsync(user.Email!))
+            .ReturnsAsync(user);
+
+        // Act
+        var result = await _jwtService.ValidateRefreshTokenAsync(user.Email!, refreshToken);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task ValidateRefreshTokenAsync_ReturnsFalse_WhenTokenIsExpired()
+    {
+        // Arrange
+        var user = _fixture.Create<ApplicationUser>();
+        var refreshToken = _fixture.Create<string>();
+
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpiryTime = _fakeTimeProvider.GetUtcNow().UtcDateTime.AddDays(-1);
+
+        _userManagerMock.Setup(um => um.FindByEmailAsync(user.Email!))
+            .ReturnsAsync(user);
+
+        // Act
+        var result = await _jwtService.ValidateRefreshTokenAsync(user.Email!, refreshToken);
+
+        // Assert
+        result.Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task ValidateRefreshTokenAsync_ReturnsTrue_WhenTokenIsValid()
+    {
+        // Arrange
+        var user = _fixture.Create<ApplicationUser>();
+        var refreshToken = _fixture.Create<string>();
+
+        user.RefreshToken = refreshToken;
+        user.RefreshTokenExpiryTime = _fakeTimeProvider.GetUtcNow().UtcDateTime.AddDays(1);
+
+        _userManagerMock.Setup(um => um.FindByEmailAsync(user.Email!))
+            .ReturnsAsync(user);
+
+        // Act
+        var result = await _jwtService.ValidateRefreshTokenAsync(user.Email!, refreshToken);
+
+        // Assert
+        result.Should().BeTrue();
+    }
 }

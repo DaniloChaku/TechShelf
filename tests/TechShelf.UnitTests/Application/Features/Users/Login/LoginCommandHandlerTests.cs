@@ -3,6 +3,7 @@ using ErrorOr;
 using FluentAssertions;
 using Moq;
 using TechShelf.Application.Features.Users.Commands.Login;
+using TechShelf.Application.Features.Users.Common;
 using TechShelf.Application.Interfaces.Auth;
 using TechShelf.Domain.Errors;
 
@@ -85,11 +86,12 @@ public class LoginCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ReturnsToken_WhenLoginSucceeds()
+    public async Task Handle_ReturnsError_WhenRefreshTokenGenerationFails()
     {
         // Arrange
         var command = _fixture.Create<LoginCommand>();
         var token = _fixture.Create<string>();
+        var refreshTokenError = _fixture.Create<Error>();
 
         _userServiceMock
             .Setup(us => us.ValidatePasswordAsync(command.Email, command.Password))
@@ -99,11 +101,44 @@ public class LoginCommandHandlerTests
             .Setup(ts => ts.GetTokenAsync(command.Email))
             .ReturnsAsync(token);
 
+        _tokenServiceMock
+            .Setup(ts => ts.GetRefreshTokenAsync(command.Email))
+            .ReturnsAsync(refreshTokenError);
+
+        // Act
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsError.Should().BeTrue();
+        result.Errors.Should().Contain(refreshTokenError);
+    }
+
+    [Fact]
+    public async Task Handle_ReturnsTokenDto_WhenLoginSucceeds()
+    {
+        // Arrange
+        var command = _fixture.Create<LoginCommand>();
+        var token = _fixture.Create<string>();
+        var refreshToken = _fixture.Create<string>();
+        var expectedResponse = new TokenDto(token, refreshToken);
+
+        _userServiceMock
+            .Setup(us => us.ValidatePasswordAsync(command.Email, command.Password))
+            .ReturnsAsync(true);
+
+        _tokenServiceMock
+            .Setup(ts => ts.GetTokenAsync(command.Email))
+            .ReturnsAsync(token);
+
+        _tokenServiceMock
+            .Setup(ts => ts.GetRefreshTokenAsync(command.Email))
+            .ReturnsAsync(refreshToken);
+
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         result.IsError.Should().BeFalse();
-        result.Value.Should().Be(token);
+        result.Value.Should().Be(expectedResponse);
     }
 }
