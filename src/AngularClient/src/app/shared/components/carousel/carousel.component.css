@@ -1,0 +1,14 @@
+.nav-arrow {
+  color: #fff;
+  opacity: 0.5;
+  transition: all 0.15s ease;
+  font-size: xx-large;
+}
+
+.nav-arrow:hover {
+  opacity: 0.9;
+}
+
+.nav-arrow:active {
+  opacity: 0.5;
+}
