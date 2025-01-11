@@ -52,17 +52,20 @@
         <input
           matInput
           min="0"
+          [max]="product.stock"
           type="number"
-          value="0"
+          [(ngModel)]="cartItemsCount"
           [disabled]="unavailable" />
       </mat-form-field>
 
       <button
+        (click)="updateCartQuantity()"
         mat-flat-button
         class="match-input-height"
         [disabled]="unavailable">
         <mat-icon>shopping_cart</mat-icon>
-        Add to cart
+        @if (initialCount() === 0) { Add to cart } @else {
+        Update cart }
       </button>
     </div>
 
