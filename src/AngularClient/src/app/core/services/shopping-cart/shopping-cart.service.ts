@@ -1,4 +1,8 @@
-import { Injectable } from '@angular/core';
+import {
+  computed,
+  Injectable,
+  signal,
+} from '@angular/core';
 import { CartItem } from '../../models/cart-item';
 
 @Injectable({
@@ -6,48 +10,52 @@ import { CartItem } from '../../models/cart-item';
 })
 export class ShoppingCartService {
   private readonly CART_KEY = 'shopping_cart';
+  private readonly cartSignal = signal<CartItem[]>([]);
+  readonly cart = computed(() => this.cartSignal());
+  readonly totalItems = computed(() =>
+    this.cartSignal().reduce(
+      (total, item) => total + item.quantity,
+      0
+    )
+  );
 
-  private getCart(): CartItem[] {
-    const cart = localStorage.getItem(this.CART_KEY);
-    return cart ? JSON.parse(cart) : [];
+  loadCart() {
+    try {
+      const cart = localStorage.getItem(this.CART_KEY);
+      this.cartSignal.set(cart ? JSON.parse(cart) : []);
+    } catch (error) {
+      console.error(
+        'Error loading cart from localStorage:',
+        error
+      );
+    }
   }
 
   private saveCart(cart: CartItem[]): void {
     if (cart.length === 0) {
-      this.clearCart();
-      return;
+      localStorage.removeItem(this.CART_KEY);
+    } else {
+      localStorage.setItem(
+        this.CART_KEY,
+        JSON.stringify(cart)
+      );
     }
-    localStorage.setItem(
-      this.CART_KEY,
-      JSON.stringify(cart)
-    );
+    this.cartSignal.set(cart);
   }
 
   private isValidQuantity(quantity: number): boolean {
     return Number.isInteger(quantity) && quantity >= 0;
   }
 
-  getItems(): CartItem[] {
-    return this.getCart();
-  }
-
-  getTotalItems(): number {
-    const cart = this.getCart();
-    return cart.reduce(
-      (total, item) => total + item.quantity,
-      0
-    );
-  }
-
   clearCart(): void {
-    localStorage.removeItem(this.CART_KEY);
+    this.saveCart([]);
   }
 
   removeItem(productId: number): void {
-    const cart = this.getCart().filter(
+    const updatedCart = this.cartSignal().filter(
       (item) => item.productId !== productId
     );
-    this.saveCart(cart);
+    this.saveCart(updatedCart);
   }
 
   updateItem(productId: number, quantity: number): void {
@@ -57,21 +65,33 @@ export class ShoppingCartService {
       );
     }
 
-    const cart = this.getCart();
-    const itemIndex = cart.findIndex(
+    const currentCart = this.cartSignal();
+    const itemIndex = currentCart.findIndex(
       (item) => item.productId === productId
     );
+    const updatedCart = [...currentCart];
 
     if (quantity === 0) {
       if (itemIndex > -1) {
-        cart.splice(itemIndex, 1);
+        updatedCart.splice(itemIndex, 1);
       }
     } else if (itemIndex > -1) {
-      cart[itemIndex].quantity = quantity;
+      updatedCart[itemIndex] = {
+        ...updatedCart[itemIndex],
+        quantity,
+      };
     } else {
-      cart.push({ productId, quantity });
+      updatedCart.push({ productId, quantity });
     }
 
-    this.saveCart(cart);
+    this.saveCart(updatedCart);
+  }
+
+  getItemQuantity(productId: number): number {
+    return (
+      this.cartSignal().find(
+        (item) => item.productId === productId
+      )?.quantity ?? 0
+    );
   }
 }
