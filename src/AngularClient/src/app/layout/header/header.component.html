@@ -25,7 +25,11 @@
       >
     </nav>
     <div class="flex gap-2.5 align-middle">
-      <button mat-icon-button class="text-xl">
+      <button
+        mat-icon-button
+        class="text-xl"
+        [matBadge]="cartItemsCount()"
+        [matBadgeHidden]="cartCountHidden()">
         <mat-icon>shopping_cart</mat-icon>
       </button>
       @if (userService.currentUser() === null){
