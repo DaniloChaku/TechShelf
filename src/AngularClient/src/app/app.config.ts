@@ -17,9 +17,16 @@ import {
 import { AuthInterceptor } from './core/interceptors/auth/auth.interceptor';
 import { loadingInterceptor } from './core/interceptors/loading/loading.interceptor';
 import { UserService } from './core/services/user/user.service';
+import { ShoppingCartService } from './core/services/shopping-cart/shopping-cart.service';
 
-export function initializeApp(userService: UserService) {
-  return () => userService.loadCurrentUser();
+export function initializeApp(
+  userService: UserService,
+  shoppingCartService: ShoppingCartService
+) {
+  return () => {
+    userService.loadCurrentUser();
+    shoppingCartService.loadCart();
+  };
 }
 
 export const appConfig: ApplicationConfig = {
@@ -39,7 +46,7 @@ export const appConfig: ApplicationConfig = {
     {
       provide: APP_INITIALIZER,
       useFactory: initializeApp,
-      deps: [UserService],
+      deps: [UserService, ShoppingCartService],
       multi: true,
     },
   ],
