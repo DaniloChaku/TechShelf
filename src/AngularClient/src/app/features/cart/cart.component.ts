@@ -1,6 +1,7 @@
 import {
   Component,
   computed,
+  effect,
   inject,
   signal,
 } from '@angular/core';
@@ -54,6 +55,18 @@ export class CartComponent {
   faCircleMinus = faCircleMinus;
 
   constructor() {
+    effect(
+      () => {
+        if (this.isCartVisible()) {
+          this.reloadProducts();
+        }
+      },
+      { allowSignalWrites: true }
+    );
+  }
+
+  private reloadProducts(): void {
+    this.loadedProducts.set(new Map());
     this.loadCartProducts();
   }
 
