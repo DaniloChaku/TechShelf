@@ -116,6 +116,12 @@
       border-top: 0.1px solid #cfcfcf;
       margin-top: auto;
 
+      @media (max-width: 768px) {
+        display: block;
+        text-align: center;
+        padding: 10px 20px;
+      }
+
       .checkout-btn {
         background: #005cbb;
         color: white;
@@ -123,10 +129,29 @@
         border: none;
         border-radius: 4px;
         cursor: pointer;
+
+        @media (max-width: 768px) {
+          width: 100%;
+        }
       }
 
       .continue-btn {
         color: #005cbb;
+
+        @media (max-width: 768px) {
+          display: none;
+        }
+      }
+
+      .total-price {
+        font-weight: 500;
+        font-size: 18px;
+        margin-right: 20px;
+
+        @media (max-width: 768px) {
+          display: block;
+          margin-bottom: 10px;
+        }
       }
     }
   }

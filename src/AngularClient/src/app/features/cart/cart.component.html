@@ -46,7 +46,12 @@
       <button (click)="close()" class="continue-btn">
         &#60; Continue Shopping
       </button>
-      <button class="checkout-btn">Checkout</button>
+      <div>
+        <strong class="total-price"
+          >Total: {{ totalPrice() }}</strong
+        >
+        <button class="checkout-btn">Checkout</button>
+      </div>
     </div>
   </div>
 </div>
