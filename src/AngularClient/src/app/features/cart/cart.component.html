@@ -1,0 +1,51 @@
+@if (isCartVisible()) {
+<div class="shopping-cart-overlay">
+  <div class="shopping-cart-container">
+    <div class="cart-head">
+      <h2>Shopping Cart</h2>
+      <button (click)="close()" class="close-btn">
+        <fa-icon [icon]="faXmark"></fa-icon>
+      </button>
+    </div>
+    <div class="cart-items">
+      <div
+        class="cart-item"
+        *ngFor="let item of cartWithProducts()">
+        <button
+          (click)="removeItem(item.productId)"
+          class="delete-btn">
+          <fa-icon [icon]="faXmark"></fa-icon>
+        </button>
+        <img
+          [src]="item.product.thumbnailUrl"
+          alt="{{ item.product.name }}" />
+        <div class="item-details">
+          <h3>{{ item.product.name }}</h3>
+          <p>${{ item.product.price }}</p>
+        </div>
+        <div class="quantity-controls">
+          <button
+            (click)="decrementQuantity(item.productId)">
+            <fa-icon
+              [icon]="faCircleMinus"
+              class="icon-minus"></fa-icon>
+          </button>
+          <span>{{ item.quantity }}</span>
+          <button
+            (click)="incrementQuantity(item.productId)">
+            <fa-icon
+              [icon]="faCirclePlus"
+              class="icon-plus"></fa-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="cart-footer">
+      <button (click)="close()" class="continue-btn">
+        &#60; Continue Shopping
+      </button>
+      <button class="checkout-btn">Checkout</button>
+    </div>
+  </div>
+</div>
+}

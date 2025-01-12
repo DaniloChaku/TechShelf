@@ -12,6 +12,7 @@ import { LoadingService } from '../../core/services/loading/loading.service';
 import { UserService } from '../../core/services/user/user.service';
 import { MatMenuModule } from '@angular/material/menu';
 import { ShoppingCartService } from '../../core/services/shopping-cart/shopping-cart.service';
+import { CartVisibilityService } from '../../core/services/cart-visibility/cart-visibility.service';
 
 @Component({
   selector: 'app-header',
@@ -30,6 +31,9 @@ import { ShoppingCartService } from '../../core/services/shopping-cart/shopping-
   styleUrl: './header.component.css',
 })
 export class HeaderComponent {
+  private cartVisibilityService = inject(
+    CartVisibilityService
+  );
   loadingService = inject(LoadingService);
   userService = inject(UserService);
   shoppingCartService = inject(ShoppingCartService);
@@ -47,5 +51,9 @@ export class HeaderComponent {
 
   logout() {
     this.userService.logout();
+  }
+
+  displayCart() {
+    this.cartVisibilityService.displayCart();
   }
 }

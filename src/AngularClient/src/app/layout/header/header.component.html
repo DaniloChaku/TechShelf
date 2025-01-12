@@ -26,6 +26,7 @@
     </nav>
     <div class="flex gap-2.5 align-middle">
       <button
+        (click)="displayCart()"
         mat-icon-button
         class="text-xl"
         [matBadge]="cartItemsCount()"
