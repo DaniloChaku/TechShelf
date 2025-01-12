@@ -7,7 +7,6 @@ import {
 import { ShoppingCartService } from '../../core/services/shopping-cart/shopping-cart.service';
 import { ProductService } from '../../core/services/product/product.service';
 import { Product } from '../../core/models/product';
-import { CommonModule } from '@angular/common';
 import { CartVisibilityService } from '../../core/services/cart-visibility/cart-visibility.service';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import {
@@ -19,7 +18,7 @@ import {
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, FaIconComponent],
+  imports: [FaIconComponent],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.css',
 })

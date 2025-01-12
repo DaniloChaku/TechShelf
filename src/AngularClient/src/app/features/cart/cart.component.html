@@ -10,9 +10,8 @@
       </button>
     </div>
     <div class="cart-items">
-      <div
-        class="cart-item"
-        *ngFor="let item of cartWithProducts()">
+      @for (item of cartWithProducts(); track $index) {
+      <div class="cart-item">
         <button
           (click)="removeItem(item.productId)"
           class="delete-btn">
@@ -41,6 +40,7 @@
           </button>
         </div>
       </div>
+      }
     </div>
     <div class="cart-footer">
       <button (click)="close()" class="continue-btn">
