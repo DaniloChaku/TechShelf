@@ -1,6 +1,8 @@
 @if (isCartVisible()) {
-<div class="shopping-cart-overlay">
-  <div class="shopping-cart-container">
+<div class="shopping-cart-overlay" (click)="close()">
+  <div
+    class="shopping-cart-container"
+    (click)="$event.stopPropagation()">
     <div class="cart-head">
       <h2>Shopping Cart</h2>
       <button (click)="close()" class="close-btn">
