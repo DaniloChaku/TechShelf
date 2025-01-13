@@ -99,7 +99,7 @@ export class CartComponent {
   incrementQuantity(productId: number): void {
     const currentQuantity =
       this.shoppingCartService.getItemQuantity(productId);
-    if (currentQuantity > 1) {
+    if (currentQuantity > 0) {
       this.shoppingCartService.updateItem(
         productId,
         currentQuantity + 1
