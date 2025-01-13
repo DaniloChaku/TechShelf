@@ -26,10 +26,23 @@
     class="mt-1"
     (click)="$event.stopPropagation()">
     <button
+      (click)="addToCart()"
       mat-stroked-button
+      [disabled]="isInCart()"
       class="w-full flex align-middle justify-center gap-1">
-      <mat-icon>add_shopping_cart</mat-icon>
-      Add to cart
+      @if (isInCart()) {
+      <span
+        ><fa-icon [icon]="faCheck" class="mr-2"></fa-icon>
+        Added to cart</span
+      >
+      } @else {
+      <span
+        ><fa-icon
+          [icon]="faCartPlus"
+          class="mr-2"></fa-icon>
+        Add to cart</span
+      >
+      }
     </button>
   </mat-card-actions>
 </mat-card>
