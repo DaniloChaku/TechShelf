@@ -15,6 +15,7 @@ import {
   faCirclePlus,
   faCircleMinus,
 } from '@fortawesome/free-solid-svg-icons';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-cart',
@@ -29,6 +30,7 @@ export class CartComponent {
   );
   private productService = inject(ProductService);
   private shoppingCartService = inject(ShoppingCartService);
+  private router = inject(Router);
   private loadedProducts = signal<Map<number, Product>>(
     new Map()
   );
@@ -116,5 +118,10 @@ export class CartComponent {
         currentQuantity - 1
       );
     }
+  }
+
+  goToCatalog() {
+    this.router.navigateByUrl('/catalog');
+    this.cartVisibilityService.hideCart();
   }
 }

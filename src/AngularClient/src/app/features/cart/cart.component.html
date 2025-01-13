@@ -9,6 +9,7 @@
         <fa-icon [icon]="faXmark"></fa-icon>
       </button>
     </div>
+    @if (cartWithProducts().length > 0) {
     <div class="cart-items">
       @for (item of cartWithProducts(); track $index) {
       <div class="cart-item">
@@ -53,6 +54,17 @@
         <button class="checkout-btn">Checkout</button>
       </div>
     </div>
+    } @else {
+    <div class="px-4 mt-4 ml-2 mb-10 text-lg">
+      Your cart is empty. Click
+      <a
+        (click)="goToCatalog()"
+        class="text-blue-600 cursor-pointer"
+        >here</a
+      >
+      to start shopping.
+    </div>
+    }
   </div>
 </div>
 }
