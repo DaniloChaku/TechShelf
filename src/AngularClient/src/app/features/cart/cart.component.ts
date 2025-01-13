@@ -41,9 +41,11 @@ export class CartComponent {
     }));
   });
   totalPrice = computed(() => {
-    return this.cartWithProducts().reduce((total, item) => {
-      return total + item.product.price * item.quantity;
-    }, 0);
+    return this.cartWithProducts()
+      .reduce((total, item) => {
+        return total + item.product.price * item.quantity;
+      }, 0)
+      .toFixed(2);
   });
   isCartVisible = computed(() =>
     this.cartVisibilityService.isCartVisible()
