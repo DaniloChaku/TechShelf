@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --main-blue: #005cbb;
+}
+
 button.match-input-height {
   height: var(--mat-form-field-container-height) !important;
 }

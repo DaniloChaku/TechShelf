@@ -101,7 +101,7 @@
           }
 
           .icon-plus {
-            color: #005cbb;
+            color: var(--main-blue);
           }
         }
       }
@@ -123,7 +123,7 @@
       }
 
       .checkout-btn {
-        background: #005cbb;
+        background: var(--main-blue);
         color: white;
         padding: 10px 20px;
         border: none;
@@ -136,7 +136,7 @@
       }
 
       .continue-btn {
-        color: #005cbb;
+        color: var(--main-blue);
 
         @media (max-width: 768px) {
           display: none;
@@ -153,6 +153,20 @@
           margin-bottom: 10px;
         }
       }
+    }
+
+    .empty-message {
+      padding: 0 1rem;
+      margin-top: 1rem;
+      margin-left: 0.5rem;
+      margin-bottom: 2.5rem;
+      font-size: 1.125rem;
+      line-height: 1.75rem;
+    }
+
+    .catalog-link {
+      cursor: pointer;
+      color: var(--main-blue);
     }
   }
 

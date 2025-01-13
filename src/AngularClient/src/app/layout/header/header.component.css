@@ -1,5 +1,5 @@
 .active {
-  color: #005cbb;
+  color: var(--main-blue);
   transform: scale(1.05);
   transform-origin: left;
 }
