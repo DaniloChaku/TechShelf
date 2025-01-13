@@ -1,8 +1,8 @@
 import {
   Component,
+  computed,
   inject,
   OnInit,
-  signal,
 } from '@angular/core';
 import { ProductService } from '../../../core/services/product/product.service';
 import {
@@ -20,6 +20,11 @@ import { MatDivider } from '@angular/material/divider';
 import { NotFoundComponent } from '../../../shared/components/not-found/not-found.component';
 import { CarouselComponent } from '../../../shared/components/carousel/carousel.component';
 import { ShoppingCartService } from '../../../core/services/shopping-cart/shopping-cart.service';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import {
+  faCartPlus,
+  faCheck,
+} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-product-details',
@@ -36,6 +41,7 @@ import { ShoppingCartService } from '../../../core/services/shopping-cart/shoppi
     CarouselComponent,
     RouterLink,
     FormsModule,
+    FaIconComponent,
   ],
   templateUrl: './product-details.component.html',
   styleUrl: './product-details.component.css',
@@ -44,9 +50,18 @@ export class ProductDetailsComponent implements OnInit {
   private productService = inject(ProductService);
   private activatedRoute = inject(ActivatedRoute);
   private shoppingCartService = inject(ShoppingCartService);
-  initialCount = signal(0);
-  cartItemsCount?: number;
   product?: Product;
+  isInCart = computed<boolean>(() => {
+    if (!this.product) return false;
+    return (
+      this.shoppingCartService
+        .cart()
+        .findIndex((p) => p.productId == this.product!.id) >
+      -1
+    );
+  });
+  faCartPlus = faCartPlus;
+  faCheck = faCheck;
 
   get unavailable() {
     return this.product?.stock === 0;
@@ -59,24 +74,17 @@ export class ProductDetailsComponent implements OnInit {
       this.productService.getProductById(+id).subscribe({
         next: (product) => {
           this.product = product;
-          const quantity =
-            this.shoppingCartService.getItemQuantity(
-              this.product!.id
-            );
-          this.initialCount.set(quantity);
-          this.cartItemsCount = quantity;
         },
       });
     }
   }
 
-  updateCartQuantity() {
-    if (this.product && this.cartItemsCount !== undefined) {
+  addToCart() {
+    if (this.product) {
       this.shoppingCartService.updateItem(
         this.product.id,
-        this.cartItemsCount
+        1
       );
-      this.initialCount.set(this.cartItemsCount);
     }
   }
 }

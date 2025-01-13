@@ -2,9 +2,9 @@
   <button
     mat-button
     routerLink="/catalog"
-    class="flex items-center gap-2">
+    class="flex items-center gap-1">
     <mat-icon>arrow_back</mat-icon>
-    Return
+    <span>Return</span>
   </button>
 </main>
 @if (product) {
@@ -43,29 +43,28 @@
         product.name
       }}</strong>
     </div>
-    <div class="mb-8">
+    <div class="mb-6">
       <em>{{ product.price | currency }}</em>
     </div>
-    <div class="flex flex-col lg:w-1/2 mb-8">
-      <mat-form-field appearance="outline">
-        <mat-label>Quantity</mat-label>
-        <input
-          matInput
-          min="0"
-          [max]="product.stock"
-          type="number"
-          [(ngModel)]="cartItemsCount"
-          [disabled]="unavailable" />
-      </mat-form-field>
-
+    <div class="mb-8">
       <button
-        (click)="updateCartQuantity()"
+        (click)="addToCart()"
         mat-flat-button
         class="match-input-height"
-        [disabled]="unavailable">
-        <mat-icon>shopping_cart</mat-icon>
-        @if (initialCount() === 0) { Add to cart } @else {
-        Update cart }
+        [disabled]="unavailable || isInCart()">
+        @if (!isInCart()) {
+        <span
+          ><fa-icon
+            [icon]="faCartPlus"
+            class="mr-2"></fa-icon>
+          Add to cart</span
+        >
+        } @else {
+        <span
+          ><fa-icon [icon]="faCheck" class="mr-2"></fa-icon>
+          Added to cart</span
+        >
+        }
       </button>
     </div>
 
