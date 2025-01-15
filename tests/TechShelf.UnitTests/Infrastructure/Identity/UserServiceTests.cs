@@ -43,7 +43,7 @@ public class UserServiceTests
     public async Task RegisterAsync_ReturnsError_WhenUserAlreadyExists()
     {
         // Arrange
-        var userDto = _fixture.Create<UserDto>();
+        var userDto = _fixture.Create<RegisterUserDto>();
         var password = _fixture.Create<string>();
         var role = _fixture.Create<string>();
 
@@ -61,7 +61,7 @@ public class UserServiceTests
     public async Task RegisterAsync_ReturnsError_WhenUserCreationFails()
     {
         // Arrange
-        var userDto = _fixture.Create<UserDto>();
+        var userDto = _fixture.Create<RegisterUserDto>();
         var password = _fixture.Create<string>();
         var role = _fixture.Create<string>();
 
@@ -86,7 +86,7 @@ public class UserServiceTests
     public async Task RegisterAsync_ReturnsError_WhenRoleAssignmentFails()
     {
         // Arrange
-        var userDto = _fixture.Create<UserDto>();
+        var userDto = _fixture.Create<RegisterUserDto>();
         var password = _fixture.Create<string>();
         var role = _fixture.Create<string>();
 
@@ -114,7 +114,7 @@ public class UserServiceTests
     public async Task RegisterAsync_ReturnsTrue_WhenRegistrationSucceeds()
     {
         // Arrange
-        var userDto = _fixture.Create<UserDto>();
+        var userDto = _fixture.Create<RegisterUserDto>();
         var password = _fixture.Create<string>();
         var role = _fixture.Create<string>();
 

@@ -30,7 +30,7 @@ public class RegisterCustomerCommandHandlerTests
     {
         // Arrange
         var command = _fixture.Create<RegisterCustomerCommand>();
-        var userDto = command.Adapt<UserDto>();
+        var userDto = command.Adapt<RegisterUserDto>();
         var token = _fixture.Create<string>();
         var refreshToken = _fixture.Create<string>();
 
@@ -61,7 +61,7 @@ public class RegisterCustomerCommandHandlerTests
         // Arrange
         var command = _fixture.Create<RegisterCustomerCommand>();
 
-        var userDto = command.Adapt<UserDto>();
+        var userDto = command.Adapt<RegisterUserDto>();
         var registrationError = Error.Failure();
 
         _authServiceMock.Setup(s => s.RegisterAsync(userDto, command.Password, UserRoles.Customer))
@@ -84,7 +84,7 @@ public class RegisterCustomerCommandHandlerTests
         // Arrange
         var command = _fixture.Create<RegisterCustomerCommand>();
 
-        var userDto = command.Adapt<UserDto>();
+        var userDto = command.Adapt<RegisterUserDto>();
         var tokenError = Error.Failure();
 
         _authServiceMock.Setup(s => s.RegisterAsync(userDto, command.Password, UserRoles.Customer))
@@ -110,7 +110,7 @@ public class RegisterCustomerCommandHandlerTests
         // Arrange
         var command = _fixture.Create<RegisterCustomerCommand>();
 
-        var userDto = command.Adapt<UserDto>();
+        var userDto = command.Adapt<RegisterUserDto>();
         var token = _fixture.Create<string>();
         var refreshTokenError = Error.Failure();
 

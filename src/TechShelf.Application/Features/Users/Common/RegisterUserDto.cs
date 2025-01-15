@@ -1,7 +1,6 @@
 ﻿namespace TechShelf.Application.Features.Users.Common;
 
-public record UserDto(
-    string Id,
+public record RegisterUserDto(
     string FirstName,
     string LastName,
     string Email,

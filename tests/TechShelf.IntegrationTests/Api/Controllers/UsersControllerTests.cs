@@ -158,7 +158,8 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
         response.EnsureSuccessStatusCode();
         var userDto = await response.Content.ReadFromJsonAsync<UserDto>();
         userDto.Should().NotBeNull();
-        userDto!.FirstName.Should().Be(user.FirstName);
+        userDto!.Id.Should().NotBeNull();
+        userDto.FirstName.Should().Be(user.FirstName);
         userDto.LastName.Should().Be(user.LastName);
         userDto.Email.Should().Be(user.Email);
         userDto.PhoneNumber.Should().Be(user.PhoneNumber);

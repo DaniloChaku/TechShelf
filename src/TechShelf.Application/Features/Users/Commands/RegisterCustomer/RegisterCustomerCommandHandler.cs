@@ -21,7 +21,7 @@ public class RegisterCustomerCommandHandler
 
     public async Task<ErrorOr<TokenDto>> Handle(RegisterCustomerCommand request, CancellationToken cancellationToken)
     {
-        var userDto = request.Adapt<UserDto>();
+        var userDto = request.Adapt<RegisterUserDto>();
 
         var registerResult = await _authService.RegisterAsync(userDto, request.Password, UserRoles.Customer);
 

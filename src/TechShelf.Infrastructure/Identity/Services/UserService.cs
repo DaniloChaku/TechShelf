@@ -24,7 +24,7 @@ public class UserService : IUserService
         _logger = logger;
     }
 
-    public async Task<ErrorOr<bool>> RegisterAsync(UserDto userDto, string password, string role)
+    public async Task<ErrorOr<bool>> RegisterAsync(RegisterUserDto userDto, string password, string role)
     {
         if (await _userManager.FindByEmailAsync(userDto.Email) != null)
         {

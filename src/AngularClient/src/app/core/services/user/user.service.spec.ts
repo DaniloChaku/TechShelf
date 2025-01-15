@@ -41,6 +41,7 @@ describe('UserService', () => {
   describe('isAuthenticated', () => {
     it('should return true when currentUser is set', () => {
       service.currentUser.set({
+        id: '1',
         firstName: 'Test',
         lastName: 'User',
         phoneNumber: '+1234567890',
@@ -71,6 +72,7 @@ describe('UserService', () => {
         token: 'mock-token',
       };
       const mockUser: User = {
+        id: '1',
         firstName: 'John',
         lastName: 'Doe',
         phoneNumber: '+123456789',
@@ -127,6 +129,7 @@ describe('UserService', () => {
         token: 'mock-token',
       };
       const mockUser: User = {
+        id: '1',
         firstName: 'Jane',
         lastName: 'Doe',
         phoneNumber: '+987654321',
@@ -204,6 +207,7 @@ describe('UserService', () => {
   describe('loadCurrentUser', () => {
     it('should update currentUser signal on successful load', (done) => {
       const mockUser: User = {
+        id: '1',
         firstName: 'Jane',
         lastName: 'Doe',
         phoneNumber: '+1234567890',
@@ -229,6 +233,7 @@ describe('UserService', () => {
     it('should set currentUser to null on error', () => {
       // Set an initial user to verify it gets cleared
       service.currentUser.set({
+        id: '1',
         firstName: 'Initial',
         lastName: 'User',
         phoneNumber: '+1234567890',

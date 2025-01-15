@@ -10,5 +10,9 @@ public static class IdentityMapsterConfig
         TypeAdapterConfig<UserDto, ApplicationUser>
             .NewConfig()
             .Map(dest => dest.UserName, src => src.Email);
+
+        TypeAdapterConfig<RegisterUserDto, ApplicationUser>
+            .NewConfig()
+            .Map(dest => dest.UserName, src => src.Email);
     }
 }
