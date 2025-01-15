@@ -12,7 +12,7 @@ import { environment } from '../../../../environments/environment';
 import { RegisterCustomerRequest } from '../../models/register-customer-request';
 import { TokenResponse } from '../../models/token-response';
 import { LoginRequest } from '../../models/login-request';
-import { UserDto } from '../../models/user-dto';
+import { User } from '../../models/user';
 import {
   catchError,
   Observable,
@@ -31,13 +31,13 @@ import {
 export class UserService {
   private http = inject(HttpClient);
   baseUrl = environment.apiUrl + 'users/';
-  currentUser = signal<UserDto | null>(null);
+  currentUser = signal<User | null>(null);
   isAuthenticated = computed(
     () => this.currentUser() !== null
   );
 
   private handleUserResponse(
-    userResponse$: Observable<UserDto>
+    userResponse$: Observable<User>
   ) {
     return userResponse$.pipe(
       tap({
@@ -102,7 +102,7 @@ export class UserService {
   }
 
   private getCurrentUser() {
-    return this.http.get<UserDto>(`${this.baseUrl}me`);
+    return this.http.get<User>(`${this.baseUrl}me`);
   }
 
   loadCurrentUser() {

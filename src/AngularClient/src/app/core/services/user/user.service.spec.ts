@@ -10,7 +10,7 @@ import {
 import { RegisterCustomerRequest } from '../../models/register-customer-request';
 import { TokenResponse } from '../../models/token-response';
 import { LoginRequest } from '../../models/login-request';
-import { UserDto } from '../../models/user-dto';
+import { User } from '../../models/user';
 
 describe('UserService', () => {
   let service: UserService;
@@ -70,7 +70,7 @@ describe('UserService', () => {
       const mockResponse: TokenResponse = {
         token: 'mock-token',
       };
-      const mockUser: UserDto = {
+      const mockUser: User = {
         firstName: 'John',
         lastName: 'Doe',
         phoneNumber: '+123456789',
@@ -126,7 +126,7 @@ describe('UserService', () => {
       const mockResponse: TokenResponse = {
         token: 'mock-token',
       };
-      const mockUser: UserDto = {
+      const mockUser: User = {
         firstName: 'Jane',
         lastName: 'Doe',
         phoneNumber: '+987654321',
@@ -203,7 +203,7 @@ describe('UserService', () => {
 
   describe('loadCurrentUser', () => {
     it('should update currentUser signal on successful load', (done) => {
-      const mockUser: UserDto = {
+      const mockUser: User = {
         firstName: 'Jane',
         lastName: 'Doe',
         phoneNumber: '+1234567890',
