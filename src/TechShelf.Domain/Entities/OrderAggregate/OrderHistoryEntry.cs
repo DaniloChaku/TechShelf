@@ -11,7 +11,7 @@ public class OrderHistoryEntry : Entity<Guid>
 
     private OrderHistoryEntry() { } // For EF Core
 
-    public OrderHistoryEntry(Guid orderId, OrderStatus status, string? notes)
+    public OrderHistoryEntry(Guid orderId, OrderStatus status, string? notes = null)
     {
         if (orderId == Guid.Empty)
         {
