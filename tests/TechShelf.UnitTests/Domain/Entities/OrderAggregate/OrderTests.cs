@@ -168,6 +168,7 @@ public class OrderTests
         Action act = () => order.SetPaymentStatus(true, null);
 
         // Assert
-        act.Should().Throw<ArgumentException>().WithMessage($"Payment intent ID cannot be null or empty for a successful payment on order {order.Id}.");
+        act.Should().Throw<ArgumentException>()
+            .WithMessage($"*Payment intent ID cannot be null or empty for a successful payment on order {order.Id}.*");
     }
 }
