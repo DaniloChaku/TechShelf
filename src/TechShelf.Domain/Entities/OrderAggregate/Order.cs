@@ -42,15 +42,27 @@ public class Order : Entity<Guid>
         Total = _orderItems.Sum(x => x.GetTotal());
     }
 
-    public void SetStripePaymentIntentId(string stripePaymentIntentId)
+    public void SetPaymentStatus(bool isPaymentSuccessful, string? paymentIntentId = null)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(stripePaymentIntentId);
-        PaymentIntentId = stripePaymentIntentId;
-    }
+        if (_history[^1].Status is not (OrderStatus.PaymentPending or OrderStatus.PaymentFailed))
+        {
+            throw new InvalidOperationException($"Order {Id} is already paid for.");
+        }
 
-    public void AddHistoryEntry(OrderHistoryEntry historyEntry)
-    {
-        ArgumentNullException.ThrowIfNull(historyEntry);
-        _history.Add(historyEntry);
+        if (isPaymentSuccessful)
+        {
+            if (string.IsNullOrEmpty(paymentIntentId))
+            {
+                throw new ArgumentException($"Payment intent ID cannot be null or empty for a successful payment on order {Id}.",
+                    nameof(paymentIntentId));
+            }
+
+            PaymentIntentId = paymentIntentId;
+            _history.Add(new OrderHistoryEntry(Id, OrderStatus.PaymentSucceeded));
+        }
+        else
+        {
+            _history.Add(new OrderHistoryEntry(Id, OrderStatus.PaymentFailed));
+        }
     }
 }

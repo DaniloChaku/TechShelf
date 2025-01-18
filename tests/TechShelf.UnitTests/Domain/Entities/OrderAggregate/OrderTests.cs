@@ -9,13 +9,7 @@ public class OrderTests
     public void Constructor_InitializesProperties_WhenValidParametersProvided()
     {
         // Arrange
-        var email = "test@example.com";
-        var phoneNumber = "1234567890";
-        var address = new Address("John Doe", "US", "123 Main Street", null, "New York", "NY", "10001");
-        var orderItems = new List<OrderItem>
-        {
-            new(new ProductOrdered(1, "Product 1", "Description 1"), 1, 10.0m)
-        };
+        var (email, phoneNumber, address, orderItems) = GetValidOrderData();
 
         // Act
         var order = new Order(email, phoneNumber, address, orderItems);
@@ -34,12 +28,7 @@ public class OrderTests
     public void Constructor_ThrowsArgumentException_WhenEmailIsInvalid()
     {
         // Arrange
-        var phoneNumber = "1234567890";
-        var address = new Address("John Doe", "US", "123 Main Street", null, "New York", "NY", "10001");
-        var orderItems = new List<OrderItem>
-        {
-            new(new ProductOrdered(1, "Product 1", "Description 1"), 1, 10.0m)
-        };
+        var (_, phoneNumber, address, orderItems) = GetValidOrderData();
 
         // Act
         Action act = () => new Order(null!, phoneNumber, address, orderItems);
@@ -52,12 +41,7 @@ public class OrderTests
     public void Constructor_ThrowsArgumentException_WhenPhoneNumberIsInvalid()
     {
         // Arrange
-        var email = "test@example.com";
-        var address = new Address("John Doe", "US", "123 Main Street", null, "New York", "NY", "10001");
-        var orderItems = new List<OrderItem>
-        {
-            new OrderItem(new ProductOrdered(1, "Product 1", "Description 1"), 1, 10.0m)
-        };
+        var (email, _, address, orderItems) = GetValidOrderData();
 
         // Act
         Action act = () => new Order(email, null!, address, orderItems);
@@ -70,12 +54,7 @@ public class OrderTests
     public void Constructor_ThrowsArgumentException_WhenAddressIsNull()
     {
         // Arrange
-        var email = "test@example.com";
-        var phoneNumber = "1234567890";
-        var orderItems = new List<OrderItem>
-        {
-            new OrderItem(new ProductOrdered(1, "Product 1", "Description 1"), 1, 10.0m)
-        };
+        var (email, phoneNumber, _, orderItems) = GetValidOrderData();
 
         // Act
         Action act = () => new Order(email, phoneNumber, null!, orderItems);
@@ -88,9 +67,7 @@ public class OrderTests
     public void Constructor_ThrowsArgumentException_WhenOrderItemsIsEmpty()
     {
         // Arrange
-        var email = "test@example.com";
-        var phoneNumber = "1234567890";
-        var address = new Address("John Doe", "US", "123 Main Street", null, "New York", "NY", "10001");
+        var (email, phoneNumber, address, _) = GetValidOrderData();
 
         // Act
         Action act = () => new Order(email, phoneNumber, address, Enumerable.Empty<OrderItem>());
@@ -100,50 +77,89 @@ public class OrderTests
     }
 
     [Fact]
-    public void SetStripePaymentIntentId_SetsStripePaymentIntentId_WhenValidIdProvided()
+    public void SetPaymentStatus_UpdatesHistory_WhenPaymentIsSuccessful()
     {
         // Arrange
-        var email = "test@example.com";
-        var phoneNumber = "1234567890";
-        var address = new Address("John Doe", "US", "123 Main Street", null, "New York", "NY", "10001");
-        var orderItems = new List<OrderItem>
-        {
-            new OrderItem(new ProductOrdered(1, "Product 1", "Description 1"), 1, 10.0m)
-        };
+        var (email, phoneNumber, address, orderItems) = GetValidOrderData();
         var order = new Order(email, phoneNumber, address, orderItems);
-        var paymentIntentId = "pi_1234567890";
+        var paymentIntentId = "pi_123456789";
 
         // Act
-        order.SetStripePaymentIntentId(paymentIntentId);
+        order.SetPaymentStatus(true, paymentIntentId);
 
         // Assert
         order.PaymentIntentId.Should().Be(paymentIntentId);
+        order.History.Should().HaveCount(2);
+        order.History[1].Status.Should().Be(OrderStatus.PaymentSucceeded);
     }
 
     [Fact]
-    public void SetStripePaymentIntentId_ThrowsArgumentException_WhenStripePaymentIntentIdIsInvalid()
+    public void SetPaymentStatus_UpdatesHistory_WhenPaymentFails()
     {
         // Arrange
-        var email = "test@example.com";
-        var phoneNumber = "1234567890";
-        var address = new Address("John Doe", "US", "123 Main Street", null, "New York", "NY", "10001");
-        var orderItems = new List<OrderItem>
-        {
-            new(new ProductOrdered(1, "Product 1", "Description 1"), 1, 10.0m)
-        };
+        var (email, phoneNumber, address, orderItems) = GetValidOrderData();
         var order = new Order(email, phoneNumber, address, orderItems);
 
         // Act
-        Action act = () => order.SetStripePaymentIntentId(null!);
+        order.SetPaymentStatus(false);
 
         // Assert
-        act.Should().Throw<ArgumentException>().WithMessage("*stripePaymentIntentId*");
+        order.PaymentIntentId.Should().BeNull();
+        order.History.Should().HaveCount(2);
+        order.History[1].Status.Should().Be(OrderStatus.PaymentFailed);
     }
 
     [Fact]
-    public void AddHistoryEntry_AddsHistoryEntry_WhenValidEntryProvided()
+    public void SetPaymentStatus_UpdatesHistory_WhenPaymentIsSuccessfulAndPreviousPaymentFailed()
     {
         // Arrange
+        var (email, phoneNumber, address, orderItems) = GetValidOrderData();
+        var order = new Order(email, phoneNumber, address, orderItems);
+        var paymentIntentId = "pi_123456789";
+
+        // Act
+        order.SetPaymentStatus(false);
+        order.SetPaymentStatus(true, paymentIntentId);
+
+        // Assert
+        order.PaymentIntentId.Should().Be(paymentIntentId);
+        order.History.Should().HaveCount(2);
+        order.History[1].Status.Should().Be(OrderStatus.PaymentSucceeded);
+    }
+
+    [Fact]
+    public void SetPaymentStatus_ThrowsInvalidOperationException_WhenOrderIsAlreadyPaid()
+    {
+        // Arrange
+        var (email, phoneNumber, address, orderItems) = GetValidOrderData();
+        var order = new Order(email, phoneNumber, address, orderItems);
+        var paymentIntentId = "pi_123456789";
+        order.SetPaymentStatus(true, paymentIntentId);
+
+        // Act
+        Action act = () => order.SetPaymentStatus(true, paymentIntentId);
+
+        // Assert
+        act.Should().Throw<InvalidOperationException>().WithMessage($"Order {order.Id} is already paid for.");
+    }
+
+    [Fact]
+    public void SetPaymentStatus_ThrowsArgumentException_WhenPaymentIntentIdIsNullForSuccessfulPayment()
+    {
+        // Arrange
+        var (email, phoneNumber, address, orderItems) = GetValidOrderData();
+        var order = new Order(email, phoneNumber, address, orderItems);
+
+        // Act
+        Action act = () => order.SetPaymentStatus(true, null);
+
+        // Assert
+        act.Should().Throw<ArgumentException>()
+            .WithMessage($"*Payment intent ID cannot be null or empty for a successful payment on order {order.Id}.*");
+    }
+
+    private (string email, string phoneNumber, Address address, List<OrderItem> orderItems) GetValidOrderData()
+    {
         var email = "test@example.com";
         var phoneNumber = "1234567890";
         var address = new Address("John Doe", "US", "123 Main Street", null, "New York", "NY", "10001");
@@ -151,33 +167,6 @@ public class OrderTests
         {
             new OrderItem(new ProductOrdered(1, "Product 1", "Description 1"), 1, 10.0m)
         };
-        var order = new Order(email, phoneNumber, address, orderItems);
-        var historyEntry = new OrderHistoryEntry(order.Id, OrderStatus.Processing);
-
-        // Act
-        order.AddHistoryEntry(historyEntry);
-
-        // Assert
-        order.History.Should().Contain(historyEntry);
-    }
-
-    [Fact]
-    public void AddHistoryEntry_ThrowsAgrumentNullException_WhenNullValueProvided()
-    {
-        // Arrange
-        var email = "test@example.com";
-        var phoneNumber = "1234567890";
-        var address = new Address("John Doe", "US", "123 Main Street", null, "New York", "NY", "10001");
-        var orderItems = new List<OrderItem>
-        {
-            new(new ProductOrdered(1, "Product 1", "Description 1"), 1, 10.0m)
-        };
-        var order = new Order(email, phoneNumber, address, orderItems);
-
-        // Act
-        var act = () => order.AddHistoryEntry(null!);
-
-        // Assert
-        act.Should().Throw<ArgumentNullException>().WithMessage("*historyEntry*");
+        return (email, phoneNumber, address, orderItems);
     }
 }
