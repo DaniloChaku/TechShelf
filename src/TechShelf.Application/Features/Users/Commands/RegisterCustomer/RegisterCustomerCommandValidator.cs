@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using TechShelf.Domain.Common;
 
 namespace TechShelf.Application.Features.Users.Commands.RegisterCustomer;
 
@@ -21,7 +22,7 @@ public class RegisterCustomerCommandValidator : AbstractValidator<RegisterCustom
 
         RuleFor(x => x.PhoneNumber)
             .NotEmpty().WithMessage("Phone number is required.")
-            .Matches(@"^\+[0-9\-]{9,15}$").WithMessage("Invalid phone number format");
+            .Matches(CommonConstants.PhoneNumberRegex).WithMessage("Invalid phone number format");
 
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage("Password is required.")
