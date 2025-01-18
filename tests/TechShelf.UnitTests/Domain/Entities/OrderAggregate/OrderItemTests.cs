@@ -9,7 +9,7 @@ public class OrderItemTests
     public void InitializesProperties_WhenValidParametersProvided()
     {
         // Arrange
-        var productOrdered = new ProductOrdered(Guid.NewGuid(), "Sample Product", "https://example.com/image.jpg");
+        var productOrdered = new ProductOrdered(1, "Sample Product", "https://example.com/image.jpg");
         var quantity = 2;
         var price = 10.5m;
 
@@ -45,7 +45,7 @@ public class OrderItemTests
     public void ThrowsArgumentOutOfRangeException_WhenQuantityIsZeroOrNegative(int invalidQuantity)
     {
         // Arrange
-        var productOrdered = new ProductOrdered(Guid.NewGuid(), "Sample Product", "https://example.com/image.jpg");
+        var productOrdered = new ProductOrdered(1, "Sample Product", "https://example.com/image.jpg");
         var price = 10.5m;
 
         // Act
@@ -62,7 +62,7 @@ public class OrderItemTests
     public void ThrowsArgumentOutOfRangeException_WhenPriceIsZeroOrNegative(decimal invalidPrice)
     {
         // Arrange
-        var productOrdered = new ProductOrdered(Guid.NewGuid(), "Sample Product", "https://example.com/image.jpg");
+        var productOrdered = new ProductOrdered(1, "Sample Product", "https://example.com/image.jpg");
         var quantity = 2;
 
         // Act
@@ -77,7 +77,7 @@ public class OrderItemTests
     public void GetTotal_ReturnsCorrectValue()
     {
         // Arrange
-        var productOrdered = new ProductOrdered(Guid.NewGuid(), "Sample Product", "https://example.com/image.jpg");
+        var productOrdered = new ProductOrdered(1, "Sample Product", "https://example.com/image.jpg");
         var quantity = 3;
         var price = 15.0m;
 

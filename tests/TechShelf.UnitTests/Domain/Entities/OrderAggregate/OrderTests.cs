@@ -14,7 +14,7 @@ public class OrderTests
         var address = new Address("John Doe", "US", "123 Main Street", null, "New York", "NY", "10001");
         var orderItems = new List<OrderItem>
         {
-            new(new ProductOrdered(Guid.NewGuid(), "Product 1", "Description 1"), 1, 10.0m)
+            new(new ProductOrdered(1, "Product 1", "Description 1"), 1, 10.0m)
         };
 
         // Act
@@ -38,7 +38,7 @@ public class OrderTests
         var address = new Address("John Doe", "US", "123 Main Street", null, "New York", "NY", "10001");
         var orderItems = new List<OrderItem>
         {
-            new(new ProductOrdered(Guid.NewGuid(), "Product 1", "Description 1"), 1, 10.0m)
+            new(new ProductOrdered(1, "Product 1", "Description 1"), 1, 10.0m)
         };
 
         // Act
@@ -56,7 +56,7 @@ public class OrderTests
         var address = new Address("John Doe", "US", "123 Main Street", null, "New York", "NY", "10001");
         var orderItems = new List<OrderItem>
         {
-            new OrderItem(new ProductOrdered(Guid.NewGuid(), "Product 1", "Description 1"), 1, 10.0m)
+            new OrderItem(new ProductOrdered(1, "Product 1", "Description 1"), 1, 10.0m)
         };
 
         // Act
@@ -74,7 +74,7 @@ public class OrderTests
         var phoneNumber = "1234567890";
         var orderItems = new List<OrderItem>
         {
-            new OrderItem(new ProductOrdered(Guid.NewGuid(), "Product 1", "Description 1"), 1, 10.0m)
+            new OrderItem(new ProductOrdered(1, "Product 1", "Description 1"), 1, 10.0m)
         };
 
         // Act
@@ -108,7 +108,7 @@ public class OrderTests
         var address = new Address("John Doe", "US", "123 Main Street", null, "New York", "NY", "10001");
         var orderItems = new List<OrderItem>
         {
-            new OrderItem(new ProductOrdered(Guid.NewGuid(), "Product 1", "Description 1"), 1, 10.0m)
+            new OrderItem(new ProductOrdered(1, "Product 1", "Description 1"), 1, 10.0m)
         };
         var order = new Order(email, phoneNumber, address, orderItems);
         var paymentIntentId = "pi_1234567890";
@@ -129,7 +129,7 @@ public class OrderTests
         var address = new Address("John Doe", "US", "123 Main Street", null, "New York", "NY", "10001");
         var orderItems = new List<OrderItem>
         {
-            new(new ProductOrdered(Guid.NewGuid(), "Product 1", "Description 1"), 1, 10.0m)
+            new(new ProductOrdered(1, "Product 1", "Description 1"), 1, 10.0m)
         };
         var order = new Order(email, phoneNumber, address, orderItems);
 
@@ -149,7 +149,7 @@ public class OrderTests
         var address = new Address("John Doe", "US", "123 Main Street", null, "New York", "NY", "10001");
         var orderItems = new List<OrderItem>
         {
-            new OrderItem(new ProductOrdered(Guid.NewGuid(), "Product 1", "Description 1"), 1, 10.0m)
+            new OrderItem(new ProductOrdered(1, "Product 1", "Description 1"), 1, 10.0m)
         };
         var order = new Order(email, phoneNumber, address, orderItems);
         var historyEntry = new OrderHistoryEntry(order.Id, OrderStatus.Processing);
@@ -170,7 +170,7 @@ public class OrderTests
         var address = new Address("John Doe", "US", "123 Main Street", null, "New York", "NY", "10001");
         var orderItems = new List<OrderItem>
         {
-            new(new ProductOrdered(Guid.NewGuid(), "Product 1", "Description 1"), 1, 10.0m)
+            new(new ProductOrdered(1, "Product 1", "Description 1"), 1, 10.0m)
         };
         var order = new Order(email, phoneNumber, address, orderItems);
 

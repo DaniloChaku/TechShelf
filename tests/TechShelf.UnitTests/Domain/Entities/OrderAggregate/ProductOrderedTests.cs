@@ -9,7 +9,7 @@ public class ProductOrderedTests
     public void InitializesProperties_WhenValidParametersProvided()
     {
         // Arrange
-        var productId = Guid.NewGuid();
+        var productId = 1;
         var name = "Sample Product";
         var imageUrl = "https://example.com/image.jpg";
 
@@ -26,7 +26,7 @@ public class ProductOrderedTests
     public void ThrowsArgumentException_WhenProductIdIsEmpty()
     {
         // Arrange
-        var productId = Guid.Empty;
+        var productId = 0;
         var name = "Sample Product";
         var imageUrl = "https://example.com/image.jpg";
 
@@ -35,21 +35,21 @@ public class ProductOrderedTests
 
         // Assert
         act.Should().Throw<ArgumentException>()
-           .WithMessage("Product ID is required");
+           .WithMessage("*productId*");
     }
 
     [Theory]
     [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
-    public void ThrowsArgumentException_WhenNameIsInvalid(string invalidName)
+    public void ThrowsArgumentException_WhenNameIsInvalid(string? invalidName)
     {
         // Arrange
-        var productId = Guid.NewGuid();
+        var productId = 1;
         var imageUrl = "https://example.com/image.jpg";
 
         // Act
-        Action act = () => new ProductOrdered(productId, invalidName, imageUrl);
+        Action act = () => new ProductOrdered(productId, invalidName!, imageUrl);
 
         // Assert
         act.Should().Throw<ArgumentException>()
@@ -60,14 +60,14 @@ public class ProductOrderedTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
-    public void ThrowsArgumentException_WhenImageUrlIsInvalid(string invalidImageUrl)
+    public void ThrowsArgumentException_WhenImageUrlIsInvalid(string? invalidImageUrl)
     {
         // Arrange
-        var productId = Guid.NewGuid();
+        var productId = 1;
         var name = "Sample Product";
 
         // Act
-        Action act = () => new ProductOrdered(productId, name, invalidImageUrl);
+        Action act = () => new ProductOrdered(productId, name, invalidImageUrl!);
 
         // Assert
         act.Should().Throw<ArgumentException>()
@@ -78,7 +78,7 @@ public class ProductOrderedTests
     public void ProductsAreEqual_WhenAllPropertiesMatch()
     {
         // Arrange
-        var productId = Guid.NewGuid();
+        var productId = 1;
         var name = "Sample Product";
         var imageUrl = "https://example.com/image.jpg";
 
@@ -93,12 +93,12 @@ public class ProductOrderedTests
     public void ProductsAreNotEqual_WhenPropertiesDiffer()
     {
         // Arrange
-        var productId = Guid.NewGuid();
+        var productId = 1;
         var name = "Sample Product";
         var imageUrl = "https://example.com/image.jpg";
 
         var product1 = new ProductOrdered(productId, name, imageUrl);
-        var product2 = new ProductOrdered(Guid.NewGuid(), name, imageUrl);
+        var product2 = new ProductOrdered(productId, "Other product", imageUrl);
 
         // Act & Assert
         product1.Should().NotBe(product2);
@@ -108,7 +108,7 @@ public class ProductOrderedTests
     public void HashCodesAreSame_WhenProductsAreEqual()
     {
         // Arrange
-        var productId = Guid.NewGuid();
+        var productId = 1;
         var name = "Sample Product";
         var imageUrl = "https://example.com/image.jpg";
 
@@ -127,8 +127,8 @@ public class ProductOrderedTests
     public void HashCodesAreDifferent_WhenProductsAreNotEqual()
     {
         // Arrange
-        var product1 = new ProductOrdered(Guid.NewGuid(), "Product A", "https://example.com/image1.jpg");
-        var product2 = new ProductOrdered(Guid.NewGuid(), "Product B", "https://example.com/image2.jpg");
+        var product1 = new ProductOrdered(1, "Product A", "https://example.com/image1.jpg");
+        var product2 = new ProductOrdered(1, "Product B", "https://example.com/image2.jpg");
 
         // Act
         var hash1 = product1.GetHashCode();
