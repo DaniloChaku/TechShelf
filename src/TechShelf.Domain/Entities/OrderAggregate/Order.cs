@@ -12,14 +12,15 @@ public class Order : Entity<Guid>
     public Address Address { get; private set; }
     public string Email { get; private set; }
     public string PhoneNumber { get; private set; }
-    public decimal Total { get; private set; }
+    public string? CustomerId { get; private set; }
     public string? PaymentIntentId { get; private set; }
+    public decimal Total { get; private set; }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     private Order() { } // For EF Core
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-    public Order(string email, string phoneNumber, Address address, IEnumerable<OrderItem> orderItems)
+    public Order(string email, string phoneNumber, Address address, IEnumerable<OrderItem> orderItems, string? customerId = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(email);
         ArgumentException.ThrowIfNullOrWhiteSpace(phoneNumber);
@@ -35,6 +36,7 @@ public class Order : Entity<Guid>
         PhoneNumber = phoneNumber;
         Address = address;
         _orderItems = orderItems.ToList();
+        CustomerId = customerId;
 
         var initialHistoryEntry = new OrderHistoryEntry(Id, OrderStatus.PaymentPending);
         _history = [initialHistoryEntry];
