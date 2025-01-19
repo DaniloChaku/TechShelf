@@ -69,6 +69,33 @@ public class CreateOrderCommandValidatorTests
         result.ShouldNotHaveValidationErrorFor(x => x.PhoneNumber);
     }
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Validator_HasError_WhenFullNameIsInvalid(string? invalidFullName)
+    {
+        // Arrange
+        var command = CreateValidOrderCommand() with { FullName = invalidFullName! };
+        // Act
+        var result = _validator.TestValidate(command);
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.FullName);
+    }
+
+    [Theory]
+    [InlineData("John Doe")]
+    [InlineData("Jane Smith")]
+    public void Validator_HasNoError_WhenFullNameIsValid(string validFullName)
+    {
+        // Arrange
+        var command = CreateValidOrderCommand() with { FullName = validFullName };
+        // Act
+        var result = _validator.TestValidate(command);
+        // Assert
+        result.ShouldNotHaveValidationErrorFor(x => x.FullName);
+    }
+
     [Fact]
     public void Validator_HasError_WhenBasketItemsIsEmpty()
     {
@@ -127,8 +154,8 @@ public class CreateOrderCommandValidatorTests
     private static CreateOrderCommand CreateValidOrderCommand() => new(
         Email: "test@example.com",
         PhoneNumber: "+1234567890",
+        FullName: "John Doe",
         ShippingAddress: new AddressDto(
-            Name: "John Doe",
             Country: "US",
             AddressLine1: "123 Main St",
             AddressLine2: null,

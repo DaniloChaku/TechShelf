@@ -16,36 +16,6 @@ public class AddressDtoValidatorTests
     [Theory]
     [InlineData(null)]
     [InlineData("")]
-    public void Validator_HasError_WhenNameIsInvalid(string? invalidName)
-    {
-        // Arrange
-        var addressDto = CreateValidAddressDto() with { Name = invalidName! };
-
-        // Act
-        var result = _validator.TestValidate(addressDto);
-
-        // Assert
-        result.ShouldHaveValidationErrorFor(x => x.Name);
-    }
-
-    [Theory]
-    [InlineData("John Doe")]
-    [InlineData("Jane Smith")]
-    public void Validator_HasNoError_WhenNameIsValid(string validName)
-    {
-        // Arrange
-        var addressDto = CreateValidAddressDto() with { Name = validName };
-
-        // Act
-        var result = _validator.TestValidate(addressDto);
-
-        // Assert
-        result.ShouldNotHaveValidationErrorFor(x => x.Name);
-    }
-
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
     [InlineData("XX")]
     public void Validator_HasError_WhenCountryIsInvalid(string? invalidCountry)
     {
@@ -192,7 +162,6 @@ public class AddressDtoValidatorTests
     private AddressDto CreateValidAddressDto()
     {
         return new AddressDto(
-            Name: "John Doe",
             Country: "US",
             AddressLine1: "123 Main Street",
             AddressLine2: null,

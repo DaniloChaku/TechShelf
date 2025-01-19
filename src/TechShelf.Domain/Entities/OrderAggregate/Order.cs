@@ -12,6 +12,7 @@ public class Order : Entity<Guid>
     public Address Address { get; private set; }
     public string Email { get; private set; }
     public string PhoneNumber { get; private set; }
+    public string FullName { get; private set; }
     public string? CustomerId { get; private set; }
     public string? PaymentIntentId { get; private set; }
     public decimal Total { get; private set; }
@@ -20,10 +21,11 @@ public class Order : Entity<Guid>
     private Order() { } // For EF Core
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-    public Order(string email, string phoneNumber, Address address, IEnumerable<OrderItem> orderItems, string? customerId = null)
+    public Order(string email, string phoneNumber, string fullName, Address address, IEnumerable<OrderItem> orderItems, string? customerId = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(email);
         ArgumentException.ThrowIfNullOrWhiteSpace(phoneNumber);
+        ArgumentException.ThrowIfNullOrWhiteSpace(fullName);
         ArgumentNullException.ThrowIfNull(address);
         ArgumentNullException.ThrowIfNull(orderItems);
         if (!orderItems.Any())
@@ -34,6 +36,7 @@ public class Order : Entity<Guid>
         Id = Guid.NewGuid();
         Email = email;
         PhoneNumber = phoneNumber;
+        FullName = fullName;
         Address = address;
         _orderItems = orderItems.ToList();
         CustomerId = customerId;

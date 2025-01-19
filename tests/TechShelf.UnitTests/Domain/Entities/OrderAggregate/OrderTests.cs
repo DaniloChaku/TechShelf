@@ -5,31 +5,33 @@ namespace TechShelf.UnitTests.Domain.Entities.OrderAggregate;
 
 public class OrderTests
 {
-    private (string email, string phoneNumber, Address address, List<OrderItem> orderItems, string? customerId) GetValidOrderData()
+    private (string email, string phoneNumber, string fullName, Address address, List<OrderItem> orderItems, string? customerId) GetValidOrderData()
     {
         var email = "test@example.com";
         var phoneNumber = "1234567890";
-        var address = new Address("John Doe", "US", "123 Main Street", null, "New York", "NY", "10001");
+        var fullName = "John Doe";
+        var address = new Address("US", "123 Main Street", null, "New York", "NY", "10001");
         var orderItems = new List<OrderItem>
         {
             new OrderItem(new ProductOrdered(1, "Product 1", "Description 1"), 1, 10.0m)
         };
         var customerId = "customer_123";
-        return (email, phoneNumber, address, orderItems, customerId);
+        return (email, phoneNumber, fullName, address, orderItems, customerId);
     }
 
     [Fact]
     public void Constructor_InitializesProperties_WhenValidParametersProvided()
     {
         // Arrange
-        var (email, phoneNumber, address, orderItems, customerId) = GetValidOrderData();
+        var (email, phoneNumber, fullName, address, orderItems, customerId) = GetValidOrderData();
 
         // Act
-        var order = new Order(email, phoneNumber, address, orderItems, customerId);
+        var order = new Order(email, phoneNumber, fullName, address, orderItems, customerId);
 
         // Assert
         order.Email.Should().Be(email);
         order.PhoneNumber.Should().Be(phoneNumber);
+        order.FullName.Should().Be(fullName);
         order.Address.Should().Be(address);
         order.OrderItems.Should().BeEquivalentTo(orderItems);
         order.Total.Should().Be(10.0m);
@@ -42,10 +44,10 @@ public class OrderTests
     public void Constructor_ThrowsArgumentException_WhenEmailIsInvalid()
     {
         // Arrange
-        var (_, phoneNumber, address, orderItems, customerId) = GetValidOrderData();
+        var (_, phoneNumber, fullName, address, orderItems, customerId) = GetValidOrderData();
 
         // Act
-        Action act = () => new Order(null!, phoneNumber, address, orderItems, customerId);
+        Action act = () => new Order(null!, phoneNumber, fullName, address, orderItems, customerId);
 
         // Assert
         act.Should().Throw<ArgumentException>().WithMessage("*email*");
@@ -55,23 +57,36 @@ public class OrderTests
     public void Constructor_ThrowsArgumentException_WhenPhoneNumberIsInvalid()
     {
         // Arrange
-        var (email, _, address, orderItems, customerId) = GetValidOrderData();
+        var (email, _, fullName, address, orderItems, customerId) = GetValidOrderData();
 
         // Act
-        Action act = () => new Order(email, null!, address, orderItems, customerId);
+        Action act = () => new Order(email, null!, fullName, address, orderItems, customerId);
 
         // Assert
         act.Should().Throw<ArgumentException>().WithMessage("*phoneNumber*");
     }
 
     [Fact]
+    public void Constructor_ThrowsArgumentException_WhenFullNameIsInvalid()
+    {
+        // Arrange
+        var (email, phoneNumber, _, address, orderItems, customerId) = GetValidOrderData();
+
+        // Act
+        Action act = () => new Order(email, phoneNumber, null!, address, orderItems, customerId);
+
+        // Assert
+        act.Should().Throw<ArgumentException>().WithMessage("*fullName*");
+    }
+
+    [Fact]
     public void Constructor_ThrowsArgumentException_WhenAddressIsNull()
     {
         // Arrange
-        var (email, phoneNumber, _, orderItems, customerId) = GetValidOrderData();
+        var (email, phoneNumber, fullName, _, orderItems, customerId) = GetValidOrderData();
 
         // Act
-        Action act = () => new Order(email, phoneNumber, null!, orderItems, customerId);
+        Action act = () => new Order(email, phoneNumber, fullName, null!, orderItems, customerId);
 
         // Assert
         act.Should().Throw<ArgumentNullException>().WithMessage("*address*");
@@ -81,10 +96,10 @@ public class OrderTests
     public void Constructor_ThrowsArgumentException_WhenOrderItemsIsEmpty()
     {
         // Arrange
-        var (email, phoneNumber, address, _, customerId) = GetValidOrderData();
+        var (email, phoneNumber, fullName, address, _, customerId) = GetValidOrderData();
 
         // Act
-        Action act = () => new Order(email, phoneNumber, address, Enumerable.Empty<OrderItem>(), customerId);
+        Action act = () => new Order(email, phoneNumber, fullName, address, Enumerable.Empty<OrderItem>(), customerId);
 
         // Assert
         act.Should().Throw<ArgumentException>().WithMessage("Order must contain at least one item.");
@@ -94,8 +109,8 @@ public class OrderTests
     public void SetPaymentStatus_UpdatesHistory_WhenPaymentIsSuccessful()
     {
         // Arrange
-        var (email, phoneNumber, address, orderItems, customerId) = GetValidOrderData();
-        var order = new Order(email, phoneNumber, address, orderItems, customerId);
+        var (email, phoneNumber, fullName, address, orderItems, customerId) = GetValidOrderData();
+        var order = new Order(email, phoneNumber, fullName, address, orderItems, customerId);
         var paymentIntentId = "pi_123456789";
 
         // Act
@@ -111,8 +126,8 @@ public class OrderTests
     public void SetPaymentStatus_UpdatesHistory_WhenPaymentFails()
     {
         // Arrange
-        var (email, phoneNumber, address, orderItems, customerId) = GetValidOrderData();
-        var order = new Order(email, phoneNumber, address, orderItems, customerId);
+        var (email, phoneNumber, fullName, address, orderItems, customerId) = GetValidOrderData();
+        var order = new Order(email, phoneNumber, fullName, address, orderItems, customerId);
 
         // Act
         order.SetPaymentStatus(false);
@@ -127,8 +142,8 @@ public class OrderTests
     public void SetPaymentStatus_UpdatesHistory_WhenPaymentIsSuccessfulAndPreviousPaymentFailed()
     {
         // Arrange
-        var (email, phoneNumber, address, orderItems, customerId) = GetValidOrderData();
-        var order = new Order(email, phoneNumber, address, orderItems, customerId);
+        var (email, phoneNumber, fullName, address, orderItems, customerId) = GetValidOrderData();
+        var order = new Order(email, phoneNumber, fullName, address, orderItems, customerId);
         var paymentIntentId = "pi_123456789";
 
         // Act
@@ -145,8 +160,8 @@ public class OrderTests
     public void SetPaymentStatus_ThrowsInvalidOperationException_WhenOrderIsAlreadyPaid()
     {
         // Arrange
-        var (email, phoneNumber, address, orderItems, customerId) = GetValidOrderData();
-        var order = new Order(email, phoneNumber, address, orderItems, customerId);
+        var (email, phoneNumber, fullName, address, orderItems, customerId) = GetValidOrderData();
+        var order = new Order(email, phoneNumber, fullName, address, orderItems, customerId);
         var paymentIntentId = "pi_123456789";
         order.SetPaymentStatus(true, paymentIntentId);
 
@@ -161,8 +176,8 @@ public class OrderTests
     public void SetPaymentStatus_ThrowsArgumentException_WhenPaymentIntentIdIsNullForSuccessfulPayment()
     {
         // Arrange
-        var (email, phoneNumber, address, orderItems, customerId) = GetValidOrderData();
-        var order = new Order(email, phoneNumber, address, orderItems, customerId);
+        var (email, phoneNumber, fullName, address, orderItems, customerId) = GetValidOrderData();
+        var order = new Order(email, phoneNumber, fullName, address, orderItems, customerId);
 
         // Act
         Action act = () => order.SetPaymentStatus(true, null);

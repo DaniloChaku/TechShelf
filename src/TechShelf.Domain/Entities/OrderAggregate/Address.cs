@@ -4,7 +4,6 @@ public record Address
 {
     public readonly static IReadOnlyList<string> AllowedCounties = ["US"];
 
-    public string Name { get; private set; }
     public string Country { get; private set; }
     public string AddressLine1 { get; private set; }
     public string? AddressLine2 { get; private set; }
@@ -16,10 +15,9 @@ public record Address
     private Address() { } // For EF Core
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-    public Address(string name, string country, string addressLine1, string? addressLine2,
+    public Address(string country, string addressLine1, string? addressLine2,
         string city, string region, string postalCode)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(name);
         ArgumentException.ThrowIfNullOrWhiteSpace(country);
         ArgumentException.ThrowIfNullOrWhiteSpace(addressLine1);
         ArgumentException.ThrowIfNullOrWhiteSpace(city);
@@ -31,7 +29,6 @@ public record Address
             throw new ArgumentException("Country not supported");
         }
 
-        Name = name;
         Country = country;
         AddressLine1 = addressLine1;
         AddressLine2 = addressLine2;

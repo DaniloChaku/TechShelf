@@ -7,7 +7,8 @@ namespace TechShelf.Application.Features.Orders.Commands.CreateOrder;
 public record CreateOrderCommand(
     string Email,
     string PhoneNumber,
-    AddressDto Address,
+    string FullName,
+    AddressDto ShippingAddress,
     IEnumerable<BasketItem> BasketItems,
     string? UserId = null)
     : IRequest<ErrorOr<Guid>>;

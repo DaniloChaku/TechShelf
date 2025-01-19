@@ -18,6 +18,11 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
             .Matches(CommonConstants.PhoneNumberRegex) 
             .WithMessage("Phone number must be in a valid format (e.g. +1234567890)");
 
+
+        RuleFor(x => x.FullName)
+            .NotEmpty()
+            .MaximumLength(100);
+
         RuleFor(x => x.ShippingAddress)
             .NotNull()
             .SetValidator(new AddressDtoValidator());
