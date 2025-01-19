@@ -18,7 +18,7 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
             .Matches(CommonConstants.PhoneNumberRegex) 
             .WithMessage("Phone number must be in a valid format (e.g. +1234567890)");
 
-        RuleFor(x => x.Address)
+        RuleFor(x => x.ShippingAddress)
             .NotNull()
             .SetValidator(new AddressDtoValidator());
 
@@ -29,6 +29,7 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
             .WithMessage("Order must contain at least one item");
 
         RuleForEach(x => x.BasketItems)
+            .NotEmpty()
             .SetValidator(new BasketItemValidator());
     }
 }

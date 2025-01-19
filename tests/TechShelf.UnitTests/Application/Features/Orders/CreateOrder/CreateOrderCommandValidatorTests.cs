@@ -81,12 +81,24 @@ public class CreateOrderCommandValidatorTests
     }
 
     [Fact]
+    public void Validator_HasError_WhenBasketItemsAreEmpty()
+    {
+        // Arrange
+        var invalidBasketItems = new List<BasketItem>();
+        var command = CreateValidOrderCommand() with { BasketItems = invalidBasketItems };
+        // Act
+        var result = _validator.TestValidate(command);
+        // Assert
+        result.ShouldHaveValidationErrorFor("BasketItems");
+    }
+
+    [Fact]
     public void Validator_HasError_WhenBasketItemsContainInvalidItem()
     {
         // Arrange
         var invalidBasketItems = new List<BasketItem>
        {
-           new BasketItem(ProductId: -1, Quantity: 0)  // Invalid product and quantity
+           new BasketItem(ProductId: -1, Quantity: 0) 
        };
         var command = CreateValidOrderCommand() with { BasketItems = invalidBasketItems };
         // Act
@@ -115,7 +127,7 @@ public class CreateOrderCommandValidatorTests
     private static CreateOrderCommand CreateValidOrderCommand() => new(
         Email: "test@example.com",
         PhoneNumber: "+1234567890",
-        Address: new AddressDto(
+        ShippingAddress: new AddressDto(
             Name: "John Doe",
             Country: "US",
             AddressLine1: "123 Main St",
@@ -128,6 +140,6 @@ public class CreateOrderCommandValidatorTests
         [
            new BasketItem(ProductId: 1, Quantity: 1)
         ],
-        userId: null
+        UserId: null
     );
 }
