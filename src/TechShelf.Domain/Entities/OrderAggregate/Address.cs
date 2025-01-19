@@ -2,7 +2,7 @@
 
 public record Address
 {
-    public readonly static IReadOnlyList<string> AllowedCounties = ["US"];
+    public readonly static IReadOnlyList<string> AllowedCountries = ["US"];
 
     public string Country { get; private set; }
     public string AddressLine1 { get; private set; }
@@ -24,7 +24,7 @@ public record Address
         ArgumentException.ThrowIfNullOrWhiteSpace(region);
         ArgumentException.ThrowIfNullOrWhiteSpace(postalCode);
 
-        if (!AllowedCounties.Contains(country))
+        if (!AllowedCountries.Contains(country))
         {
             throw new ArgumentException("Country not supported");
         }

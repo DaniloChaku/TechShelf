@@ -151,5 +151,5 @@ public class AddressTests
         address1.Should().NotBe(address2);
     }
 
-    private static string ValidCountry { get; } = Address.AllowedCounties[0];
+    private static string ValidCountry { get; } = Address.AllowedCountries[0];
 }
