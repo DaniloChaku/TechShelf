@@ -73,27 +73,27 @@ public class CreateOrderCommandValidatorTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Validator_HasError_WhenFullNameIsInvalid(string? invalidFullName)
+    public void Validator_HasError_WhenNameIsInvalid(string? invalidFullName)
     {
         // Arrange
-        var command = CreateValidOrderCommand() with { FullName = invalidFullName! };
+        var command = CreateValidOrderCommand() with { Name = invalidFullName! };
         // Act
         var result = _validator.TestValidate(command);
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.FullName);
+        result.ShouldHaveValidationErrorFor(x => x.Name);
     }
 
     [Theory]
     [InlineData("John Doe")]
     [InlineData("Jane Smith")]
-    public void Validator_HasNoError_WhenFullNameIsValid(string validFullName)
+    public void Validator_HasNoError_WhenNameIsValid(string validFullName)
     {
         // Arrange
-        var command = CreateValidOrderCommand() with { FullName = validFullName };
+        var command = CreateValidOrderCommand() with { Name = validFullName };
         // Act
         var result = _validator.TestValidate(command);
         // Assert
-        result.ShouldNotHaveValidationErrorFor(x => x.FullName);
+        result.ShouldNotHaveValidationErrorFor(x => x.Name);
     }
 
     [Fact]
@@ -154,13 +154,13 @@ public class CreateOrderCommandValidatorTests
     private static CreateOrderCommand CreateValidOrderCommand() => new(
         Email: "test@example.com",
         PhoneNumber: "+1234567890",
-        FullName: "John Doe",
+        Name: "John Doe",
         ShippingAddress: new AddressDto(
             Country: "US",
-            AddressLine1: "123 Main St",
-            AddressLine2: null,
+            Line1: "123 Main St",
+            Line2: null,
             City: "New York",
-            Region: "NY",
+            State: "NY",
             PostalCode: "10001"
         ),
         BasketItems:

@@ -12,11 +12,11 @@ public class AddressDtoValidator : AbstractValidator<AddressDto>
             .MaximumLength(2)
             .Must(c => Address.AllowedCounties.Contains(c))
             .WithMessage("Country is not supported");
-        RuleFor(x => x.AddressLine1).NotEmpty()
+        RuleFor(x => x.Line1).NotEmpty()
             .MaximumLength(100);
         RuleFor(x => x.City).NotEmpty()
             .MaximumLength(50);
-        RuleFor(x => x.Region).NotEmpty()
+        RuleFor(x => x.State).NotEmpty()
             .MaximumLength(50);
         RuleFor(x => x.PostalCode).NotEmpty()
             .MaximumLength(10);

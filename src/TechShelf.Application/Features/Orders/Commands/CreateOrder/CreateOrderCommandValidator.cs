@@ -19,7 +19,7 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
             .WithMessage("Phone number must be in a valid format (e.g. +1234567890)");
 
 
-        RuleFor(x => x.FullName)
+        RuleFor(x => x.Name)
             .NotEmpty()
             .MaximumLength(100);
 

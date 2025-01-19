@@ -46,30 +46,30 @@ public class AddressDtoValidatorTests
     [Theory]
     [InlineData(null)]
     [InlineData("")]
-    public void Validator_HasError_WhenAddressLine1IsInvalid(string? invalidAddressLine1)
+    public void Validator_HasError_WhenLine1IsInvalid(string? invalidLine1)
     {
         // Arrange
-        var addressDto = CreateValidAddressDto() with { AddressLine1 = invalidAddressLine1! };
+        var addressDto = CreateValidAddressDto() with { Line1 = invalidLine1! };
 
         // Act
         var result = _validator.TestValidate(addressDto);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.AddressLine1);
+        result.ShouldHaveValidationErrorFor(x => x.Line1);
     }
 
     [Theory]
     [InlineData("123 Main Street")]
-    public void Validator_HasNoError_WhenAddressLine1IsValid(string validAddressLine1)
+    public void Validator_HasNoError_WhenLine1IsValid(string validLine1)
     {
         // Arrange
-        var addressDto = CreateValidAddressDto() with { AddressLine1 = validAddressLine1 };
+        var addressDto = CreateValidAddressDto() with { Line1 = validLine1 };
 
         // Act
         var result = _validator.TestValidate(addressDto);
 
         // Assert
-        result.ShouldNotHaveValidationErrorFor(x => x.AddressLine1);
+        result.ShouldNotHaveValidationErrorFor(x => x.Line1);
     }
 
     [Theory]
@@ -104,30 +104,30 @@ public class AddressDtoValidatorTests
     [Theory]
     [InlineData(null)]
     [InlineData("")]
-    public void Validator_HasError_WhenRegionIsInvalid(string? invalidRegion)
+    public void Validator_HasError_WhenStateIsInvalid(string? invalidState)
     {
         // Arrange
-        var addressDto = CreateValidAddressDto() with { Region = invalidRegion! };
+        var addressDto = CreateValidAddressDto() with { State = invalidState! };
 
         // Act
         var result = _validator.TestValidate(addressDto);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.Region);
+        result.ShouldHaveValidationErrorFor(x => x.State);
     }
 
     [Theory]
     [InlineData("NY")]
-    public void Validator_HasNoError_WhenRegionIsValid(string validRegion)
+    public void Validator_HasNoError_WhenStateIsValid(string validState)
     {
         // Arrange
-        var addressDto = CreateValidAddressDto() with { Region = validRegion };
+        var addressDto = CreateValidAddressDto() with { State = validState };
 
         // Act
         var result = _validator.TestValidate(addressDto);
 
         // Assert
-        result.ShouldNotHaveValidationErrorFor(x => x.Region);
+        result.ShouldNotHaveValidationErrorFor(x => x.State);
     }
 
     [Theory]
@@ -163,10 +163,10 @@ public class AddressDtoValidatorTests
     {
         return new AddressDto(
             Country: "US",
-            AddressLine1: "123 Main Street",
-            AddressLine2: null,
+            Line1: "123 Main Street",
+            Line2: null,
             City: "New York",
-            Region: "NY",
+            State: "NY",
             PostalCode: "10001");
     }
 }

@@ -2,8 +2,8 @@
 
 public record AddressDto(
     string Country,
-    string AddressLine1,
-    string? AddressLine2,
+    string Line1,
+    string? Line2,
     string City,
-    string Region,
+    string State,
     string PostalCode);
