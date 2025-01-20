@@ -4,6 +4,9 @@ namespace TechShelf.Domain.Errors;
 
 public static class OrderErrors
 {
+    public static Error OrderNotFound(Guid orderId) =>
+        Error.NotFound(
+            $"Order with ID {orderId} was not found.");
     public static Error InvalidProductInBasket(int productId) =>
         Error.Validation(
             "Order.InvalidProduct",
