@@ -47,27 +47,21 @@ public class Order : Entity<Guid>
         Total = _orderItems.Sum(x => x.GetTotal());
     }
 
-    public void SetPaymentStatus(bool isPaymentSuccessful, string? paymentIntentId = null)
+    public void SetPaymentStatus(bool isPaymentSuccessful, string paymentIntentId)
     {
-        if (_history[^1].Status is not (OrderStatus.PaymentPending or OrderStatus.PaymentFailed))
+        var currentStatus = _history[^1].Status;
+        if (currentStatus != OrderStatus.PaymentPending)
         {
-            throw new InvalidOperationException($"Order {Id} is already paid for.");
+            throw new InvalidOperationException(
+                $"Cannot process payment for order {Id} - payment already processed (current status: {_history[^1].Status}).");
         }
 
-        if (isPaymentSuccessful)
-        {
-            if (string.IsNullOrEmpty(paymentIntentId))
-            {
-                throw new ArgumentException($"Payment intent ID cannot be null or empty for a successful payment on order {Id}.",
-                    nameof(paymentIntentId));
-            }
+        ArgumentException.ThrowIfNullOrWhiteSpace(paymentIntentId);
+        PaymentIntentId = paymentIntentId;
 
-            PaymentIntentId = paymentIntentId;
-            _history.Add(new OrderHistoryEntry(Id, OrderStatus.PaymentSucceeded));
-        }
-        else
-        {
-            _history.Add(new OrderHistoryEntry(Id, OrderStatus.PaymentFailed));
-        }
+        _history.Add(new OrderHistoryEntry(
+            Id,
+            isPaymentSuccessful ? OrderStatus.PaymentSucceeded : OrderStatus.PaymentFailed
+        ));
     }
 }

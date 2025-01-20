@@ -128,36 +128,19 @@ public class OrderTests
         // Arrange
         var (email, phoneNumber, fullName, address, orderItems, customerId) = GetValidOrderData();
         var order = new Order(email, phoneNumber, fullName, address, orderItems, customerId);
+        var paymentIntentId = "pi_123456789";
 
         // Act
-        order.SetPaymentStatus(false);
+        order.SetPaymentStatus(false, paymentIntentId);
 
         // Assert
-        order.PaymentIntentId.Should().BeNull();
+        order.PaymentIntentId.Should().Be(paymentIntentId);
         order.History.Should().HaveCount(2);
         order.History[1].Status.Should().Be(OrderStatus.PaymentFailed);
     }
 
     [Fact]
-    public void SetPaymentStatus_UpdatesHistory_WhenPaymentIsSuccessfulAndPreviousPaymentFailed()
-    {
-        // Arrange
-        var (email, phoneNumber, fullName, address, orderItems, customerId) = GetValidOrderData();
-        var order = new Order(email, phoneNumber, fullName, address, orderItems, customerId);
-        var paymentIntentId = "pi_123456789";
-
-        // Act
-        order.SetPaymentStatus(false);
-        order.SetPaymentStatus(true, paymentIntentId);
-
-        // Assert
-        order.PaymentIntentId.Should().Be(paymentIntentId);
-        order.History.Should().HaveCount(3);
-        order.History[2].Status.Should().Be(OrderStatus.PaymentSucceeded);
-    }
-
-    [Fact]
-    public void SetPaymentStatus_ThrowsInvalidOperationException_WhenOrderIsAlreadyPaid()
+    public void SetPaymentStatus_ThrowsInvalidOperationException_WhenPaymentAlreadyProcessed()
     {
         // Arrange
         var (email, phoneNumber, fullName, address, orderItems, customerId) = GetValidOrderData();
@@ -166,24 +149,26 @@ public class OrderTests
         order.SetPaymentStatus(true, paymentIntentId);
 
         // Act
-        Action act = () => order.SetPaymentStatus(true, paymentIntentId);
+        Action act = () => order.SetPaymentStatus(true, "pi_987654321");
 
         // Assert
-        act.Should().Throw<InvalidOperationException>().WithMessage($"Order {order.Id} is already paid for.");
+        act.Should().Throw<InvalidOperationException>()
+            .WithMessage(
+            $"Cannot process payment for order {order.Id} - payment already processed (current status: {OrderStatus.PaymentSucceeded}).");
     }
 
     [Fact]
-    public void SetPaymentStatus_ThrowsArgumentException_WhenPaymentIntentIdIsNullForSuccessfulPayment()
+    public void SetPaymentStatus_ThrowsArgumentException_WhenPaymentIntentIdIsNull()
     {
         // Arrange
         var (email, phoneNumber, fullName, address, orderItems, customerId) = GetValidOrderData();
         var order = new Order(email, phoneNumber, fullName, address, orderItems, customerId);
 
         // Act
-        Action act = () => order.SetPaymentStatus(true, null);
+        Action act = () => order.SetPaymentStatus(true, null!);
 
         // Assert
         act.Should().Throw<ArgumentException>()
-            .WithMessage($"*Payment intent ID cannot be null or empty for a successful payment on order {order.Id}.*");
+            .WithMessage("*paymentIntentId*");
     }
 }
