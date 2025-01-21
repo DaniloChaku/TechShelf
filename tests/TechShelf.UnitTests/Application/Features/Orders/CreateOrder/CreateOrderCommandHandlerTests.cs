@@ -50,7 +50,14 @@ public class CreateOrderCommandHandlerTests
 
         // Assert
         result.IsError.Should().BeFalse();
-        result.Value.Should().NotBe(Guid.Empty);
+        result.Value.Should().NotBeNull();
+        result.Value.Id.Should().NotBe(Guid.Empty);
+        result.Value.History.Should().HaveCount(1);
+        result.Value.OrderItems.Should().HaveCount(command.BasketItems.Count());
+        foreach (var item in command.BasketItems)
+        {
+            result.Value.OrderItems.Should().ContainSingle(i => i.ProductOrdered.ProductId == item.ProductId);
+        }
 
         _orderRepositoryMock.Verify(
             x => x.Add(It.IsAny<Order>()),

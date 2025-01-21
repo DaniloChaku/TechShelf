@@ -1,4 +1,5 @@
 ﻿using ErrorOr;
+using Mapster;
 using MediatR;
 using TechShelf.Application.Features.Orders.Common.Dtos;
 using TechShelf.Application.Interfaces.Data;
@@ -9,7 +10,7 @@ using TechShelf.Domain.Specifications.Products;
 
 namespace TechShelf.Application.Features.Orders.Commands.CreateOrder;
 
-public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, ErrorOr<Guid>>
+public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, ErrorOr<OrderDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -18,7 +19,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Err
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<ErrorOr<Guid>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<OrderDto>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
         var orderItemsResult = await CreateOrderItemsAsync(request.BasketItems, cancellationToken);
         if (orderItemsResult.IsError)
@@ -31,7 +32,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Err
         _unitOfWork.Repository<Order>().Add(order);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return order.Id;
+        return order.Adapt<OrderDto>();
     }
 
     private async Task<ErrorOr<List<OrderItem>>> CreateOrderItemsAsync(

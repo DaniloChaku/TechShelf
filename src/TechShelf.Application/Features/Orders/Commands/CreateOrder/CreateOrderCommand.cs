@@ -11,4 +11,4 @@ public record CreateOrderCommand(
     AddressDto ShippingAddress,
     IEnumerable<BasketItem> BasketItems,
     string? UserId = null)
-    : IRequest<ErrorOr<Guid>>;
+    : IRequest<ErrorOr<OrderDto>>;
