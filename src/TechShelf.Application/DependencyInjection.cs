@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using TechShelf.Application.Common.Behaviors;
+using TechShelf.Application.Common.Mappings;
 
 namespace TechShelf.Application;
 
@@ -17,6 +18,8 @@ public static class DependencyInjection
         });
 
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+        OrderMappings.Configure();
 
         return services;
     }
