@@ -6,6 +6,8 @@ public static class FixtureFactory
 {
     public static IFixture CreateFixture()
     {
-        return new Fixture().Customize(new AddressCustomization());
+        var fixture = new Fixture();
+        fixture.Customize(new AddressCustomization());
+        return fixture;
     }
 }
