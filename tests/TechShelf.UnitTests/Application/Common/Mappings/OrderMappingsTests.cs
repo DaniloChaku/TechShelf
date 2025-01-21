@@ -4,6 +4,7 @@ using Mapster;
 using TechShelf.Application.Common.Mappings;
 using TechShelf.Application.Features.Orders.Common.Dtos;
 using TechShelf.Domain.Entities.OrderAggregate;
+using TechShelf.UnitTests.TestHelpers.AutoFixtureCustomization;
 
 namespace TechShelf.UnitTests.Application.Common.Mappings;
 
@@ -13,22 +14,8 @@ public class OrderMappingsTests
 
     public OrderMappingsTests()
     {
-        _fixture = new Fixture();
-        CustomizeFixture();
+        _fixture = FixtureFactory.CreateFixture();
         OrderMappings.Configure();
-    }
-
-    private void CustomizeFixture()
-    {
-        // Address customization
-        _fixture.Customize<Address>(composer => composer
-            .FromFactory(() => new Address(
-                country: Address.AllowedCountries[0],
-                addressLine1: _fixture.Create<string>(),
-                addressLine2: _fixture.Create<string>(),
-                city: _fixture.Create<string>(),
-                region: _fixture.Create<string>(),
-                postalCode: _fixture.Create<string>())));
     }
 
     [Fact]
