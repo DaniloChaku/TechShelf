@@ -71,6 +71,7 @@ public static class DependencyInjection
         services.Configure<StripeOptions>(configuration.GetSection(StripeOptions.SectionName));
 
         services.AddSingleton(TimeProvider.System);
+        services.AddScoped<IStripeService, StripeService>();
 
         IdentityMapsterConfig.Configure();
 
