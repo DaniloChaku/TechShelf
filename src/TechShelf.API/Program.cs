@@ -6,6 +6,7 @@ using TechShelf.API.Common.Http;
 using TechShelf.API.Common;
 using TechShelf.Infrastructure.Identity;
 using Microsoft.OpenApi.Models;
+using TechShelf.API.Common.Requirements;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,6 +62,10 @@ builder.Services.AddRouting(options =>
     options.LowercaseUrls = true;
 });
 
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy(Policies.AllowAnonymousAndCustomer, policy =>
+        policy.Requirements.Add(new AllowAnonymousAndCustomer()));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -85,6 +90,7 @@ if (app.Environment.IsDevelopment())
         .WithOrigins("https://localhost:4200"));
 }
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
