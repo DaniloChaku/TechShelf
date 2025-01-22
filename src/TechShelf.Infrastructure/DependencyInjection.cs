@@ -1,5 +1,4 @@
-﻿using Mapster;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -8,11 +7,14 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TechShelf.Application.Interfaces.Auth;
 using TechShelf.Application.Interfaces.Data;
+using TechShelf.Application.Interfaces.Services;
 using TechShelf.Infrastructure.Data;
 using TechShelf.Infrastructure.Data.Repositories;
 using TechShelf.Infrastructure.Identity;
 using TechShelf.Infrastructure.Identity.Options;
 using TechShelf.Infrastructure.Identity.Services;
+using TechShelf.Infrastructure.Options;
+using TechShelf.Infrastructure.Services;
 
 namespace TechShelf.Infrastructure;
 
@@ -65,6 +67,8 @@ public static class DependencyInjection
         services.Configure<AdminOptions>(configuration.GetSection(AdminOptions.SectionName));
         services.AddScoped<IdentitySeeder>();
         services.AddScoped<IUserService ,UserService>();
+
+        services.Configure<StripeOptions>(configuration.GetSection(StripeOptions.SectionName));
 
         services.AddSingleton(TimeProvider.System);
 
