@@ -14,7 +14,7 @@ using TechShelf.Infrastructure.Identity;
 using TechShelf.Infrastructure.Identity.Options;
 using TechShelf.Infrastructure.Identity.Services;
 using TechShelf.Infrastructure.Options;
-using TechShelf.Infrastructure.Services;
+using TechShelf.Infrastructure.Services.Stripe;
 
 namespace TechShelf.Infrastructure;
 

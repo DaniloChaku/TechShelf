@@ -6,7 +6,7 @@ using TechShelf.Application.Features.Orders.Common.Dtos;
 using TechShelf.Application.Interfaces.Services;
 using TechShelf.Infrastructure.Options;
 
-namespace TechShelf.Infrastructure.Services;
+namespace TechShelf.Infrastructure.Services.Stripe;
 
 public class StripeService : IStripeService
 {
@@ -42,6 +42,10 @@ public class StripeService : IStripeService
             Mode = "payment",
             SuccessUrl = QueryHelpers.AddQueryString(_stripeOptions.SuccessUrl, "orderId", order.Id.ToString()),
             CancelUrl = _stripeOptions.ErrorUrl,
+            Metadata = new()
+            {
+                { StripeConstatns.OrderIdMetadataKey, order.Id.ToString() }
+            }
         };
 
         var service = new SessionService();
