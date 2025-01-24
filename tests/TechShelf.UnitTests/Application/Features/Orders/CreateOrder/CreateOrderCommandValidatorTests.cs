@@ -100,19 +100,19 @@ public class CreateOrderCommandValidatorTests
     public void Validator_HasError_WhenBasketItemsIsEmpty()
     {
         // Arrange
-        var command = CreateValidOrderCommand() with { BasketItems = new List<BasketItem>() };
+        var command = CreateValidOrderCommand() with { ShoppingCartItems = new List<ShoppingCartItem>() };
         // Act
         var result = _validator.TestValidate(command);
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.BasketItems);
+        result.ShouldHaveValidationErrorFor(x => x.ShoppingCartItems);
     }
 
     [Fact]
     public void Validator_HasError_WhenBasketItemsAreEmpty()
     {
         // Arrange
-        var invalidBasketItems = new List<BasketItem>();
-        var command = CreateValidOrderCommand() with { BasketItems = invalidBasketItems };
+        var invalidBasketItems = new List<ShoppingCartItem>();
+        var command = CreateValidOrderCommand() with { ShoppingCartItems = invalidBasketItems };
         // Act
         var result = _validator.TestValidate(command);
         // Assert
@@ -123,11 +123,11 @@ public class CreateOrderCommandValidatorTests
     public void Validator_HasError_WhenBasketItemsContainInvalidItem()
     {
         // Arrange
-        var invalidBasketItems = new List<BasketItem>
+        var invalidBasketItems = new List<ShoppingCartItem>
        {
-           new BasketItem(ProductId: -1, Quantity: 0) 
+           new ShoppingCartItem(ProductId: -1, Quantity: 0) 
        };
-        var command = CreateValidOrderCommand() with { BasketItems = invalidBasketItems };
+        var command = CreateValidOrderCommand() with { ShoppingCartItems = invalidBasketItems };
         // Act
         var result = _validator.TestValidate(command);
         // Assert
@@ -139,16 +139,16 @@ public class CreateOrderCommandValidatorTests
     public void Validator_HasNoError_WhenBasketItemsAreValid()
     {
         // Arrange
-        var validBasketItems = new List<BasketItem>
+        var validBasketItems = new List<ShoppingCartItem>
        {
-           new BasketItem(ProductId: 1, Quantity: 1),
-           new BasketItem(ProductId: 2, Quantity: 3)
+           new ShoppingCartItem(ProductId: 1, Quantity: 1),
+           new ShoppingCartItem(ProductId: 2, Quantity: 3)
        };
-        var command = CreateValidOrderCommand() with { BasketItems = validBasketItems };
+        var command = CreateValidOrderCommand() with { ShoppingCartItems = validBasketItems };
         // Act
         var result = _validator.TestValidate(command);
         // Assert
-        result.ShouldNotHaveValidationErrorFor(x => x.BasketItems);
+        result.ShouldNotHaveValidationErrorFor(x => x.ShoppingCartItems);
     }
 
     private static CreateOrderCommand CreateValidOrderCommand() => new(
@@ -163,9 +163,9 @@ public class CreateOrderCommandValidatorTests
             State: "NY",
             PostalCode: "10001"
         ),
-        BasketItems:
+        ShoppingCartItems:
         [
-           new BasketItem(ProductId: 1, Quantity: 1)
+           new ShoppingCartItem(ProductId: 1, Quantity: 1)
         ],
         UserId: null
     );

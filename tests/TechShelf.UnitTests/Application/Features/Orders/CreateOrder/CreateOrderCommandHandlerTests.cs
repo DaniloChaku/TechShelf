@@ -42,7 +42,7 @@ public class CreateOrderCommandHandlerTests
     {
         // Arrange
         var command = CreateValidCommand();
-        var products = CreateValidProducts(command.BasketItems);
+        var products = CreateValidProducts(command.ShoppingCartItems);
         SetupProductRepository(products);
 
         // Act
@@ -53,8 +53,8 @@ public class CreateOrderCommandHandlerTests
         result.Value.Should().NotBeNull();
         result.Value.Id.Should().NotBe(Guid.Empty);
         result.Value.History.Should().HaveCount(1);
-        result.Value.OrderItems.Should().HaveCount(command.BasketItems.Count());
-        foreach (var item in command.BasketItems)
+        result.Value.OrderItems.Should().HaveCount(command.ShoppingCartItems.Count());
+        foreach (var item in command.ShoppingCartItems)
         {
             result.Value.OrderItems.Should().ContainSingle(i => i.ProductOrdered.ProductId == item.ProductId);
         }
@@ -81,7 +81,7 @@ public class CreateOrderCommandHandlerTests
 
         // Assert
         result.IsError.Should().BeTrue();
-        result.FirstError.Should().Be(OrderErrors.InvalidProductInBasket(command.BasketItems.First().ProductId));
+        result.FirstError.Should().Be(OrderErrors.InvalidProductInBasket(command.ShoppingCartItems.First().ProductId));
 
         _orderRepositoryMock.Verify(
             x => x.Add(It.IsAny<Order>()),
@@ -119,11 +119,11 @@ public class CreateOrderCommandHandlerTests
     {
         // Arrange
         var command = CreateValidCommand();
-        var products = CreateValidProducts(command.BasketItems);
+        var products = CreateValidProducts(command.ShoppingCartItems);
         SetupProductRepository(products);
         var expectedStockLevels = products.ToDictionary(
             p => p.Id,
-            p => p.Stock - command.BasketItems.First(b => b.ProductId == p.Id).Quantity);
+            p => p.Stock - command.ShoppingCartItems.First(b => b.ProductId == p.Id).Quantity);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -137,9 +137,9 @@ public class CreateOrderCommandHandlerTests
     private CreateOrderCommand CreateValidCommand()
     {
         return _fixture.Build<CreateOrderCommand>()
-            .With(x => x.BasketItems,
+            .With(x => x.ShoppingCartItems,
             [
-                _fixture.Build<BasketItem>()
+                _fixture.Build<ShoppingCartItem>()
                     .With(b => b.Quantity, 1)
                     .Create()
             ])
@@ -149,7 +149,7 @@ public class CreateOrderCommandHandlerTests
             .Create();
     }
 
-    private List<Product> CreateValidProducts(IEnumerable<BasketItem> basketItems)
+    private List<Product> CreateValidProducts(IEnumerable<ShoppingCartItem> basketItems)
     {
         return basketItems.Select(item => _fixture.Build<Product>()
             .With(x => x.Id, item.ProductId)

@@ -3,9 +3,9 @@ using TechShelf.Application.Features.Orders.Common.Dtos;
 
 namespace TechShelf.Application.Features.Orders.Common.Validators;
 
-public class BasketItemValidator : AbstractValidator<BasketItem>
+public class ShoppingCartItemValidator : AbstractValidator<ShoppingCartItem>
 {
-    public BasketItemValidator()
+    public ShoppingCartItemValidator()
     {
         RuleFor(x => x.ProductId)
             .GreaterThan(0)

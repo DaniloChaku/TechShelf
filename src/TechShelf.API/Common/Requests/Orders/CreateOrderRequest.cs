@@ -7,4 +7,4 @@ public record CreateOrderRequest(
     string PhoneNumber,
     string Name,
     AddressDto ShippingAddress,
-    IEnumerable<BasketItem> BasketItems);
+    IEnumerable<ShoppingCartItem> ShoppingCartItems);

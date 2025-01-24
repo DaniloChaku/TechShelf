@@ -27,14 +27,14 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
             .NotNull()
             .SetValidator(new AddressDtoValidator());
 
-        RuleFor(x => x.BasketItems)
+        RuleFor(x => x.ShoppingCartItems)
             .NotEmpty()
             .WithMessage("Order must contain at least one item")
             .Must(items => items.Any())
             .WithMessage("Order must contain at least one item");
 
-        RuleForEach(x => x.BasketItems)
+        RuleForEach(x => x.ShoppingCartItems)
             .NotEmpty()
-            .SetValidator(new BasketItemValidator());
+            .SetValidator(new ShoppingCartItemValidator());
     }
 }

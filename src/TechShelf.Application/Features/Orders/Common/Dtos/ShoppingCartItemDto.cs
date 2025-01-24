@@ -1,5 +1,5 @@
 ﻿namespace TechShelf.Application.Features.Orders.Common.Dtos;
 
-public record BasketItem(
+public record ShoppingCartItem(
     int ProductId,
     int Quantity);

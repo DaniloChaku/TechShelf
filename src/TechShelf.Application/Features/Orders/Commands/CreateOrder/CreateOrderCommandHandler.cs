@@ -21,7 +21,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Err
 
     public async Task<ErrorOr<OrderDto>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
     {
-        var orderItemsResult = await CreateOrderItemsAsync(request.BasketItems, cancellationToken);
+        var orderItemsResult = await CreateOrderItemsAsync(request.ShoppingCartItems, cancellationToken);
         if (orderItemsResult.IsError)
         {
             return orderItemsResult.Errors;
@@ -36,7 +36,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Err
     }
 
     private async Task<ErrorOr<List<OrderItem>>> CreateOrderItemsAsync(
-        IEnumerable<BasketItem> basketItems,
+        IEnumerable<ShoppingCartItem> basketItems,
         CancellationToken cancellationToken)
     {
         var orderItems = new List<OrderItem>();

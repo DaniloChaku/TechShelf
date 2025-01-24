@@ -44,7 +44,7 @@ public class OrdersController : BaseApiController
             createOrderRequest.PhoneNumber,
             createOrderRequest.Name,
             createOrderRequest.ShippingAddress,
-            createOrderRequest.BasketItems);
+            createOrderRequest.ShoppingCartItems);
 
         if (HttpContext.User.Identity?.IsAuthenticated ?? false)
         {

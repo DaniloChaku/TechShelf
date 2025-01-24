@@ -4,13 +4,13 @@ using TechShelf.Application.Features.Orders.Common.Validators;
 
 namespace TechShelf.UnitTests.Application.Features.Orders.Common;
 
-public class BasketItemValidatorTests
+public class ShoppingCartItemValidatorTests
 {
-    private readonly BasketItemValidator _validator;
+    private readonly ShoppingCartItemValidator _validator;
 
-    public BasketItemValidatorTests()
+    public ShoppingCartItemValidatorTests()
     {
-        _validator = new BasketItemValidator();
+        _validator = new ShoppingCartItemValidator();
     }
 
     [Theory]
@@ -67,7 +67,7 @@ public class BasketItemValidatorTests
         result.ShouldNotHaveValidationErrorFor(x => x.Quantity);
     }
 
-    private static BasketItem CreateValidBasketItem() => new(
+    private static ShoppingCartItem CreateValidBasketItem() => new(
         ProductId: 1,
         Quantity: 1
     );
