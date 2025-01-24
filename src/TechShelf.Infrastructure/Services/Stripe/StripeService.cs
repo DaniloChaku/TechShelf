@@ -44,7 +44,7 @@ public class StripeService : IStripeService
             CancelUrl = _stripeOptions.ErrorUrl,
             Metadata = new()
             {
-                { StripeConstatns.OrderIdMetadataKey, order.Id.ToString() }
+                { StripeConstants.OrderIdMetadataKey, order.Id.ToString() }
             }
         };
 

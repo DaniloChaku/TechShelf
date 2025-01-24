@@ -133,7 +133,7 @@ public class OrdersController : BaseApiController
 
     private async Task SetPaymentStatusAsync(Session session, bool isPaymentSuccessful)
     {
-        var orderId = new Guid(session.Metadata[StripeConstatns.OrderIdMetadataKey]);
+        var orderId = new Guid(session.Metadata[StripeConstants.OrderIdMetadataKey]);
         var command = new SetPaymentStatusCommand(orderId, isPaymentSuccessful, session.PaymentIntentId);
         var response = await _mediator.Send(command);
 
