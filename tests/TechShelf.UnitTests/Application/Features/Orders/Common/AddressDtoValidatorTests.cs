@@ -16,36 +16,6 @@ public class AddressDtoValidatorTests
     [Theory]
     [InlineData(null)]
     [InlineData("")]
-    [InlineData("XX")]
-    public void Validator_HasError_WhenCountryIsInvalid(string? invalidCountry)
-    {
-        // Arrange
-        var addressDto = CreateValidAddressDto() with { Country = invalidCountry! };
-
-        // Act
-        var result = _validator.TestValidate(addressDto);
-
-        // Assert
-        result.ShouldHaveValidationErrorFor(x => x.Country);
-    }
-
-    [Theory]
-    [InlineData("US")]
-    public void Validator_HasNoError_WhenCountryIsValid(string validCountry)
-    {
-        // Arrange
-        var addressDto = CreateValidAddressDto() with { Country = validCountry };
-
-        // Act
-        var result = _validator.TestValidate(addressDto);
-
-        // Assert
-        result.ShouldNotHaveValidationErrorFor(x => x.Country);
-    }
-
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
     public void Validator_HasError_WhenLine1IsInvalid(string? invalidLine1)
     {
         // Arrange
@@ -162,7 +132,6 @@ public class AddressDtoValidatorTests
     private AddressDto CreateValidAddressDto()
     {
         return new AddressDto(
-            Country: "US",
             Line1: "123 Main Street",
             Line2: null,
             City: "New York",

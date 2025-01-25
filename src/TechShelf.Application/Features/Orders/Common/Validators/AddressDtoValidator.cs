@@ -8,10 +8,6 @@ public class AddressDtoValidator : AbstractValidator<AddressDto>
 {
     public AddressDtoValidator()
     {
-        RuleFor(x => x.Country).NotEmpty()
-            .MaximumLength(2)
-            .Must(c => Address.AllowedCountries.Contains(c))
-            .WithMessage("Country is not supported");
         RuleFor(x => x.Line1).NotEmpty()
             .MaximumLength(100);
         RuleFor(x => x.City).NotEmpty()

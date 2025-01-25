@@ -9,22 +9,20 @@ public class AddressTests
     public void InitializesProperties_WhenValidParametersProvided()
     {
         // Arrange
-        var country = ValidCountry;
-        var addressLine1 = "123 Main Street";
-        var addressLine2 = "Apt 4B";
+        var line1 = "123 Main Street";
+        var line2 = "Apt 4B";
         var city = "New York";
-        var region = "NY";
+        var state = "NY";
         var postalCode = "10001";
 
         // Act
-        var address = new Address(country, addressLine1, addressLine2, city, region, postalCode);
+        var address = new Address(line1, line2, city, state, postalCode);
 
         // Assert
-        address.Country.Should().Be(country);
-        address.AddressLine1.Should().Be(addressLine1);
-        address.AddressLine2.Should().Be(addressLine2);
+        address.Line1.Should().Be(line1);
+        address.Line2.Should().Be(line2);
         address.City.Should().Be(city);
-        address.Region.Should().Be(region);
+        address.State.Should().Be(state);
         address.PostalCode.Should().Be(postalCode);
     }
 
@@ -32,41 +30,19 @@ public class AddressTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
-    [InlineData("DE")]
-    public void ThrowsArgumentException_WhenCountryIsInvalid(string? invalidCountry)
+    public void ThrowsArgumentException_WhenLine1IsInvalid(string? invalidLine1)
     {
         // Arrange
-        var addressLine1 = "123 Main Street";
         var city = "New York";
-        var region = "NY";
+        var state = "NY";
         var postalCode = "10001";
 
         // Act
-        Action act = () => new Address(invalidCountry!, addressLine1, null, city, region, postalCode);
+        Action act = () => new Address(invalidLine1!, null, city, state, postalCode);
 
         // Assert
         act.Should().Throw<ArgumentException>()
-           .WithMessage("*country*");
-    }
-
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData(" ")]
-    public void ThrowsArgumentException_WhenAddressLine1IsInvalid(string? invalidAddressLine1)
-    {
-        // Arrange
-        var country = ValidCountry;
-        var city = "New York";
-        var region = "NY";
-        var postalCode = "10001";
-
-        // Act
-        Action act = () => new Address(country, invalidAddressLine1!, null, city, region, postalCode);
-
-        // Assert
-        act.Should().Throw<ArgumentException>()
-           .WithMessage("*addressLine1*");
+           .WithMessage("*line1*");
     }
 
     [Theory]
@@ -76,13 +52,12 @@ public class AddressTests
     public void ThrowsArgumentException_WhenCityIsInvalid(string? invalidCity)
     {
         // Arrange
-        var country = ValidCountry;
-        var addressLine1 = "123 Main Street";
-        var region = "NY";
+        var line1 = "123 Main Street";
+        var state = "NY";
         var postalCode = "10001";
 
         // Act
-        Action act = () => new Address(country, addressLine1, null, invalidCity!, region, postalCode);
+        Action act = () => new Address(line1, null, invalidCity!, state, postalCode);
 
         // Assert
         act.Should().Throw<ArgumentException>()
@@ -93,20 +68,19 @@ public class AddressTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData(" ")]
-    public void ThrowsArgumentException_WhenRegionIsInvalid(string? invalidRegion)
+    public void ThrowsArgumentException_WhenStateIsInvalid(string? invalidState)
     {
         // Arrange
-        var country = ValidCountry;
-        var addressLine1 = "123 Main Street";
+        var line1 = "123 Main Street";
         var city = "New York";
         var postalCode = "10001";
 
         // Act
-        Action act = () => new Address(country, addressLine1, null, city, invalidRegion!, postalCode);
+        Action act = () => new Address(line1, null, city, invalidState!, postalCode);
 
         // Assert
         act.Should().Throw<ArgumentException>()
-           .WithMessage("*region*");
+           .WithMessage("*state*");
     }
 
     [Theory]
@@ -116,13 +90,12 @@ public class AddressTests
     public void ThrowsArgumentException_WhenPostalCodeIsInvalid(string? invalidPostalCode)
     {
         // Arrange
-        var country = ValidCountry;
-        var addressLine1 = "123 Main Street";
+        var line1 = "123 Main Street";
         var city = "New York";
-        var region = "NY";
+        var state = "NY";
 
         // Act
-        Action act = () => new Address(country, addressLine1, null, city, region, invalidPostalCode!);
+        Action act = () => new Address(line1, null, city, state, invalidPostalCode!);
 
         // Assert
         act.Should().Throw<ArgumentException>()
@@ -133,8 +106,8 @@ public class AddressTests
     public void AddressesAreEqual_WhenAllPropertiesMatch()
     {
         // Arrange
-        var address1 = new Address(ValidCountry, "123 Main Street", "Apt 4B", "New York", "NY", "10001");
-        var address2 = new Address(ValidCountry, "123 Main Street", "Apt 4B", "New York", "NY", "10001");
+        var address1 = new Address("123 Main Street", "Apt 4B", "New York", "NY", "10001");
+        var address2 = new Address("123 Main Street", "Apt 4B", "New York", "NY", "10001");
 
         // Act & Assert
         address1.Should().Be(address2);
@@ -144,12 +117,10 @@ public class AddressTests
     public void AddressesAreNotEqual_WhenPropertiesDiffer()
     {
         // Arrange
-        var address1 = new Address(ValidCountry, "123 Main Street", "Apt 4B", "New York", "NY", "10001");
-        var address2 = new Address(ValidCountry, "123 Main Street", "Apt 4B", "New York", "NY", "10002");
+        var address1 = new Address("123 Main Street", "Apt 4B", "New York", "NY", "10001");
+        var address2 = new Address("123 Main Street", "Apt 4B", "New York", "NY", "10002");
 
         // Act & Assert
         address1.Should().NotBe(address2);
     }
-
-    private static string ValidCountry { get; } = Address.AllowedCountries[0];
 }

@@ -156,7 +156,6 @@ public class CreateOrderCommandValidatorTests
         PhoneNumber: "+1234567890",
         Name: "John Doe",
         ShippingAddress: new AddressDto(
-            Country: "US",
             Line1: "123 Main St",
             Line2: null,
             City: "New York",

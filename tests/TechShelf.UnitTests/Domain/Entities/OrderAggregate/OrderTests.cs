@@ -10,7 +10,7 @@ public class OrderTests
         var email = "test@example.com";
         var phoneNumber = "1234567890";
         var fullName = "John Doe";
-        var address = new Address("US", "123 Main Street", null, "New York", "NY", "10001");
+        var address = new Address("123 Main Street", null, "New York", "NY", "10001");
         var orderItems = new List<OrderItem>
         {
             new OrderItem(new ProductOrdered(1, "Product 1", "Description 1"), 1, 10.0m)
