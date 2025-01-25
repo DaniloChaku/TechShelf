@@ -7,20 +7,19 @@ using TechShelf.Application.Interfaces.Data;
 using TechShelf.Domain.Entities.OrderAggregate;
 using TechShelf.Domain.Errors;
 using TechShelf.Domain.Specifications.Orders;
-using TechShelf.UnitTests.TestHelpers.AutoFixtureCustomization;
 
 namespace TechShelf.UnitTests.Application.Features.Orders.SetPaymentStatus;
 
 public class SetPaymentStatusCommandHandlerTests
 {
-    private readonly IFixture _fixture;
+    private readonly Fixture _fixture;
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
     private readonly Mock<IRepository<Order>> _orderRepositoryMock;
     private readonly SetPaymentStatusCommandHandler _handler;
 
     public SetPaymentStatusCommandHandlerTests()
     {
-        _fixture = FixtureFactory.CreateFixture();
+        _fixture = new Fixture();
         _unitOfWorkMock = new Mock<IUnitOfWork>();
         _orderRepositoryMock = new Mock<IRepository<Order>>();
 

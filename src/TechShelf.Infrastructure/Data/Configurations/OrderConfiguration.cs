@@ -34,15 +34,11 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
 
         builder.OwnsOne(x => x.Address, address =>
         {
-            address.Property(a => a.Country)
-                .IsRequired()
-                .HasMaxLength(2);
-
-            address.Property(a => a.AddressLine1)
+            address.Property(a => a.Line1)
                     .IsRequired()
                     .HasMaxLength(100);
 
-            address.Property(a => a.AddressLine2)
+            address.Property(a => a.Line2)
                    .HasMaxLength(100)
                    .IsRequired(false);
 
@@ -50,7 +46,7 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
                    .IsRequired()
                    .HasMaxLength(50);
 
-            address.Property(a => a.Region)
+            address.Property(a => a.State)
                    .IsRequired()
                    .HasMaxLength(50);
 

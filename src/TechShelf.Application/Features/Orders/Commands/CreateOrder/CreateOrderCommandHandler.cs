@@ -68,11 +68,10 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Err
     private static Order CreateOrder(CreateOrderCommand request, List<OrderItem> orderItems)
     {
         var shippingAddress = new Address(
-            country: request.ShippingAddress.Country,
-            addressLine1: request.ShippingAddress.Line1,
-            addressLine2: request.ShippingAddress.Line2,
+            line1: request.ShippingAddress.Line1,
+            line2: request.ShippingAddress.Line2,
             city: request.ShippingAddress.City,
-            region: request.ShippingAddress.State,
+            state: request.ShippingAddress.State,
             postalCode: request.ShippingAddress.PostalCode);
 
         return new Order(

@@ -3,7 +3,6 @@ using FluentAssertions;
 using TechShelf.Domain.Entities;
 using TechShelf.Domain.Entities.OrderAggregate;
 using TechShelf.Domain.Specifications.Orders;
-using TechShelf.Domain.Specifications.Products;
 
 namespace TechShelf.UnitTests.Domain.Specifications;
 
@@ -17,7 +16,6 @@ public class OrderByIdSpecTests
 
         _fixture.Customize<Address>(composer => composer
             .FromFactory(() => new Address(
-                country: Address.AllowedCountries[0],
                 _fixture.Create<string>(),
                 _fixture.Create<string>(),
                 _fixture.Create<string>(), 

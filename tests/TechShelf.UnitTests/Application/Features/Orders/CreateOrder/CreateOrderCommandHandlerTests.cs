@@ -143,9 +143,6 @@ public class CreateOrderCommandHandlerTests
                     .With(b => b.Quantity, 1)
                     .Create()
             ])
-            .With(x => x.ShippingAddress, _fixture.Build<AddressDto>()
-            .With(a => a.Country, Address.AllowedCountries[0])
-                .Create())
             .Create();
     }
 
