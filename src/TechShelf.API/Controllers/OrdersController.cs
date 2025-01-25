@@ -84,14 +84,9 @@ public class OrdersController : BaseApiController
             var stripeEvent = EventUtility.ConstructEvent(
                 json, Request.Headers["Stripe-Signature"], _stripeOptions.WhSecret);
 
-            switch (stripeEvent.Type)
+            if (stripeEvent.Type is (EventTypes.PaymentIntentSucceeded or EventTypes.PaymentIntentPaymentFailed))
             {
-                case EventTypes.CheckoutSessionCompleted:
-                    await HandleCheckoutSessionCompletedAsync(stripeEvent);
-                    break;
-                case EventTypes.PaymentIntentPaymentFailed:
-                    await HandlePaymentIntentFailedAsync(stripeEvent);
-                    break;
+                await HandlePaymentIntentEventAsync(stripeEvent);
             }
 
             return Ok();
@@ -101,40 +96,24 @@ public class OrdersController : BaseApiController
             _logger.LogError(e, "Stripe exception: {Message}", e.Message);
             return BadRequest();
         }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "Unexpected error in stripe webhook: {Message}", e.Message);
-
-            // Indicates the event was received
-            return Ok();
-        }
     }
 
-    private async Task HandleCheckoutSessionCompletedAsync(Event stripeEvent)
-    {
-        var session = stripeEvent.Data.Object as Session ??
-            throw new InvalidOperationException("Failed to parse session object.");
-        await SetPaymentStatusAsync(session, true);
-    }
-
-    private async Task HandlePaymentIntentFailedAsync(Event stripeEvent)
+    private async Task HandlePaymentIntentEventAsync(Event stripeEvent)
     {
         var paymentIntent = stripeEvent.Data.Object as PaymentIntent ??
             throw new InvalidOperationException("Failed to parse payment intent object.");
 
-        var session = await GetSessionByPaymentIntentIdAsync(paymentIntent.Id);
-        if (session == null)
+        if (!paymentIntent.Metadata.TryGetValue(StripeConstants.OrderIdMetadataKey, out var orderIdValue))
         {
-            _logger.LogWarning("No session found for payment intent {PaymentIntentId}", paymentIntent.Id);
+            _logger.LogError("No orderId found in metadata for payment intent {PaymentIntentId}", paymentIntent.Id);
             return;
         }
-        await SetPaymentStatusAsync(session, false);
-    }
 
-    private async Task SetPaymentStatusAsync(Session session, bool isPaymentSuccessful)
-    {
-        var orderId = new Guid(session.Metadata[StripeConstants.OrderIdMetadataKey]);
-        var command = new SetPaymentStatusCommand(orderId, isPaymentSuccessful, session.PaymentIntentId);
+        var orderId = new Guid(orderIdValue);
+        var isPaymentSuccessful = stripeEvent.Type == EventTypes.PaymentIntentSucceeded;
+
+        // replace with creating an event and processing it in a background job"
+        var command = new SetPaymentStatusCommand(orderId, isPaymentSuccessful, paymentIntent.Id);
         var response = await _mediator.Send(command);
 
         if (response.IsError)
@@ -145,16 +124,5 @@ public class OrdersController : BaseApiController
                 isPaymentSuccessful
             );
         }
-    }
-
-    private async Task<Session?> GetSessionByPaymentIntentIdAsync(string paymentIntentId)
-    {
-        var sessionService = new SessionService();
-        var sessions = await sessionService.ListAsync(new SessionListOptions()
-        {
-            PaymentIntent = paymentIntentId
-        });
-
-        return sessions.FirstOrDefault();
     }
 }

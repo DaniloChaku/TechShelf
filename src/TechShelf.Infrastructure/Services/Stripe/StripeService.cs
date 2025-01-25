@@ -45,6 +45,13 @@ public class StripeService : IStripeService
             Metadata = new()
             {
                 { StripeConstants.OrderIdMetadataKey, order.Id.ToString() }
+            },
+            PaymentIntentData = new SessionPaymentIntentDataOptions
+            {
+                Metadata = new()
+                {
+                    { StripeConstants.OrderIdMetadataKey, order.Id.ToString() }
+                }
             }
         };
 
