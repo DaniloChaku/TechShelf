@@ -7,6 +7,7 @@ using Stripe.Checkout;
 using System.IdentityModel.Tokens.Jwt;
 using TechShelf.API.Common;
 using TechShelf.API.Common.Requests.Orders;
+using TechShelf.API.Common.Responses;
 using TechShelf.Application.Features.Orders.Commands.CreateOrder;
 using TechShelf.Application.Features.Orders.Commands.SetPaymentStatus;
 using TechShelf.Application.Features.Users.Queries.GetUserInfo;
@@ -69,9 +70,8 @@ public class OrdersController : BaseApiController
         }
 
         var stripeUrl = await _stripeService.CreateCheckoutSessionAsync(orderResponse.Value);
-        Response.Headers.Append("Location", stripeUrl);
 
-        return StatusCode(303);
+        return Ok(new StripeRedirectionResponse(stripeUrl));
     }
 
     [HttpPost("webhook")]
