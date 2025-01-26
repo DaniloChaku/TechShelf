@@ -10,6 +10,9 @@ public class OrderHistoryConfiguration : IEntityTypeConfiguration<OrderHistoryEn
     {
         builder.HasKey(o => o.Id);
 
+        builder.Property(x => x.Id)
+            .ValueGeneratedNever();
+
         builder.Property(x => x.OrderId)
             .IsRequired();
 
