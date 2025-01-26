@@ -35,6 +35,11 @@
         (click)="pay()">
         Pay
       </button>
+      @if (validationErrors()) {
+      <div class="text-red-700 mt-2 text-center">
+        {{ validationErrors() }}
+      </div>
+      }
     </div>
   </div>
 </div>

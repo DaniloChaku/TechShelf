@@ -3,6 +3,7 @@ import {
   inject,
   OnDestroy,
   OnInit,
+  signal,
 } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -24,6 +25,8 @@ import { StripeAddressElement } from '@stripe/stripe-js';
 import { UserService } from '../../core/services/user/user.service';
 import { CreateOrderRequest } from '../../core/models/create-order-request';
 import { OrderService } from '../../core/services/order/order.service';
+import { ApiError } from '../../core/models/api-error';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-checkout',
@@ -57,6 +60,7 @@ export class CheckoutComponent
     ],
   });
   addressElement?: StripeAddressElement;
+  validationErrors = signal<string | null>(null);
 
   async ngOnInit() {
     try {
@@ -79,6 +83,7 @@ export class CheckoutComponent
   }
 
   async pay() {
+    this.validationErrors.set(null);
     if (this.checkoutForm.invalid) {
       this.checkoutForm.controls.email.markAsTouched();
       return;
@@ -128,6 +133,23 @@ export class CheckoutComponent
     this.orderService.checkout(request).subscribe({
       next: (response) =>
         (window.location.href = response.stripeUrl),
+      error: (error: HttpErrorResponse) => {
+        const apiError = error.error as ApiError;
+        this.snackBar.open(
+          apiError.detail || apiError.title,
+          'Close'
+        );
+
+        if (!apiError.errors) return;
+
+        const validationErrorsCombined = Object.values(
+          apiError.errors
+        ).reduce(
+          (message, cur) => (message += cur.join('\n')),
+          ''
+        );
+        this.validationErrors.set(validationErrorsCombined);
+      },
     });
   }
 
