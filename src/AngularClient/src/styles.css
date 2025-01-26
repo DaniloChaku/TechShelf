@@ -18,6 +18,14 @@ button.match-input-height {
   background: whitesmoke !important;
 }
 
+.mat-stepper-horizontal {
+  background: none !important;
+}
+
+.mat-horizontal-stepper-wrapper {
+  gap: 1rem !important;
+}
+
 .image-wrapper {
   position: relative;
 }

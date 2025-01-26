@@ -1,0 +1,40 @@
+<div class="lg:mx-20 mx-5 pt-5">
+  <div class="grid grid-cols-2 gap-x-6 mx-5">
+    <div>
+      <form [formGroup]="checkoutForm">
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Email</mat-label>
+          <input
+            matInput
+            placeholder="Email"
+            formControlName="email" />
+          @if (checkoutForm.controls.email.invalid &&
+          checkoutForm.controls.email.touched) {
+          <mat-error>
+            @if
+            (checkoutForm.controls.email.errors?.['required'])
+            {
+            <span>Email is required.</span>
+            } @else {
+            <span>Please enter a valid email address.</span>
+            }
+          </mat-error>
+          }
+        </mat-form-field>
+      </form>
+
+      <div id="address-element" class="mt-2"></div>
+      <button
+        mat-flat-button
+        class="mt-8"
+        style="
+          width: 100%;
+          padding-top: 1.4rem;
+          padding-bottom: 1.4rem;
+        "
+        (click)="pay()">
+        Pay
+      </button>
+    </div>
+  </div>
+</div>

@@ -15,7 +15,7 @@ import {
   faCirclePlus,
   faCircleMinus,
 } from '@fortawesome/free-solid-svg-icons';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-cart',
@@ -122,6 +122,11 @@ export class CartComponent {
 
   goToCatalog() {
     this.router.navigateByUrl('/catalog');
+    this.cartVisibilityService.hideCart();
+  }
+
+  goToCheckout() {
+    this.router.navigateByUrl('checkout');
     this.cartVisibilityService.hideCart();
   }
 }

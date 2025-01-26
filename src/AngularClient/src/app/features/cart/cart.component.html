@@ -51,7 +51,11 @@
         <strong class="total-price"
           >Total: {{ totalPrice() }}</strong
         >
-        <button class="checkout-btn">Checkout</button>
+        <button
+          class="checkout-btn"
+          (click)="goToCheckout()">
+          Checkout
+        </button>
       </div>
     </div>
     } @else {
