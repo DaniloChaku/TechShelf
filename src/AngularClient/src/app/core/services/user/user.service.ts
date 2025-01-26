@@ -106,9 +106,7 @@ export class UserService {
   }
 
   loadCurrentUser() {
-    return this.handleUserResponse(
-      this.getCurrentUser()
-    ).subscribe();
+    return this.handleUserResponse(this.getCurrentUser());
   }
 
   logout() {

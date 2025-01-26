@@ -215,7 +215,7 @@ describe('UserService', () => {
         roles: ['customer'],
       };
 
-      service.loadCurrentUser();
+      service.loadCurrentUser().subscribe();
 
       const req = httpMock.expectOne(
         `${environment.apiUrl}users/me`
@@ -241,7 +241,7 @@ describe('UserService', () => {
         roles: ['customer'],
       });
 
-      service.loadCurrentUser();
+      service.loadCurrentUser().subscribe();
 
       const req = httpMock.expectOne(
         `${environment.apiUrl}users/me`

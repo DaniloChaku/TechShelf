@@ -18,14 +18,15 @@ import { AuthInterceptor } from './core/interceptors/auth/auth.interceptor';
 import { loadingInterceptor } from './core/interceptors/loading/loading.interceptor';
 import { UserService } from './core/services/user/user.service';
 import { ShoppingCartService } from './core/services/shopping-cart/shopping-cart.service';
+import { firstValueFrom } from 'rxjs';
 
 export function initializeApp(
   userService: UserService,
   shoppingCartService: ShoppingCartService
 ) {
   return () => {
-    userService.loadCurrentUser();
     shoppingCartService.loadCart();
+    return firstValueFrom(userService.loadCurrentUser());
   };
 }
 
