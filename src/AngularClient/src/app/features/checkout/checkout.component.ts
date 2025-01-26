@@ -95,15 +95,26 @@ export class CheckoutComponent
       return;
     }
 
-    const addressElementValues = (
-      await this.addressElement.getValue()
-    ).value;
-    const address = addressElementValues.address;
+    const addressElementValues =
+      await this.addressElement.getValue();
+
+    if (!addressElementValues.complete) {
+      this.snackBar.open(
+        'Please provide a complete and valid address.',
+        'Close',
+        {
+          duration: 5000,
+        }
+      );
+      return;
+    }
+
+    const address = addressElementValues.value.address;
 
     var request: CreateOrderRequest = {
-      name: addressElementValues.name,
+      name: addressElementValues.value.name,
       email: this.checkoutForm.value.email!,
-      phoneNumber: addressElementValues.phone!,
+      phoneNumber: addressElementValues.value.phone!,
       shippingAddress: {
         line1: address.line1,
         line2: address.line2 ?? undefined,
