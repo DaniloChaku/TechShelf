@@ -1,5 +1,31 @@
 <div class="lg:mx-20 mx-5 mb-10 pt-5">
-  <div class="grid grid-cols-2 gap-x-6 mx-5">
+  <div class="grid lg:grid-cols-2 grid-cols-1 gap-x-6 mx-5">
+    <mat-card class="p-5 h-fit mb-10 lg:order-2 lg:mb-0">
+      <h2 class="text-center text-2xl font-semibold mb-5">
+        Summary
+      </h2>
+      <ul class="flex flex-col gap-3 mb-4">
+        @for (item of productsInCart; track $index) {
+        <li class="flex justify-between items-center">
+          <span>
+            <img
+              [src]="item.product.thumbnailUrl"
+              class="max-h-16 lg:inline-block mr-4" />
+            <em>{{ item.product.name }}</em>
+            <span> x {{ item.cart.quantity }}</span>
+          </span>
+          <strong>{{
+            item.product.price | currency
+          }}</strong>
+        </li>
+        }
+      </ul>
+      <mat-divider></mat-divider>
+      <strong class="text-center text-xl mt-2">{{
+        totalPrice | currency
+      }}</strong>
+    </mat-card>
+
     <div>
       <form [formGroup]="checkoutForm">
         <mat-form-field appearance="outline" class="w-full">

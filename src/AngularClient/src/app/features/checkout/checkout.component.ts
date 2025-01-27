@@ -27,6 +27,13 @@ import { CreateOrderRequest } from '../../core/models/create-order-request';
 import { OrderService } from '../../core/services/order/order.service';
 import { ApiError } from '../../core/models/api-error';
 import { HttpErrorResponse } from '@angular/common/http';
+import { MatCardModule } from '@angular/material/card';
+import { ProductService } from '../../core/services/product/product.service';
+import { Product } from '../../core/models/product';
+import { CartItem } from '../../core/models/cart-item';
+import { CurrencyPipe } from '@angular/common';
+import { MatDividerModule } from '@angular/material/divider';
+import { forkJoin, map } from 'rxjs';
 
 @Component({
   selector: 'app-checkout',
@@ -37,8 +44,11 @@ import { HttpErrorResponse } from '@angular/common/http';
     MatButtonModule,
     MatInputModule,
     MatSnackBarModule,
+    MatCardModule,
+    MatDividerModule,
     ReactiveFormsModule,
     FormsModule,
+    CurrencyPipe,
   ],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.css',
@@ -46,6 +56,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class CheckoutComponent
   implements OnInit, OnDestroy
 {
+  private productService = inject(ProductService);
   private shoppingCartService = inject(ShoppingCartService);
   private userService = inject(UserService);
   private stripeService = inject(StripeService);
@@ -61,6 +72,39 @@ export class CheckoutComponent
   });
   addressElement?: StripeAddressElement;
   validationErrors = signal<string | null>(null);
+  productsInCart: {
+    cart: CartItem;
+    product: Product;
+  }[] = [];
+  totalPrice?: string;
+
+  constructor() {
+    const productRequests = this.shoppingCartService
+      .cart()
+      .map((item) =>
+        this.productService
+          .getProductById(item.productId)
+          .pipe(
+            map((product) => ({
+              cart: item,
+              product,
+            }))
+          )
+      );
+
+    forkJoin(productRequests).subscribe({
+      next: (products) => {
+        this.productsInCart = products;
+        this.totalPrice = this.productsInCart
+          .reduce(
+            (sum, cur) =>
+              sum + cur.cart.quantity * cur.product.price,
+            0
+          )
+          .toFixed(2);
+      },
+    });
+  }
 
   async ngOnInit() {
     try {
