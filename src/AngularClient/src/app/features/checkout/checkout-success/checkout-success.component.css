@@ -1,0 +1,32 @@
+.success-card {
+  max-width: 400px;
+  margin: 2rem auto;
+  text-align: center;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.success-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.success-icon {
+  color: green;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: green;
+}
+
+p {
+  margin: 0;
+  font-size: 1rem;
+  color: #333;
+}

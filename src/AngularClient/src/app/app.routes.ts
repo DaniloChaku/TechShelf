@@ -7,6 +7,7 @@ import { RegisterComponent } from './features/account/register/register.componen
 import { ProfileComponent } from './features/account/profile/profile.component';
 import { authGuard } from './core/guards/auth/auth.guard';
 import { CheckoutComponent } from './features/checkout/checkout.component';
+import { CheckoutSuccessComponent } from './features/checkout/checkout-success/checkout-success.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -31,5 +32,9 @@ export const routes: Routes = [
   {
     path: 'checkout',
     component: CheckoutComponent,
+  },
+  {
+    path: 'checkout/success',
+    component: CheckoutSuccessComponent,
   },
 ];
