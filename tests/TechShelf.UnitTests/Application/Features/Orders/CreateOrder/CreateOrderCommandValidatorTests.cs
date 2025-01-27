@@ -97,42 +97,30 @@ public class CreateOrderCommandValidatorTests
     }
 
     [Fact]
-    public void Validator_HasError_WhenBasketItemsIsEmpty()
+    public void Validator_HasError_WhenShoppingCartItemsAreEmpty()
     {
         // Arrange
-        var command = CreateValidOrderCommand() with { ShoppingCartItems = new List<ShoppingCartItem>() };
+        var command = CreateValidOrderCommand() with { ShoppingCartItems = [] };
         // Act
         var result = _validator.TestValidate(command);
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.ShoppingCartItems);
-    }
-
-    [Fact]
-    public void Validator_HasError_WhenBasketItemsAreEmpty()
-    {
-        // Arrange
-        var invalidBasketItems = new List<ShoppingCartItem>();
-        var command = CreateValidOrderCommand() with { ShoppingCartItems = invalidBasketItems };
-        // Act
-        var result = _validator.TestValidate(command);
-        // Assert
-        result.ShouldHaveValidationErrorFor("BasketItems");
+        result.ShouldHaveValidationErrorFor(c => c.ShoppingCartItems);
     }
 
     [Fact]
     public void Validator_HasError_WhenBasketItemsContainInvalidItem()
     {
         // Arrange
-        var invalidBasketItems = new List<ShoppingCartItem>
-       {
-           new ShoppingCartItem(ProductId: -1, Quantity: 0) 
-       };
-        var command = CreateValidOrderCommand() with { ShoppingCartItems = invalidBasketItems };
+        var invalidShoppingCartItems = new List<ShoppingCartItem>
+        {
+            new(ProductId: -1, Quantity: 0)
+        };
+        var command = CreateValidOrderCommand() with { ShoppingCartItems = invalidShoppingCartItems };
         // Act
         var result = _validator.TestValidate(command);
         // Assert
-        result.ShouldHaveValidationErrorFor("BasketItems[0].ProductId");
-        result.ShouldHaveValidationErrorFor("BasketItems[0].Quantity");
+        result.ShouldHaveValidationErrorFor($"{nameof(CreateOrderCommand.ShoppingCartItems)}[0].ProductId");
+        result.ShouldHaveValidationErrorFor($"{nameof(CreateOrderCommand.ShoppingCartItems)}[0].Quantity");
     }
 
     [Fact]
