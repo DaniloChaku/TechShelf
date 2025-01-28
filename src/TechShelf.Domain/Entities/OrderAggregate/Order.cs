@@ -50,7 +50,7 @@ public class Order : Entity<Guid>
     public void SetPaymentStatus(bool isPaymentSuccessful, string paymentIntentId)
     {
         var currentStatus = _history[^1].Status;
-        if (currentStatus != OrderStatus.PaymentPending)
+        if (currentStatus is not (OrderStatus.PaymentPending or OrderStatus.PaymentFailed))
         {
             throw new InvalidOperationException(
                 $"Cannot process payment for order {Id} - payment already processed (current status: {_history[^1].Status}).");
