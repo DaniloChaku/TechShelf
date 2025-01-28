@@ -14,6 +14,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import {
   faCartPlus,
   faCheck,
+  faXmark,
 } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -41,8 +42,10 @@ export class ProductCardComponent {
         ) > -1
     );
   });
+  isAvailable = computed(() => this.product().stock > 0);
   faCartPlus = faCartPlus;
   faCheck = faCheck;
+  faXmark = faXmark;
 
   addToCart() {
     this.shoppingCartService.updateItem(

@@ -28,12 +28,17 @@
     <button
       (click)="addToCart()"
       mat-stroked-button
-      [disabled]="isInCart()"
+      [disabled]="isInCart() || !isAvailable()"
       class="w-full flex align-middle justify-center gap-1">
       @if (isInCart()) {
       <span
         ><fa-icon [icon]="faCheck" class="mr-2"></fa-icon>
         Added to cart</span
+      >
+      } @else if (!isAvailable()) {
+      <span
+        ><fa-icon [icon]="faXmark" class="mr-2"></fa-icon
+        >Unavailable</span
       >
       } @else {
       <span
