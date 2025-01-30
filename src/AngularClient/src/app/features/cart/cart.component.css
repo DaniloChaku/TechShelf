@@ -49,6 +49,12 @@
       }
     }
 
+    .spinner-container {
+      display: flex;
+      justify-items: center;
+      align-items: center;
+    }
+
     .cart-items {
       overflow-y: auto;
       padding: 12px 24px;

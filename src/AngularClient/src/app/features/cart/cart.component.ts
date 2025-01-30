@@ -15,12 +15,14 @@ import {
   faCirclePlus,
   faCircleMinus,
 } from '@fortawesome/free-solid-svg-icons';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
+import { delay } from 'rxjs';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [FaIconComponent],
+  imports: [FaIconComponent, MatProgressBarModule],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.css',
 })
@@ -31,6 +33,7 @@ export class CartComponent {
   private productService = inject(ProductService);
   private shoppingCartService = inject(ShoppingCartService);
   private router = inject(Router);
+  isLoading = signal(false);
   private loadedProducts = signal<Map<number, Product>>(
     new Map()
   );
@@ -74,9 +77,18 @@ export class CartComponent {
 
   private loadCartProducts(): void {
     const cartItems = this.shoppingCartService.cart();
+    let loadedCount = 0;
+    this.isLoading.set(true);
+
+    if (this.shoppingCartService.cart().length === 0) {
+      this.isLoading.set(false);
+      return;
+    }
+
     cartItems.forEach((item) => {
       this.productService
         .getProductById(item.productId)
+        .pipe(delay(1000))
         .subscribe({
           next: (product) => {
             const currentProducts = this.loadedProducts();
@@ -85,6 +97,17 @@ export class CartComponent {
             );
             updatedProducts.set(product.id, product);
             this.loadedProducts.set(updatedProducts);
+
+            loadedCount++;
+            if (loadedCount === cartItems.length) {
+              this.isLoading.set(false);
+            }
+          },
+          error: () => {
+            loadedCount++;
+            if (loadedCount === cartItems.length) {
+              this.isLoading.set(false);
+            }
           },
         });
     });
