@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using TechShelf.Domain.Common;
 using TechShelf.Infrastructure.Data;
 using TechShelf.Infrastructure.Identity;
 using TechShelf.Infrastructure.Identity.Options;
@@ -44,13 +46,16 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(_connectionString, options => options.SetPostgresVersion(12, 0)));
 
-            using var applicationDbContext = CreateDbContext<ApplicationDbContext>(services);
-            applicationDbContext.Database.EnsureDeleted();
-            applicationDbContext.Database.Migrate();
+            using (var applicationDbContext = CreateDbContext<ApplicationDbContext>(services))
+            {
+                applicationDbContext.Database.EnsureDeleted();
+                applicationDbContext.Database.Migrate();
 
-            BrandHelper.Seed(applicationDbContext);
-            CategoryHelper.Seed(applicationDbContext);
-            ProductHelper.Seed(applicationDbContext);
+                BrandHelper.Seed(applicationDbContext);
+                CategoryHelper.Seed(applicationDbContext);
+                ProductHelper.Seed(applicationDbContext);
+            }
+
 
             services.AddDbContext<AppIdentityDbContext>(options =>
                 options.UseNpgsql(_connectionString, options => options.SetPostgresVersion(12, 0)));
@@ -58,6 +63,17 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
             {
                 options.SuperAdmins = [AdminHelper.SuperAdminOptions];
             });
+
+            using var appIdentityDbContext = CreateDbContext<AppIdentityDbContext>(services);
+            appIdentityDbContext.Database.Migrate();
+
+            var serviceProvider = services.BuildServiceProvider();
+            using var scope = serviceProvider.CreateScope();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+            SeedRoles(roleManager).Wait();
+            CustomerHelper.Seed(userManager);
         });
     }
 
@@ -78,6 +94,17 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
         var scope = serviceProvider.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<IDbContext>();
         return dbContext;
+    }
+
+    private static async Task SeedRoles(RoleManager<IdentityRole> roleManager)
+    {
+        foreach (var role in UserRoles.GetAllRoles())
+        {
+            if (!await roleManager.RoleExistsAsync(role))
+            {
+                await roleManager.CreateAsync(new IdentityRole(role));
+            }
+        }
     }
 
     protected override void Dispose(bool disposing)
