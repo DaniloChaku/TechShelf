@@ -10,7 +10,7 @@ using TechShelf.Domain.Common;
 using TechShelf.Infrastructure.Data;
 using TechShelf.Infrastructure.Identity;
 using TechShelf.Infrastructure.Identity.Options;
-using TechShelf.IntegrationTests.TestHelpers.Seed;
+using TechShelf.IntegrationTests.TestHelpers.TestData;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 
@@ -64,16 +64,23 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
                 options.SuperAdmins = [AdminHelper.SuperAdminOptions];
             });
 
-            using var appIdentityDbContext = CreateDbContext<AppIdentityDbContext>(services);
-            appIdentityDbContext.Database.Migrate();
+            using (var appIdentityDbContext = CreateDbContext<AppIdentityDbContext>(services))
+            {
+                appIdentityDbContext.Database.Migrate();
 
-            var serviceProvider = services.BuildServiceProvider();
-            using var scope = serviceProvider.CreateScope();
-            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                var serviceProvider = services.BuildServiceProvider();
+                using var scope = serviceProvider.CreateScope();
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-            SeedRoles(roleManager).Wait();
-            CustomerHelper.Seed(userManager);
+                SeedRoles(roleManager).Wait();
+                CustomerHelper.Seed(userManager);
+            }
+
+            using (var applicationDbContext = CreateDbContext<ApplicationDbContext>(services))
+            {
+                OrderHelper.Seed(applicationDbContext);
+            }
         });
     }
 

@@ -1,29 +1,30 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using TechShelf.Infrastructure.Identity;
 
-namespace TechShelf.IntegrationTests.TestHelpers.Seed;
+namespace TechShelf.IntegrationTests.TestHelpers.TestData;
 
 public static class CustomerHelper
 {
     public static void Seed(UserManager<ApplicationUser> userManager)
     {
-        var customer = VerifiedCustomer;
-        var result = userManager.CreateAsync(customer, VerifiedCustomerPassword).Result;
+        var customer = Customer1;
+        var result = userManager.CreateAsync(customer, Customer1Password).Result;
         if (!result.Succeeded) throw new Exception(result.Errors.First().Description);
 
         userManager.AddToRoleAsync(customer, "Customer").Wait();
     }
 
-    public static ApplicationUser VerifiedCustomer =>
+    public static ApplicationUser Customer1 =>
         new()
         {
-            Email = "verifiedCustomer@example.com",
-            UserName = "verifiedCustomer@example.com",
+            Id = Guid.NewGuid().ToString(),
+            Email = "customer1@example.com",
+            UserName = "customer1@example.com",
             PhoneNumber = "+12345678901",
             FirstName = "John",
             LastName = "Doe",
             EmailConfirmed = true,
             PhoneNumberConfirmed = true
         };
-    public const string VerifiedCustomerPassword = "Customer@123";
+    public const string Customer1Password = "Customer@123";
 }
