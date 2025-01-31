@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TechShelf.Domain.Common;
 using TechShelf.Infrastructure.Identity;
 using TechShelf.IntegrationTests.TestHelpers;
-using TechShelf.IntegrationTests.TestHelpers.Seed;
+using TechShelf.IntegrationTests.TestHelpers.TestData;
 
 namespace TechShelf.IntegrationTests.Infrastructure.Identity;
 

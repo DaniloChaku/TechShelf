@@ -5,7 +5,6 @@ using TechShelf.IntegrationTests.TestHelpers;
 using TechShelf.API.Common.Responses;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
-using TechShelf.IntegrationTests.TestHelpers.Seed;
 using System.Net.Http.Headers;
 using TechShelf.Application.Features.Users.Common;
 using TechShelf.Domain.Common;
@@ -14,6 +13,7 @@ using Mapster;
 using TechShelf.Infrastructure.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
+using TechShelf.IntegrationTests.TestHelpers.TestData;
 
 namespace TechShelf.IntegrationTests.Api.Controllers;
 

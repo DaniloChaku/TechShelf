@@ -2,7 +2,7 @@
 using System.Net.Http.Json;
 using TechShelf.Application.Features.Brands.Queries.Shared;
 using TechShelf.IntegrationTests.TestHelpers;
-using TechShelf.IntegrationTests.TestHelpers.Seed;
+using TechShelf.IntegrationTests.TestHelpers.TestData;
 
 namespace TechShelf.IntegrationTests.Api.Controllers;
 

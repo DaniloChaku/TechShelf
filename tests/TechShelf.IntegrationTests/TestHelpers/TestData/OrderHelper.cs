@@ -9,7 +9,7 @@ public static class OrderHelper
     {
         var customer = CustomerHelper.Customer1;
 
-        Orders = [
+        Customer1Orders = [
             new Order(
                 email: customer.Email!,
                 phoneNumber: customer.PhoneNumber!,
@@ -49,9 +49,9 @@ public static class OrderHelper
 
     public static void Seed(ApplicationDbContext dbContext)
     {
-        dbContext.Orders.AddRange(Orders);
+        dbContext.Orders.AddRange(Customer1Orders);
         dbContext.SaveChanges();
     }
 
-    public static List<Order> Orders { get; private set; }
+    public static List<Order> Customer1Orders { get; private set; }
 }

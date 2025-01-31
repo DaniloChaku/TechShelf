@@ -2,7 +2,7 @@
 using TechShelf.Domain.Entities;
 using TechShelf.Infrastructure.Data;
 
-namespace TechShelf.IntegrationTests.TestHelpers.Seed;
+namespace TechShelf.IntegrationTests.TestHelpers.TestData;
 
 public static class ProductHelper
 {
@@ -61,10 +61,10 @@ public static class ProductHelper
                productDto.CategoryId == product.CategoryId &&
                productDto.BrandId == product.BrandId &&
                productDto.ThumbnailUrl == product.ThumbnailUrl &&
-               productDto.ImageUrls.SequenceEqual(product.ImageUrls) && 
-               (compareReferences && 
+               productDto.ImageUrls.SequenceEqual(product.ImageUrls) &&
+               compareReferences &&
                CategoryHelper.Equals(productDto.Category!, CategoryHelper.Categories.First(c => c.Id == product.CategoryId)) &&
-               BrandHelper.Equals(productDto.Brand!, BrandHelper.Brands.First(b => b.Id == product.BrandId)));
+               BrandHelper.Equals(productDto.Brand!, BrandHelper.Brands.First(b => b.Id == product.BrandId));
     }
 }
 

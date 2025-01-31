@@ -1,7 +1,7 @@
 ﻿using TechShelf.Infrastructure.Identity;
 using TechShelf.Infrastructure.Identity.Options;
 
-namespace TechShelf.IntegrationTests.TestHelpers.Seed;
+namespace TechShelf.IntegrationTests.TestHelpers.TestData;
 
 public static class AdminHelper
 {
@@ -21,6 +21,6 @@ public static class AdminHelper
             LastName = SuperAdminOptions.LastName,
             Email = SuperAdminOptions.Email,
             UserName = SuperAdminOptions.Email,
-            PhoneNumber= SuperAdminOptions.PhoneNumber,
+            PhoneNumber = SuperAdminOptions.PhoneNumber,
         };
 }

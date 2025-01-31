@@ -7,7 +7,7 @@ using TechShelf.API.Common.Requests.Products;
 using TechShelf.Application.Common.Pagination;
 using TechShelf.Application.Features.Products.Queries.Shared;
 using TechShelf.IntegrationTests.TestHelpers;
-using TechShelf.IntegrationTests.TestHelpers.Seed;
+using TechShelf.IntegrationTests.TestHelpers.TestData;
 
 namespace TechShelf.IntegrationTests.Api.Controllers;
 

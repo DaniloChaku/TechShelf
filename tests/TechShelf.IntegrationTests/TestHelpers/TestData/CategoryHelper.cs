@@ -3,7 +3,7 @@ using TechShelf.Application.Features.Categories.Queries.Shared;
 using TechShelf.Domain.Entities;
 using TechShelf.Infrastructure.Data;
 
-namespace TechShelf.IntegrationTests.TestHelpers.Seed;
+namespace TechShelf.IntegrationTests.TestHelpers.TestData;
 
 public static class CategoryHelper
 {
