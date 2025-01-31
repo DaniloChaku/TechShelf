@@ -1,5 +1,7 @@
-﻿using Mapster;
+﻿using ErrorOr;
+using Mapster;
 using MediatR;
+using TechShelf.Application.Common.Pagination;
 using TechShelf.Application.Features.Orders.Common.Dtos;
 using TechShelf.Application.Interfaces.Data;
 using TechShelf.Domain.Entities.OrderAggregate;
@@ -8,7 +10,7 @@ using TechShelf.Domain.Specifications.Orders;
 namespace TechShelf.Application.Features.Orders.Queries.GetCustomerOrders;
 
 public class GetCustomerOrdersQueryHandler
-    : IRequestHandler<GetCustomerOrdersQuery, List<OrderDto>>
+    : IRequestHandler<GetCustomerOrdersQuery, ErrorOr<PagedResult<OrderDto>>>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -17,12 +19,23 @@ public class GetCustomerOrdersQueryHandler
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<List<OrderDto>> Handle(GetCustomerOrdersQuery request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<PagedResult<OrderDto>>> Handle(GetCustomerOrdersQuery request, CancellationToken cancellationToken)
     {
-        var spec = new GetCustomerOrdersSpec(request.CustomerId);
+        var pageResult = PaginationHelper.CalculatePagination(request.PageIndex, request.PageSize);
 
-        var orders = await _unitOfWork.Repository<Order>().ListAsync(spec, cancellationToken);
+        if (pageResult.IsError)
+        {
+            return pageResult.Errors;
+        }
 
-        return orders.Adapt<List<OrderDto>>();
+        var (skip, take) = pageResult.Value;
+
+        var spec = new GetCustomerOrdersSpec(request.CustomerId, skip, take);
+
+        var (orders, totalCount) = await _unitOfWork.Repository<Order>().ListWithTotalCountAsync(spec, cancellationToken);
+
+        var orderDtos = orders.Adapt<List<OrderDto>>();
+
+        return new PagedResult<OrderDto>(orderDtos, totalCount, request.PageIndex, request.PageSize);
     }
 }
