@@ -6,10 +6,14 @@ using System.IdentityModel.Tokens.Jwt;
 using TechShelf.API.Common;
 using TechShelf.API.Common.Requests.Orders;
 using TechShelf.API.Common.Responses;
+using TechShelf.Application.Common.Pagination;
 using TechShelf.Application.Features.Orders.Commands.CreateOrder;
 using TechShelf.Application.Features.Orders.Commands.SetPaymentStatus;
+using TechShelf.Application.Features.Orders.Common.Dtos;
+using TechShelf.Application.Features.Orders.Queries.GetCustomerOrders;
 using TechShelf.Application.Features.Users.Queries.GetUserInfo;
 using TechShelf.Application.Interfaces.Services;
+using TechShelf.Domain.Common;
 
 namespace TechShelf.API.Controllers;
 
@@ -103,5 +107,19 @@ public class OrdersController : BaseApiController
         }
 
         return Ok();
+    }
+
+    [Authorize(Roles = $"{UserRoles.AdminSupport},{UserRoles.SuperAdmin}")]
+    [HttpGet("customer/{customerId}")]
+    [ProducesResponseType(statusCode: StatusCodes.Status200OK, type: typeof(List<OrderDto>))]
+    public async Task<IActionResult> GetCustomerOrders(
+        string customerId, 
+        [FromQuery] int pageIndex, 
+        [FromQuery] int pageSize)
+    {
+        var query = new GetCustomerOrdersQuery(customerId, pageIndex, pageSize);
+        var orders = await _mediator.Send(query);
+
+        return orders.Match(Ok, Problem);
     }
 }

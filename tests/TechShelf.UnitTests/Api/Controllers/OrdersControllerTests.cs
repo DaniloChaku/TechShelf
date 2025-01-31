@@ -15,9 +15,11 @@ using System.Text.Json;
 using TechShelf.API.Common.Requests.Orders;
 using TechShelf.API.Common.Responses;
 using TechShelf.API.Controllers;
+using TechShelf.Application.Common.Pagination;
 using TechShelf.Application.Features.Orders.Commands.CreateOrder;
 using TechShelf.Application.Features.Orders.Commands.SetPaymentStatus;
 using TechShelf.Application.Features.Orders.Common.Dtos;
+using TechShelf.Application.Features.Orders.Queries.GetCustomerOrders;
 using TechShelf.Application.Features.Users.Common;
 using TechShelf.Application.Features.Users.Queries.GetUserInfo;
 using TechShelf.Application.Interfaces.Services;
@@ -262,5 +264,89 @@ public class OrdersControllerTests
         };
 
         _controller.ControllerContext.HttpContext.Request.Headers.Append("Stripe-Signature", "test_signature");
+    }
+
+    [Fact]
+    public async Task GetCustomerOrders_ReturnsOkWithPagedResult_WhenOrdersExist()
+    {
+        // Arrange
+        var pageIndex = _fixture.Create<int>();
+        var pageSize = _fixture.Create<int>();
+        var totalCount = _fixture.Create<int>();
+        var customerId = _fixture.Create<string>();
+        var orders = _fixture.CreateMany<OrderDto>(Math.Min(pageSize, totalCount)).ToList();
+        var pagedResult = new PagedResult<OrderDto>(orders, totalCount, pageIndex, pageSize);
+
+        _mediatorMock
+            .Setup(m => m.Send(It.Is<GetCustomerOrdersQuery>(q =>
+                q.CustomerId == customerId &&
+                q.PageIndex == pageIndex &&
+                q.PageSize == pageSize),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(pagedResult);
+
+        // Act
+        var result = await _controller.GetCustomerOrders(customerId, pageIndex, pageSize);
+
+        // Assert
+        var okResult = result.Should().BeOfType<OkObjectResult>().Subject;
+        var returnedPagedResult = okResult.Value.Should().BeOfType<PagedResult<OrderDto>>().Subject;
+
+        returnedPagedResult.Items.Should().HaveCount(orders.Count);
+        returnedPagedResult.TotalCount.Should().Be(totalCount);
+        returnedPagedResult.PageIndex.Should().Be(pageIndex);
+        returnedPagedResult.PageSize.Should().Be(pageSize);
+
+        _mediatorMock.Verify(m => m.Send(It.IsAny<GetCustomerOrdersQuery>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetCustomerOrders_ReturnsOkWithEmptyResult_WhenNoOrdersExist()
+    {
+        // Arrange
+        var pageIndex = _fixture.Create<int>();
+        var pageSize = _fixture.Create<int>();
+        var customerId = _fixture.Create<string>();
+        var emptyPagedResult = new PagedResult<OrderDto>([], 0, pageIndex, pageSize);
+
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<GetCustomerOrdersQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(emptyPagedResult);
+
+        // Act
+        var result = await _controller.GetCustomerOrders(customerId, pageIndex, pageSize);
+
+        // Assert
+        var okResult = result.Should().BeOfType<OkObjectResult>().Subject;
+        var returnedPagedResult = okResult.Value.Should().BeOfType<PagedResult<OrderDto>>().Subject;
+
+        returnedPagedResult.Items.Should().BeEmpty();
+        returnedPagedResult.TotalCount.Should().Be(0);
+        returnedPagedResult.PageIndex.Should().Be(pageIndex);
+        returnedPagedResult.PageSize.Should().Be(pageSize);
+
+        _mediatorMock.Verify(m => m.Send(It.IsAny<GetCustomerOrdersQuery>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetCustomerOrders_ReturnsProblem_WhenPaginationParametersAreInvalid()
+    {
+        // Arrange
+        var customerId = _fixture.Create<string>();
+        var error = Error.Validation("Invalid pagination parameters");
+
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<GetCustomerOrdersQuery>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(error);
+
+        // Act
+        var result = await _controller.GetCustomerOrders(customerId, _fixture.Create<int>(), _fixture.Create<int>());
+
+        // Assert
+        result.Should().BeOfType<ObjectResult>();
+        var problemResult = result as ObjectResult;
+        problemResult!.Value.Should().BeAssignableTo<ProblemDetails>();
+
+        _mediatorMock.Verify(m => m.Send(It.IsAny<GetCustomerOrdersQuery>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 }
