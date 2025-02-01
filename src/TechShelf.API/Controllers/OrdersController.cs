@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using TechShelf.API.Common;
 using TechShelf.API.Common.Requests.Orders;
 using TechShelf.API.Common.Responses;
@@ -111,12 +112,35 @@ public class OrdersController : BaseApiController
 
     [Authorize(Roles = $"{UserRoles.AdminSupport},{UserRoles.SuperAdmin}")]
     [HttpGet("customer/{customerId}")]
-    [ProducesResponseType(statusCode: StatusCodes.Status200OK, type: typeof(List<OrderDto>))]
+    [ProducesResponseType(statusCode: StatusCodes.Status200OK, type: typeof(PagedResult<OrderDto>))]
+    [ProducesResponseType(statusCode: StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(statusCode: StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> GetCustomerOrders(
         string customerId, 
         [FromQuery] int pageIndex, 
         [FromQuery] int pageSize)
     {
+        var query = new GetCustomerOrdersQuery(customerId, pageIndex, pageSize);
+        var orders = await _mediator.Send(query);
+
+        return orders.Match(Ok, Problem);
+    }
+
+    [Authorize(Roles = UserRoles.Customer)]
+    [HttpGet("myorders")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedResult<OrderDto>))]
+    [ProducesResponseType(statusCode: StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(statusCode: StatusCodes.Status403Forbidden)]
+    public async Task<IActionResult> GetMyOrders(
+            [FromQuery] int pageIndex,
+            [FromQuery] int pageSize)
+    {
+        var customerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(customerId))
+        {
+            return Forbid();
+        }
+
         var query = new GetCustomerOrdersQuery(customerId, pageIndex, pageSize);
         var orders = await _mediator.Send(query);
 

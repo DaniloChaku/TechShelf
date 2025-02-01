@@ -17,4 +17,5 @@ public static class ApiUrls
 
     public const string Orders = "api/orders";
     public const string GetCustomerOrders = $"{Orders}/customer";
+    public const string GetMyOrders = $"{Orders}/myorders";
 }

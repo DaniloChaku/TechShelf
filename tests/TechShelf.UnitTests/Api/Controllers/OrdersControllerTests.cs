@@ -4,6 +4,7 @@ using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Testing;
 using Moq;
@@ -349,4 +350,102 @@ public class OrdersControllerTests
 
         _mediatorMock.Verify(m => m.Send(It.IsAny<GetCustomerOrdersQuery>(), It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    #region GetMyOrders
+
+    [Fact]
+    public async Task GetMyOrders_ReturnsForbidden_WhenCustomerIdClaimMissing()
+    {
+        // Arrange
+        var pageIndex = _fixture.Create<int>();
+        var pageSize = _fixture.Create<int>();
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
+
+        // Act
+        var result = await _controller.GetMyOrders(pageIndex, pageSize);
+
+        // Assert
+        result.Should().BeOfType<ForbidResult>();
+    }
+
+    [Fact]
+    public async Task GetMyOrders_ReturnsProblem_WhenErrorOccurs()
+    {
+        // Arrange
+        var customerId = _fixture.Create<string>();
+        var pageIndex = _fixture.Create<int>();
+        var pageSize = _fixture.Create<int>();
+        var error = _fixture.Create<Error>();
+
+        SetupUserWithSubClaim(customerId);
+
+        _mediatorMock
+           .Setup(m => m.Send(It.Is<GetCustomerOrdersQuery>(q =>
+               q.CustomerId == customerId &&
+               q.PageIndex == pageIndex &&
+               q.PageSize == pageSize),
+               It.IsAny<CancellationToken>()))
+           .ReturnsAsync(error);
+
+        // Act
+        var result = await _controller.GetMyOrders(pageIndex, pageSize);
+        result.Should().BeOfType<ObjectResult>();
+        var problemResult = result as ObjectResult;
+        problemResult!.Value.Should().BeAssignableTo<ProblemDetails>();
+    }
+
+    [Fact]
+    public async Task GetMyOrders_ReturnsOkWithPagedResult_WhenOrdersExist()
+    {
+        // Arrange
+        var pageIndex = _fixture.Create<int>();
+        var pageSize = _fixture.Create<int>();
+        var totalCount = _fixture.Create<int>();
+        var customerId = _fixture.Create<string>();
+
+        var orders = _fixture.CreateMany<OrderDto>(Math.Min(pageSize, totalCount)).ToList();
+        var pagedResult = new PagedResult<OrderDto>(orders, totalCount, pageIndex, pageSize);
+
+        SetupUserWithSubClaim(customerId);
+
+        _mediatorMock
+            .Setup(m => m.Send(It.Is<GetCustomerOrdersQuery>(q =>
+                q.CustomerId == customerId &&
+                q.PageIndex == pageIndex &&
+                q.PageSize == pageSize),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(pagedResult);
+
+        // Act
+        var result = await _controller.GetMyOrders(pageIndex, pageSize);
+
+        // Assert
+        var okResult = result.Should().BeOfType<OkObjectResult>().Subject;
+        var returnedPagedResult = okResult.Value.Should().BeOfType<PagedResult<OrderDto>>().Subject;
+
+        returnedPagedResult.Items.Should().HaveCount(orders.Count);
+        returnedPagedResult.TotalCount.Should().Be(totalCount);
+        returnedPagedResult.PageIndex.Should().Be(pageIndex);
+        returnedPagedResult.PageSize.Should().Be(pageSize);
+    }
+
+    private void SetupUserWithSubClaim(string customerId)
+    {
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, customerId)
+        };
+        var identity = new ClaimsIdentity(claims);
+        var principal = new ClaimsPrincipal(identity);
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { User = principal }
+        };
+    }
+
+    #endregion
 }
