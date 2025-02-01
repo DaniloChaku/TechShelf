@@ -330,11 +330,11 @@ public class OrdersControllerTests
     }
 
     [Fact]
-    public async Task GetCustomerOrders_ReturnsProblem_WhenPaginationParametersAreInvalid()
+    public async Task GetCustomerOrders_ReturnsProblem_WhenErrorOccurred()
     {
         // Arrange
         var customerId = _fixture.Create<string>();
-        var error = Error.Validation("Invalid pagination parameters");
+        var error = _fixture.Create<Error>();
 
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<GetCustomerOrdersQuery>(), It.IsAny<CancellationToken>()))
