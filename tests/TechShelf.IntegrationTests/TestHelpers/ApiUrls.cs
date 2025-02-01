@@ -14,4 +14,7 @@ public static class ApiUrls
     public const string Login = $"{Users}/login";
     public const string Me = $"{Users}/me";
     public const string RefreshToken = $"{Users}/refresh-token";
+
+    public const string Orders = "api/orders";
+    public const string GetCustomerOrders = $"{Orders}/customer";
 }
