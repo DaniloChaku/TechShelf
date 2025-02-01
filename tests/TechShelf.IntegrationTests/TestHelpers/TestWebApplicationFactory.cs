@@ -56,7 +56,6 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
                 ProductHelper.Seed(applicationDbContext);
             }
 
-
             services.AddDbContext<AppIdentityDbContext>(options =>
                 options.UseNpgsql(_connectionString, options => options.SetPostgresVersion(12, 0)));
             services.Configure<AdminOptions>(options =>

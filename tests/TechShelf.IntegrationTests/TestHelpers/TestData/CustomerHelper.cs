@@ -14,10 +14,9 @@ public static class CustomerHelper
         userManager.AddToRoleAsync(customer, "Customer").Wait();
     }
 
-    public static ApplicationUser Customer1 =>
+    public static ApplicationUser Customer1 { get; private set; } =
         new()
         {
-            Id = Guid.NewGuid().ToString(),
             Email = "customer1@example.com",
             UserName = "customer1@example.com",
             PhoneNumber = "+12345678901",
