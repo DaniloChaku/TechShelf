@@ -79,6 +79,7 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Err
             phoneNumber: request.PhoneNumber,
             fullName: request.Name,
             address: shippingAddress,
-            orderItems: orderItems);
+            orderItems: orderItems,
+            customerId: request.UserId);
     }
 }
