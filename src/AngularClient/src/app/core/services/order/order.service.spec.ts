@@ -88,57 +88,59 @@ describe('OrderService', () => {
 
   describe('myorders', () => {
     it('should make a GET request to the correct URL and return an Order', () => {
-      const mockOrder: Order = {
-        id: '1',
-        email: 'test@test.com',
-        phoneNumber: '123456789',
-        fullName: 'John Doe',
-        total: 100,
-        address: {
-          line1: '123 Main St',
-          line2: 'Apt 4B',
-          city: 'Boston',
-          state: 'MA',
-          postalCode: '02108',
+      const mockOrders: Order[] = [
+        {
+          id: '1',
+          email: 'test@test.com',
+          phoneNumber: '123456789',
+          fullName: 'John Doe',
+          total: 100,
+          address: {
+            line1: '123 Main St',
+            line2: 'Apt 4B',
+            city: 'Boston',
+            state: 'MA',
+            postalCode: '02108',
+          },
+          orderItems: [
+            {
+              price: 50,
+              quantity: 1,
+              productOrdered: {
+                productId: 1,
+                name: 'Product 1',
+                imageUrl: 'http://example.com/product1.jpg',
+              },
+            },
+            {
+              price: 50,
+              quantity: 1,
+              productOrdered: {
+                productId: 2,
+                name: 'Product 2',
+                imageUrl: 'http://example.com/product2.jpg',
+              },
+            },
+          ],
+          history: [
+            {
+              orderId: '1',
+              status: 'Ordered',
+              date: new Date(),
+            },
+          ],
         },
-        orderItems: [
-          {
-            price: 50,
-            quantity: 1,
-            productOrdered: {
-              productId: 1,
-              name: 'Product 1',
-              imageUrl: 'http://example.com/product1.jpg',
-            },
-          },
-          {
-            price: 50,
-            quantity: 1,
-            productOrdered: {
-              productId: 2,
-              name: 'Product 2',
-              imageUrl: 'http://example.com/product2.jpg',
-            },
-          },
-        ],
-        history: [
-          {
-            orderId: '1',
-            status: 'Ordered',
-            date: new Date(),
-          },
-        ],
-      };
+      ];
 
       service.myorders().subscribe((order) => {
-        expect(order).toEqual(mockOrder);
+        expect(order).toEqual(mockOrders);
       });
 
       const req = httpMock.expectOne(
         environment.apiUrl + 'orders/myorders'
       );
       expect(req.request.method).toBe('GET');
-      req.flush(mockOrder);
+      req.flush(mockOrders);
     });
 
     it('should handle errors appropriately', () => {
