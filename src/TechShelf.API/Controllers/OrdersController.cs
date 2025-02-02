@@ -47,17 +47,14 @@ public class OrdersController : BaseApiController
 
         if (HttpContext.User.Identity?.IsAuthenticated ?? false)
         {
-            var email = HttpContext.User.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Email)?.Value;
+            var userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
-            if (email is not null)
+            if (userId is null)
             {
-                var user = new GetUserInfoQuery(email);
-                var userResponse = await _mediator.Send(user);
-                if (!userResponse.IsError)
-                {
-                    createOrderCommand = createOrderCommand with { UserId = userResponse.Value.Id };
-                }
+                return Unauthorized("Invalid token structure. Please re-login");
             }
+            
+            createOrderCommand = createOrderCommand with { UserId = userId };
         }
 
         var orderResponse = await _mediator.Send(createOrderCommand);

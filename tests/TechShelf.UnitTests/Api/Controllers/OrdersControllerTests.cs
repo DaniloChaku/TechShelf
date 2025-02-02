@@ -56,28 +56,22 @@ public class OrdersControllerTests
         var orderDto = _fixture.Create<OrderDto>();
         var stripeUrl = _fixture.Create<string>();
         var expectedResponse = new StripeRedirectionResponse(stripeUrl);
-
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<CreateOrderCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(orderDto);
-
         _stripeServiceMock
             .Setup(s => s.CreateCheckoutSessionAsync(orderDto))
             .ReturnsAsync(stripeUrl);
-
         _controller.ControllerContext = new ControllerContext
         {
             HttpContext = new DefaultHttpContext()
         };
-
         // Act
         var result = await _controller.Checkout(request);
-
         // Assert
         result.Should().BeOfType<OkObjectResult>();
         var okResult = result as OkObjectResult;
         okResult!.Value.Should().BeEquivalentTo(expectedResponse);
-
         _mediatorMock.Verify(m => m.Send(It.IsAny<CreateOrderCommand>(), It.IsAny<CancellationToken>()), Times.Once);
         _stripeServiceMock.Verify(s => s.CreateCheckoutSessionAsync(orderDto), Times.Once);
     }
@@ -88,19 +82,15 @@ public class OrdersControllerTests
         // Arrange
         var request = _fixture.Create<CreateOrderRequest>();
         var errors = _fixture.Create<Error>();
-
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<CreateOrderCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(errors);
-
         _controller.ControllerContext = new ControllerContext
         {
             HttpContext = new DefaultHttpContext()
         };
-
         // Act
         var result = await _controller.Checkout(request);
-
         // Assert
         result.Should().BeOfType<ObjectResult>();
         var problemResult = result as ObjectResult;
@@ -113,42 +103,52 @@ public class OrdersControllerTests
     {
         // Arrange
         var request = _fixture.Create<CreateOrderRequest>();
-        var email = _fixture.Create<string>();
-        var userDto = _fixture.Create<UserDto>();
+        var userId = _fixture.Create<string>();
         var orderDto = _fixture.Create<OrderDto>();
         var stripeUrl = _fixture.Create<string>();
-
         var user = new ClaimsPrincipal(new ClaimsIdentity(
         [
-            new Claim(JwtRegisteredClaimNames.Email, email)
+            new Claim(ClaimTypes.NameIdentifier, userId)
         ], "test"));
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { User = user }
+        };
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<CreateOrderCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(orderDto);
+        _stripeServiceMock
+            .Setup(s => s.CreateCheckoutSessionAsync(orderDto))
+            .ReturnsAsync(stripeUrl);
+        // Act
+        var result = await _controller.Checkout(request);
+        // Assert
+        result.Should().BeOfType<OkObjectResult>();
+        _mediatorMock.Verify(m => m.Send(
+            It.Is<CreateOrderCommand>(c => c.UserId == userId),
+            It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
 
+    [Fact]
+    public async Task Checkout_ReturnsUnauthorized_WhenAuthenticatedUserMissingNameIdentifierClaim()
+    {
+        // Arrange
+        var request = _fixture.Create<CreateOrderRequest>();
+        var user = new ClaimsPrincipal(new ClaimsIdentity([], "test"));
         _controller.ControllerContext = new ControllerContext
         {
             HttpContext = new DefaultHttpContext { User = user }
         };
 
-        _mediatorMock
-            .Setup(m => m.Send(It.IsAny<GetUserInfoQuery>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(userDto);
-
-        _mediatorMock
-            .Setup(m => m.Send(It.IsAny<CreateOrderCommand>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(orderDto);
-
-        _stripeServiceMock
-            .Setup(s => s.CreateCheckoutSessionAsync(orderDto))
-            .ReturnsAsync(stripeUrl);
-
         // Act
         var result = await _controller.Checkout(request);
 
         // Assert
-        result.Should().BeOfType<OkObjectResult>();
-        _mediatorMock.Verify(m => m.Send(
-            It.Is<CreateOrderCommand>(c => c.UserId == userDto.Id),
-            It.IsAny<CancellationToken>()),
-            Times.Once);
+        result.Should().BeOfType<UnauthorizedObjectResult>();
+        _mediatorMock.Verify(
+            m => m.Send(It.IsAny<CreateOrderCommand>(), It.IsAny<CancellationToken>()),
+            Times.Never);
     }
 
     [Fact]
