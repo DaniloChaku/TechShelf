@@ -19,7 +19,7 @@ export class OrderService {
     );
   }
 
-  myorders() {
+  myorders(pageIndex: number, pageSize: number) {
     return this.http.get<Order[]>(
       this.baseUrl + 'myorders'
     );

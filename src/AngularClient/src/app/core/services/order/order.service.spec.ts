@@ -132,7 +132,7 @@ describe('OrderService', () => {
         },
       ];
 
-      service.myorders().subscribe((order) => {
+      service.myorders(1, 1).subscribe((order) => {
         expect(order).toEqual(mockOrders);
       });
 
@@ -146,7 +146,7 @@ describe('OrderService', () => {
     it('should handle errors appropriately', () => {
       const errorMessage = 'Failed to fetch orders';
 
-      service.myorders().subscribe({
+      service.myorders(1, 1).subscribe({
         error: (error) => {
           expect(error.status).toBe(500);
           expect(error.statusText).toBe(errorMessage);
