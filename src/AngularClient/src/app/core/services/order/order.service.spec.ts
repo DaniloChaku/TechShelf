@@ -8,6 +8,7 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { StripeRedirectionResponse } from '../../models/stripe-redirection-response';
+import { Order } from '../../models/order';
 
 describe('OrderService', () => {
   let service: OrderService;
@@ -77,6 +78,81 @@ describe('OrderService', () => {
 
       const req = httpMock.expectOne(
         environment.apiUrl + 'orders/checkout'
+      );
+      req.flush(errorMessage, {
+        status: 500,
+        statusText: errorMessage,
+      });
+    });
+  });
+
+  describe('myorders', () => {
+    it('should make a GET request to the correct URL and return an Order', () => {
+      const mockOrder: Order = {
+        id: '1',
+        email: 'test@test.com',
+        phoneNumber: '123456789',
+        fullName: 'John Doe',
+        total: 100,
+        address: {
+          line1: '123 Main St',
+          line2: 'Apt 4B',
+          city: 'Boston',
+          state: 'MA',
+          postalCode: '02108',
+        },
+        orderItems: [
+          {
+            price: 50,
+            quantity: 1,
+            productOrdered: {
+              productId: 1,
+              name: 'Product 1',
+              imageUrl: 'http://example.com/product1.jpg',
+            },
+          },
+          {
+            price: 50,
+            quantity: 1,
+            productOrdered: {
+              productId: 2,
+              name: 'Product 2',
+              imageUrl: 'http://example.com/product2.jpg',
+            },
+          },
+        ],
+        history: [
+          {
+            orderId: '1',
+            status: 'Ordered',
+            date: new Date(),
+          },
+        ],
+      };
+
+      service.myorders().subscribe((order) => {
+        expect(order).toEqual(mockOrder);
+      });
+
+      const req = httpMock.expectOne(
+        environment.apiUrl + 'orders/myorders'
+      );
+      expect(req.request.method).toBe('GET');
+      req.flush(mockOrder);
+    });
+
+    it('should handle errors appropriately', () => {
+      const errorMessage = 'Failed to fetch orders';
+
+      service.myorders().subscribe({
+        error: (error) => {
+          expect(error.status).toBe(500);
+          expect(error.statusText).toBe(errorMessage);
+        },
+      });
+
+      const req = httpMock.expectOne(
+        environment.apiUrl + 'orders/myorders'
       );
       req.flush(errorMessage, {
         status: 500,
