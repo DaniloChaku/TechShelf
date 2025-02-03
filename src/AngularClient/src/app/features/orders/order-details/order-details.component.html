@@ -1,0 +1,72 @@
+<h2 mat-dialog-title>Order #{{ order.id }}</h2>
+<mat-dialog-content>
+  <div class="mb-3">
+    <p>
+      <strong>Total:</strong> {{ order.total | currency }}
+    </p>
+    <p>
+      <strong>Status:</strong>
+      {{ order.history.at(-1)?.status }}
+    </p>
+  </div>
+
+  <div class="mb-3">
+    @for (item of order.orderItems; track $index) {
+    <div class="flex justify-between items-center mb-2">
+      <span>
+        <img
+          [src]="item.productOrdered.imageUrl"
+          class="max-h-10 inline-block mr-3" />
+        <span>{{ item.productOrdered.name }}</span>
+      </span>
+      <span
+        >{{ item.quantity }} x
+        {{ item.price | currency }}</span
+      >
+    </div>
+    }
+  </div>
+
+  <div class="mb-3">
+    <h3 class="mb-1 font-semibold">Address</h3>
+    <div class="flex flex-col gap-0.5">
+      <span><em>State:</em> {{ order.address.state }}</span>
+      <span><em>City:</em> {{ order.address.city }}</span>
+      <span
+        ><em>Line 1:</em> {{ order.address.line1 }}</span
+      >
+      @if (order.address.line2) {
+      <span
+        ><em>Line 2:</em> {{ order.address.line2 }}</span
+      >
+      }
+      <span
+        ><em>Postal Code:</em>
+        {{ order.address.postalCode }}</span
+      >
+    </div>
+  </div>
+
+  <div>
+    <h3 class="mb-1 font-semibold">History</h3>
+    <div
+      class="overflow-y-auto max-h-40 border p-2 rounded">
+      @for (entry of order.history; track entry.date) {
+      <div
+        class="border-b pb-2 mb-2 last:border-none last:mb-0 last:pb-0">
+        <p><strong>Status:</strong> {{ entry.status }}</p>
+        <p>
+          <strong>Date:</strong>
+          {{ entry.date | date : 'short' }}
+        </p>
+        @if (entry.notes) {
+        <p><strong>Notes:</strong> {{ entry.notes }}</p>
+        }
+      </div>
+      }
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="close()">Close</button>
+</mat-dialog-actions>

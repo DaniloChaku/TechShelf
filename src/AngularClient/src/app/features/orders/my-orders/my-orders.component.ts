@@ -5,6 +5,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
+import { OrderDetailsComponent } from '../order-details/order-details.component';
 
 @Component({
   selector: 'app-my-orders',
@@ -13,6 +16,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     CurrencyPipe,
     MatCardModule,
     MatPaginatorModule,
+    MatButtonModule,
   ],
   templateUrl: './my-orders.component.html',
   styleUrl: './my-orders.component.css',
@@ -21,6 +25,7 @@ export class MyOrdersComponent {
   private orderService = inject(OrderService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private dialog = inject(MatDialog);
 
   pageSize = 10;
   orders = signal<Order[] | null>(null);
@@ -58,5 +63,12 @@ export class MyOrdersComponent {
     });
 
     this.fetchOrders();
+  }
+
+  openOrderDetails(order: Order) {
+    this.dialog.open(OrderDetailsComponent, {
+      width: '500px',
+      data: order,
+    });
   }
 }
