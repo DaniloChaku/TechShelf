@@ -10,6 +10,10 @@ button.match-input-height {
   height: var(--mat-form-field-container-height) !important;
 }
 
+.mat-mdc-paginator {
+  background-color: white;
+}
+
 .mdc-notched-outline__notch {
   border-right-style: none !important;
 }

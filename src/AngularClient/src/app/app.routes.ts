@@ -8,6 +8,7 @@ import { ProfileComponent } from './features/account/profile/profile.component';
 import { authGuard } from './core/guards/auth/auth.guard';
 import { CheckoutComponent } from './features/checkout/checkout.component';
 import { CheckoutSuccessComponent } from './features/checkout/checkout-success/checkout-success.component';
+import { MyOrdersComponent } from './features/orders/my-orders/my-orders.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -36,5 +37,9 @@ export const routes: Routes = [
   {
     path: 'checkout/success',
     component: CheckoutSuccessComponent,
+  },
+  {
+    path: 'myorders',
+    component: MyOrdersComponent,
   },
 ];

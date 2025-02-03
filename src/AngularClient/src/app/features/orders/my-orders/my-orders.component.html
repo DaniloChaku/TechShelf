@@ -1,0 +1,51 @@
+<div class="mt-28">
+  @if (orders()) {
+  <div class="flex justify-center mb-4">
+    <div class="flex flex-col gap-4">
+      @for (order of orders(); track order.id) {
+      <mat-card>
+        <mat-card-header class="mb-2">
+          <strong>Order #{{ order.id }}</strong>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="mb-3 flex flex-col">
+            <em>{{ order.total | currency }}</em>
+            <em
+              >Status:
+              {{ order.history.at(-1)?.status }}</em
+            >
+          </div>
+          <div class="flex flex-col gap-1">
+            @for (item of order.orderItems; track $index) {
+            <div
+              class="flex justify-between content-center flex-wrap">
+              <span
+                ><img
+                  [src]="item.productOrdered.imageUrl"
+                  class="max-h-10 inline-block" />
+                {{ item.productOrdered.name }}</span
+              >
+              <span class="flex content-center flex-wrap"
+                >{{ item.quantity }} x
+                {{ item.price | currency }}</span
+              >
+            </div>
+            }
+          </div>
+        </mat-card-content>
+      </mat-card>
+      }
+    </div>
+  </div>
+
+  <mat-paginator
+    style="background-color: white"
+    [length]="totalCount()"
+    [pageIndex]="pageIndex() - 1"
+    [pageSize]="pageSize"
+    [showFirstLastButtons]="true"
+    [hidePageSize]="true"
+    (page)="onPageChange($event)"
+    aria-label="Select page"></mat-paginator>
+  }
+</div>
