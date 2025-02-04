@@ -80,6 +80,6 @@ public class CreateOrderCommandHandler : IRequestHandler<CreateOrderCommand, Err
             fullName: request.Name,
             address: shippingAddress,
             orderItems: orderItems,
-            customerId: request.UserId);
+            customerId: request.CustomerId);
     }
 }

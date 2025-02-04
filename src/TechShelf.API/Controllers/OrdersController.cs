@@ -35,27 +35,25 @@ public class OrdersController : BaseApiController
     }
 
     [HttpPost("checkout")]
-    [Authorize(Policy = Policies.AllowAnonymousAndCustomer)]
+    [Authorize(Roles = UserRoles.Customer)]
     public async Task<IActionResult> Checkout(CreateOrderRequest createOrderRequest)
     {
-        var createOrderCommand = new CreateOrderCommand(
+        CreateOrderCommand createOrderCommand;
+
+        var userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+        if (userId is null)
+        {
+            return Unauthorized("Invalid token structure. Please re-login");
+        }
+            
+        createOrderCommand = new CreateOrderCommand(
             createOrderRequest.Email,
             createOrderRequest.PhoneNumber,
             createOrderRequest.Name,
             createOrderRequest.ShippingAddress,
-            createOrderRequest.ShoppingCartItems);
-
-        if (HttpContext.User.Identity?.IsAuthenticated ?? false)
-        {
-            var userId = HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-            if (userId is null)
-            {
-                return Unauthorized("Invalid token structure. Please re-login");
-            }
-            
-            createOrderCommand = createOrderCommand with { UserId = userId };
-        }
+            createOrderRequest.ShoppingCartItems,
+            userId);
 
         var orderResponse = await _mediator.Send(createOrderCommand);
 

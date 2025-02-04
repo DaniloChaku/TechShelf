@@ -10,5 +10,5 @@ public record CreateOrderCommand(
     string Name,
     AddressDto ShippingAddress,
     IEnumerable<ShoppingCartItem> ShoppingCartItems,
-    string? UserId = null)
+    string CustomerId)
     : IRequest<ErrorOr<OrderDto>>;

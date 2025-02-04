@@ -36,5 +36,8 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
         RuleForEach(x => x.ShoppingCartItems)
             .NotEmpty()
             .SetValidator(new ShoppingCartItemValidator());
+
+        RuleFor(x => x.CustomerId)
+            .NotEmpty();
     }
 }

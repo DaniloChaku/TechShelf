@@ -58,7 +58,7 @@ public class CreateOrderCommandHandlerTests
         {
             result.Value.OrderItems.Should().ContainSingle(i => i.ProductOrdered.ProductId == item.ProductId);
         }
-        result.Value.CustomerId.Should().Be(command.UserId);
+        result.Value.CustomerId.Should().Be(command.CustomerId);
 
         _orderRepositoryMock.Verify(
             x => x.Add(It.IsAny<Order>()),

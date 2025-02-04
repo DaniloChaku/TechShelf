@@ -21,13 +21,14 @@ public class Order : Entity<Guid>
     private Order() { } // For EF Core
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
-    public Order(string email, string phoneNumber, string fullName, Address address, IEnumerable<OrderItem> orderItems, string? customerId = null)
+    public Order(string email, string phoneNumber, string fullName, Address address, IEnumerable<OrderItem> orderItems, string customerId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(email);
         ArgumentException.ThrowIfNullOrWhiteSpace(phoneNumber);
         ArgumentException.ThrowIfNullOrWhiteSpace(fullName);
         ArgumentNullException.ThrowIfNull(address);
         ArgumentNullException.ThrowIfNull(orderItems);
+        ArgumentNullException.ThrowIfNull(customerId);
         if (!orderItems.Any())
         {
             throw new ArgumentException("Order must contain at least one item.");

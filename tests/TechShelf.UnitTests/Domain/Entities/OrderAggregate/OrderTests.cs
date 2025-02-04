@@ -5,7 +5,7 @@ namespace TechShelf.UnitTests.Domain.Entities.OrderAggregate;
 
 public class OrderTests
 {
-    private (string email, string phoneNumber, string fullName, Address address, List<OrderItem> orderItems, string? customerId) GetValidOrderData()
+    private (string email, string phoneNumber, string fullName, Address address, List<OrderItem> orderItems, string customerId) GetValidOrderData()
     {
         var email = "test@example.com";
         var phoneNumber = "1234567890";
@@ -41,7 +41,7 @@ public class OrderTests
     }
 
     [Fact]
-    public void Constructor_ThrowsArgumentException_WhenEmailIsInvalid()
+    public void Constructor_ThrowsArgumentNullException_WhenEmailIsInvalid()
     {
         // Arrange
         var (_, phoneNumber, fullName, address, orderItems, customerId) = GetValidOrderData();
@@ -50,11 +50,11 @@ public class OrderTests
         Action act = () => new Order(null!, phoneNumber, fullName, address, orderItems, customerId);
 
         // Assert
-        act.Should().Throw<ArgumentException>().WithMessage("*email*");
+        act.Should().Throw<ArgumentNullException>().WithMessage("*email*");
     }
 
     [Fact]
-    public void Constructor_ThrowsArgumentException_WhenPhoneNumberIsInvalid()
+    public void Constructor_ThrowsArgumentNullException_WhenPhoneNumberIsInvalid()
     {
         // Arrange
         var (email, _, fullName, address, orderItems, customerId) = GetValidOrderData();
@@ -63,11 +63,11 @@ public class OrderTests
         Action act = () => new Order(email, null!, fullName, address, orderItems, customerId);
 
         // Assert
-        act.Should().Throw<ArgumentException>().WithMessage("*phoneNumber*");
+        act.Should().Throw<ArgumentNullException>().WithMessage("*phoneNumber*");
     }
 
     [Fact]
-    public void Constructor_ThrowsArgumentException_WhenFullNameIsInvalid()
+    public void Constructor_ThrowsArgumentNullException_WhenFullNameIsInvalid()
     {
         // Arrange
         var (email, phoneNumber, _, address, orderItems, customerId) = GetValidOrderData();
@@ -76,11 +76,11 @@ public class OrderTests
         Action act = () => new Order(email, phoneNumber, null!, address, orderItems, customerId);
 
         // Assert
-        act.Should().Throw<ArgumentException>().WithMessage("*fullName*");
+        act.Should().Throw<ArgumentNullException>().WithMessage("*fullName*");
     }
 
     [Fact]
-    public void Constructor_ThrowsArgumentException_WhenAddressIsNull()
+    public void Constructor_ThrowsArgumentNullException_WhenAddressIsNull()
     {
         // Arrange
         var (email, phoneNumber, fullName, _, orderItems, customerId) = GetValidOrderData();
@@ -90,6 +90,19 @@ public class OrderTests
 
         // Assert
         act.Should().Throw<ArgumentNullException>().WithMessage("*address*");
+    }
+
+    [Fact]
+    public void Constructor_ThrowsArgumentNullException_WhenOrderItemsIsEmpty()
+    {
+        // Arrange
+        var (email, phoneNumber, fullName, address, orderItems, _) = GetValidOrderData();
+
+        // Act
+        Action act = () => new Order(email, phoneNumber, fullName, address, orderItems, null!);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>().WithMessage("*customerId*");
     }
 
     [Fact]

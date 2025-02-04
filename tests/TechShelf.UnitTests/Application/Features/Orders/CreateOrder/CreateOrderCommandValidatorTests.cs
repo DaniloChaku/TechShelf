@@ -139,6 +139,38 @@ public class CreateOrderCommandValidatorTests
         result.ShouldNotHaveValidationErrorFor(x => x.ShoppingCartItems);
     }
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Validator_HasError_WhenCustomerIdIsInvalid(string? invalidCustomerId)
+    {
+        // Arrange
+        var command = CreateValidOrderCommand() with { CustomerId = invalidCustomerId! };
+
+        // Act
+        var result = _validator.TestValidate(command);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.CustomerId);
+    }
+
+    [Theory]
+    [InlineData("customer123")]
+    [InlineData("1234567890")]
+    [InlineData("s1a3c-231b-134")]
+    public void Validator_HasNoError_WhenCustomerIdIsInvalid(string validCustomerId)
+    {
+        // Arrange
+        var command = CreateValidOrderCommand() with { CustomerId = validCustomerId! };
+
+        // Act
+        var result = _validator.TestValidate(command);
+
+        // Assert
+        result.ShouldNotHaveValidationErrorFor(x => x.CustomerId);
+    }
+
     private static CreateOrderCommand CreateValidOrderCommand() => new(
         Email: "test@example.com",
         PhoneNumber: "+1234567890",
@@ -154,6 +186,6 @@ public class CreateOrderCommandValidatorTests
         [
            new ShoppingCartItem(ProductId: 1, Quantity: 1)
         ],
-        UserId: null
+        CustomerId: "customer_123"
     );
 }

@@ -21,8 +21,6 @@ using TechShelf.Application.Features.Orders.Commands.CreateOrder;
 using TechShelf.Application.Features.Orders.Commands.SetPaymentStatus;
 using TechShelf.Application.Features.Orders.Common.Dtos;
 using TechShelf.Application.Features.Orders.Queries.GetCustomerOrders;
-using TechShelf.Application.Features.Users.Common;
-using TechShelf.Application.Features.Users.Queries.GetUserInfo;
 using TechShelf.Application.Interfaces.Services;
 
 namespace TechShelf.UnitTests.Api.Controllers;
@@ -62,12 +60,12 @@ public class OrdersControllerTests
         _stripeServiceMock
             .Setup(s => s.CreateCheckoutSessionAsync(orderDto))
             .ReturnsAsync(stripeUrl);
-        _controller.ControllerContext = new ControllerContext
-        {
-            HttpContext = new DefaultHttpContext()
-        };
+
+        SetupUserWithNameIdentifier(_fixture.Create<string>());
+
         // Act
         var result = await _controller.Checkout(request);
+
         // Assert
         result.Should().BeOfType<OkObjectResult>();
         var okResult = result as OkObjectResult;
@@ -82,6 +80,7 @@ public class OrdersControllerTests
         // Arrange
         var request = _fixture.Create<CreateOrderRequest>();
         var errors = _fixture.Create<Error>();
+
         _mediatorMock
             .Setup(m => m.Send(It.IsAny<CreateOrderCommand>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(errors);
@@ -89,45 +88,18 @@ public class OrdersControllerTests
         {
             HttpContext = new DefaultHttpContext()
         };
+
+        SetupUserWithNameIdentifier(_fixture.Create<string>());
+
+
         // Act
         var result = await _controller.Checkout(request);
+
         // Assert
         result.Should().BeOfType<ObjectResult>();
         var problemResult = result as ObjectResult;
         problemResult!.Value.Should().BeAssignableTo<ProblemDetails>();
         _mediatorMock.Verify(m => m.Send(It.IsAny<CreateOrderCommand>(), It.IsAny<CancellationToken>()), Times.Once);
-    }
-
-    [Fact]
-    public async Task Checkout_IncludesUserId_WhenUserIsAuthenticated()
-    {
-        // Arrange
-        var request = _fixture.Create<CreateOrderRequest>();
-        var userId = _fixture.Create<string>();
-        var orderDto = _fixture.Create<OrderDto>();
-        var stripeUrl = _fixture.Create<string>();
-        var user = new ClaimsPrincipal(new ClaimsIdentity(
-        [
-            new Claim(ClaimTypes.NameIdentifier, userId)
-        ], "test"));
-        _controller.ControllerContext = new ControllerContext
-        {
-            HttpContext = new DefaultHttpContext { User = user }
-        };
-        _mediatorMock
-            .Setup(m => m.Send(It.IsAny<CreateOrderCommand>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(orderDto);
-        _stripeServiceMock
-            .Setup(s => s.CreateCheckoutSessionAsync(orderDto))
-            .ReturnsAsync(stripeUrl);
-        // Act
-        var result = await _controller.Checkout(request);
-        // Assert
-        result.Should().BeOfType<OkObjectResult>();
-        _mediatorMock.Verify(m => m.Send(
-            It.Is<CreateOrderCommand>(c => c.UserId == userId),
-            It.IsAny<CancellationToken>()),
-            Times.Once);
     }
 
     [Fact]
@@ -149,6 +121,19 @@ public class OrdersControllerTests
         _mediatorMock.Verify(
             m => m.Send(It.IsAny<CreateOrderCommand>(), It.IsAny<CancellationToken>()),
             Times.Never);
+    }
+
+    private void SetupUserWithNameIdentifier(string userId)
+    {
+        var user = new ClaimsPrincipal(new ClaimsIdentity(
+        [
+            new Claim(ClaimTypes.NameIdentifier, userId)
+        ], "test"));
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { User = user }
+        };
     }
 
     [Fact]
