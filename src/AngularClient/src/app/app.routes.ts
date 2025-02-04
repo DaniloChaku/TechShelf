@@ -33,13 +33,16 @@ export const routes: Routes = [
   {
     path: 'checkout',
     component: CheckoutComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'checkout/success',
     component: CheckoutSuccessComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'myorders',
     component: MyOrdersComponent,
+    canActivate: [authGuard],
   },
 ];
