@@ -29,8 +29,6 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
 
         RuleFor(x => x.ShoppingCartItems)
             .NotEmpty()
-            .WithMessage("Order must contain at least one item")
-            .Must(items => items.Any())
             .WithMessage("Order must contain at least one item");
 
         RuleForEach(x => x.ShoppingCartItems)
