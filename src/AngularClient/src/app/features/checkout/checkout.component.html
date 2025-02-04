@@ -51,6 +51,7 @@
 
       <div id="address-element" class="mt-2"></div>
       <button
+        [disabled]="productsInCart.length === 0"
         mat-flat-button
         class="mt-5"
         style="
@@ -64,6 +65,11 @@
       @if (validationErrors()) {
       <div class="text-red-700 mt-2 text-center">
         {{ validationErrors() }}
+      </div>
+      } @if (productsInCart.length === 0) {
+      <div class="text-red-700 mt-2 text-center">
+        Your cart is empty. Add products before placing an
+        order.
       </div>
       }
     </div>
