@@ -88,7 +88,6 @@ export class CartComponent {
     cartItems.forEach((item) => {
       this.productService
         .getProductById(item.productId)
-        .pipe(delay(1000))
         .subscribe({
           next: (product) => {
             const currentProducts = this.loadedProducts();
