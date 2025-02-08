@@ -70,7 +70,11 @@ public class OrdersController : BaseApiController
     [HttpPost("webhook")]
     public async Task<IActionResult> StripeWebhook()
     {
-        var json = await new StreamReader(Request.Body).ReadToEndAsync();
+        string json;
+        using (var reader = new StreamReader(Request.Body))
+        {
+            json = await reader.ReadToEndAsync();
+        }
         StripePaymentResult? paymentResult;
 
         try
@@ -85,7 +89,6 @@ public class OrdersController : BaseApiController
 
         if (paymentResult is not null)
         {
-            // replace with creating an event and processing it in a background job
             var command = new SetPaymentStatusCommand(
                 paymentResult.OrderId,
                 paymentResult.IsSuccessful,
