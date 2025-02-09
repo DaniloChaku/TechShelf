@@ -102,6 +102,8 @@ public class OrdersController : BaseApiController
                     paymentResult.OrderId,
                     paymentResult.IsSuccessful
                 );
+
+                return Problem(response.Errors);
             }
         }
 

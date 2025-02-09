@@ -136,6 +136,8 @@ public class OrdersControllerTests
         };
     }
 
+    #region StripeWebhook
+
     [Fact]
     public async Task StripeWebhook_ReturnsOk_WhenEventIsValid()
     {
@@ -207,7 +209,7 @@ public class OrdersControllerTests
     }
 
     [Fact]
-    public async Task StripeWebhook_LogsError_WhenPaymentStatusUpdateFails()
+    public async Task StripeWebhook_ReturnsError_WhenPaymentStatusUpdateFails()
     {
         // Arrange
         var paymentIntentId = _fixture.Create<string>();
@@ -230,7 +232,9 @@ public class OrdersControllerTests
         var result = await _controller.StripeWebhook();
 
         // Assert
-        result.Should().BeOfType<OkResult>();
+        var objectResult = result.Should().BeOfType<ObjectResult>().Subject;
+        objectResult.Value.Should().BeOfType<ProblemDetails>();
+
         _fakeLogger.Collector.GetSnapshot().Should().Contain(log =>
             log.Level == LogLevel.Error &&
             log.Message.Contains($"Payment status update failed for order {orderId}. Payment success: {paymentSuccess}"));
@@ -251,6 +255,8 @@ public class OrdersControllerTests
 
         _controller.ControllerContext.HttpContext.Request.Headers.Append("Stripe-Signature", "test_signature");
     }
+
+    #endregion
 
     [Fact]
     public async Task GetCustomerOrders_ReturnsOkWithPagedResult_WhenOrdersExist()
