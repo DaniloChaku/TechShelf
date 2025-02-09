@@ -2,7 +2,7 @@
 
 namespace TechShelf.Domain.Entities;
 
-public class Product : Entity<int>
+public class Product : AggregateRoot<int>
 {
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;

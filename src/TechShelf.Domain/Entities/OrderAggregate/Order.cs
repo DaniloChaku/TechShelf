@@ -2,7 +2,7 @@
 
 namespace TechShelf.Domain.Entities.OrderAggregate;
 
-public class Order : Entity<Guid>
+public class Order : AggregateRoot<Guid>
 {
     private readonly List<OrderItem> _orderItems;
     private readonly List<OrderHistoryEntry> _history;
