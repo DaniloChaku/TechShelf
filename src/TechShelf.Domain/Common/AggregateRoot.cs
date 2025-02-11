@@ -1,6 +1,9 @@
 ﻿namespace TechShelf.Domain.Common;
 
-public abstract class AggregateRoot<T> : Entity<T> where T : notnull
+public abstract class AggregateRoot<T> : 
+    Entity<T>, 
+    IAggregateRoot
+    where T : notnull
 {
     private readonly List<IDomainEvent> _domainEvents = [];
 
