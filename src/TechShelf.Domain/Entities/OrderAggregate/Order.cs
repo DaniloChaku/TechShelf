@@ -1,4 +1,5 @@
 ﻿using TechShelf.Domain.Common;
+using TechShelf.Domain.Events;
 
 namespace TechShelf.Domain.Entities.OrderAggregate;
 
@@ -64,5 +65,10 @@ public class Order : AggregateRoot<Guid>
             Id,
             isPaymentSuccessful ? OrderStatus.PaymentSucceeded : OrderStatus.PaymentFailed
         ));
+
+        if (isPaymentSuccessful)
+        {
+            Raise(new OrderPaymentConfirmedDomainEvent(Id, Email));
+        }
     }
 }

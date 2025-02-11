@@ -1,10 +1,14 @@
-﻿using FluentAssertions;
+﻿using AutoFixture;
+using FluentAssertions;
 using TechShelf.Domain.Entities.OrderAggregate;
+using TechShelf.Domain.Events;
 
 namespace TechShelf.UnitTests.Domain.Entities.OrderAggregate;
 
 public class OrderTests
 {
+    private readonly Fixture _fixture = new();
+
     private (string email, string phoneNumber, string fullName, Address address, List<OrderItem> orderItems, string customerId) GetValidOrderData()
     {
         var email = "test@example.com";
@@ -124,7 +128,7 @@ public class OrderTests
         // Arrange
         var (email, phoneNumber, fullName, address, orderItems, customerId) = GetValidOrderData();
         var order = new Order(email, phoneNumber, fullName, address, orderItems, customerId);
-        var paymentIntentId = "pi_123456789";
+        var paymentIntentId = _fixture.Create<string>();
 
         // Act
         order.SetPaymentStatus(true, paymentIntentId);
@@ -141,7 +145,7 @@ public class OrderTests
         // Arrange
         var (email, phoneNumber, fullName, address, orderItems, customerId) = GetValidOrderData();
         var order = new Order(email, phoneNumber, fullName, address, orderItems, customerId);
-        var paymentIntentId = "pi_123456789";
+        var paymentIntentId = _fixture.Create<string>();
 
         // Act
         order.SetPaymentStatus(false, paymentIntentId);
@@ -158,11 +162,11 @@ public class OrderTests
         // Arrange
         var (email, phoneNumber, fullName, address, orderItems, customerId) = GetValidOrderData();
         var order = new Order(email, phoneNumber, fullName, address, orderItems, customerId);
-        var paymentIntentId = "pi_123456789";
+        var paymentIntentId = _fixture.Create<string>();
         order.SetPaymentStatus(true, paymentIntentId);
 
         // Act
-        Action act = () => order.SetPaymentStatus(true, "pi_987654321");
+        Action act = () => order.SetPaymentStatus(true, _fixture.Create<string>());
 
         // Assert
         act.Should().Throw<InvalidOperationException>()
@@ -183,5 +187,23 @@ public class OrderTests
         // Assert
         act.Should().Throw<ArgumentException>()
             .WithMessage("*paymentIntentId*");
+    }
+
+    [Fact]
+    public void SetPaymentStatus_RaisesOrderPaymentConfirmedDomainEvent_WhenPaymentIsSuccessful()
+    {
+        // Arrange
+        var (email, phoneNumber, fullName, address, orderItems, customerId) = GetValidOrderData();
+        var order = new Order(email, phoneNumber, fullName, address, orderItems, customerId);
+        var paymentIntentId = _fixture.Create<string>();
+
+        // Act
+        order.SetPaymentStatus(true, paymentIntentId);
+
+        // Assert
+        var domainEvent = order.DomainEvents.OfType<OrderPaymentConfirmedDomainEvent>().FirstOrDefault();
+        domainEvent.Should().NotBeNull();
+        domainEvent!.OrderId.Should().Be(order.Id);
+        domainEvent.CustomerEmail.Should().Be(email);
     }
 }
