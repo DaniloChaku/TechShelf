@@ -9,6 +9,7 @@ using TechShelf.Application.Interfaces.Auth;
 using TechShelf.Application.Interfaces.Data;
 using TechShelf.Application.Interfaces.Services;
 using TechShelf.Infrastructure.Data;
+using TechShelf.Infrastructure.Data.Interceptors;
 using TechShelf.Infrastructure.Data.Repositories;
 using TechShelf.Infrastructure.Identity;
 using TechShelf.Infrastructure.Identity.Options;
@@ -22,9 +23,11 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<ApplicationDbContext>(options =>
+        services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
         {
-            options.UseNpgsql(configuration.GetConnectionString("Default"));
+            options
+                .UseNpgsql(configuration.GetConnectionString("Default"))
+                .AddInterceptors(serviceProvider.GetRequiredService<DomainEventsToOutboxInterceptor>());
         });
 
         services.AddDbContext<AppIdentityDbContext>(options =>
@@ -46,6 +49,8 @@ public static class DependencyInjection
 
         services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        services.AddScoped<DomainEventsToOutboxInterceptor>();
 
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
         services.AddScoped<ITokenService, JwtService>();
