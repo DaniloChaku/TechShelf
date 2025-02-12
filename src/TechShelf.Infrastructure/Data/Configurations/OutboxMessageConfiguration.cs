@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
+using TechShelf.Infrastructure.Data.Outbox;
 
 namespace TechShelf.Infrastructure.Data.Configurations;
 

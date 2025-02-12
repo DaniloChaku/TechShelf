@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Text.Json;
 using TechShelf.Domain.Common;
+using TechShelf.Infrastructure.Data.Outbox;
 
 namespace TechShelf.Infrastructure.Data.Interceptors;
 

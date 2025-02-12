@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using TechShelf.Infrastructure.Data.Interceptors;
-using TechShelf.Infrastructure.Data;
 using FluentAssertions;
 using TechShelf.Domain.Common;
 using AutoFixture;
 using System.Text.Json;
+using TechShelf.Infrastructure.Data.Outbox;
 
 namespace TechShelf.IntegrationTests.Infrastructure.Data.Interceptors;
 

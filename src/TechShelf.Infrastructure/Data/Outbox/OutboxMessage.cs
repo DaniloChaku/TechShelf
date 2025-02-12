@@ -1,4 +1,4 @@
-﻿namespace TechShelf.Infrastructure.Data;
+﻿namespace TechShelf.Infrastructure.Data.Outbox;
 
 public class OutboxMessage
 {
