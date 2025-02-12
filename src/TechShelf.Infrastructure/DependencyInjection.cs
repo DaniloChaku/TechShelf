@@ -10,6 +10,7 @@ using TechShelf.Application.Interfaces.Data;
 using TechShelf.Application.Interfaces.Services;
 using TechShelf.Infrastructure.Data;
 using TechShelf.Infrastructure.Data.Interceptors;
+using TechShelf.Infrastructure.Data.Outbox;
 using TechShelf.Infrastructure.Data.Repositories;
 using TechShelf.Infrastructure.Identity;
 using TechShelf.Infrastructure.Identity.Options;
@@ -51,6 +52,9 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddScoped<DomainEventsToOutboxInterceptor>();
+        services.AddScoped<IOutboxMessageProcessor, OutboxMessageProcessor>();
+        services.Configure<OutboxOptions>(configuration.GetSection(OutboxOptions.SectionName));
+        services.AddHostedService<OutboxBackgroundService>();
 
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
         services.AddScoped<ITokenService, JwtService>();
