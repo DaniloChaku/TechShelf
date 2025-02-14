@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using SendGrid.Extensions.DependencyInjection;
 using System.Text;
 using TechShelf.Application.Interfaces.Auth;
 using TechShelf.Application.Interfaces.Data;
@@ -16,6 +17,7 @@ using TechShelf.Infrastructure.Identity;
 using TechShelf.Infrastructure.Identity.Options;
 using TechShelf.Infrastructure.Identity.Services;
 using TechShelf.Infrastructure.Options;
+using TechShelf.Infrastructure.Services.SendGrid;
 using TechShelf.Infrastructure.Services.Stripe;
 
 namespace TechShelf.Infrastructure;
@@ -81,6 +83,13 @@ public static class DependencyInjection
 
         services.AddSingleton(TimeProvider.System);
         services.AddScoped<IStripeService, StripeService>();
+
+        services.AddSendGrid(options =>
+        {
+            options.ApiKey = configuration["SendGrid:ApiKey"];
+        });
+        services.AddTransient<IEmailService, SendGridService>();
+        services.Configure<SendGridOptions>(configuration.GetSection(SendGridOptions.SectionName));
 
         IdentityMapsterConfig.Configure();
 
