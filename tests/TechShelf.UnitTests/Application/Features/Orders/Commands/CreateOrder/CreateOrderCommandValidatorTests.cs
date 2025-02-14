@@ -2,7 +2,7 @@
 using TechShelf.Application.Features.Orders.Commands.CreateOrder;
 using TechShelf.Application.Features.Orders.Common.Dtos;
 
-namespace TechShelf.UnitTests.Application.Features.Orders.CreateOrder;
+namespace TechShelf.UnitTests.Application.Features.Orders.Commands.CreateOrder;
 
 public class CreateOrderCommandValidatorTests
 {
@@ -45,7 +45,7 @@ public class CreateOrderCommandValidatorTests
     [InlineData("")]
     [InlineData("123")]
     [InlineData("invalid-phone")]
-    [InlineData("+123456789012345678")] 
+    [InlineData("+123456789012345678")]
     public void Validator_HasError_WhenPhoneNumberIsInvalid(string? invalidPhone)
     {
         // Arrange

@@ -10,7 +10,7 @@ using TechShelf.Domain.Entities.OrderAggregate;
 using TechShelf.Domain.Errors;
 using TechShelf.Domain.Specifications.Products;
 
-namespace TechShelf.UnitTests.Application.Features.Orders.CreateOrder;
+namespace TechShelf.UnitTests.Application.Features.Orders.Commands.CreateOrder;
 
 public class CreateOrderCommandHandlerTests
 {

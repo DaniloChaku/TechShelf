@@ -1,11 +1,11 @@
 ﻿using FluentValidation.TestHelper;
 using TechShelf.Application.Features.Orders.Commands.SetPaymentStatus;
 
-namespace TechShelf.UnitTests.Application.Features.Orders.SetPaymentStatus;
+namespace TechShelf.UnitTests.Application.Features.Orders.Commands.SetPaymentStatus;
 
 public class SetPaymentStatusCommandValidatorTests
 {
-    private readonly SetPaymentStatusCommandValidator _validator = 
+    private readonly SetPaymentStatusCommandValidator _validator =
         new SetPaymentStatusCommandValidator();
 
     [Fact]

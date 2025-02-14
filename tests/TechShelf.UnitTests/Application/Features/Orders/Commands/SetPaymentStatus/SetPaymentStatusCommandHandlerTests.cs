@@ -8,7 +8,7 @@ using TechShelf.Domain.Entities.OrderAggregate;
 using TechShelf.Domain.Errors;
 using TechShelf.Domain.Specifications.Orders;
 
-namespace TechShelf.UnitTests.Application.Features.Orders.SetPaymentStatus;
+namespace TechShelf.UnitTests.Application.Features.Orders.Commands.SetPaymentStatus;
 
 public class SetPaymentStatusCommandHandlerTests
 {

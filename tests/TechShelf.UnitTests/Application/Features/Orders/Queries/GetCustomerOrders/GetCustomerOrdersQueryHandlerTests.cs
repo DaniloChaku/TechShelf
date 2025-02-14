@@ -7,7 +7,7 @@ using TechShelf.Application.Interfaces.Data;
 using TechShelf.Domain.Entities.OrderAggregate;
 using TechShelf.Domain.Specifications.Orders;
 
-namespace TechShelf.UnitTests.Application.Features.Orders.GetCustomerOrders;
+namespace TechShelf.UnitTests.Application.Features.Orders.Queries.GetCustomerOrders;
 
 public class GetCustomerOrdersQueryHandlerTests
 {
