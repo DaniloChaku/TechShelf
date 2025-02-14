@@ -52,7 +52,7 @@ public class DomainEventsToOutboxInterceptorTests : IDisposable
         outboxMessages.Should().HaveCount(1);
 
         var outboxMessage = outboxMessages[0];
-        outboxMessage.Type.Should().Be(nameof(DummyDomainEvent));
+        outboxMessage.Type.Should().Be(typeof(DummyDomainEvent).FullName);
         var deserializedEvent = JsonSerializer.Deserialize<DummyDomainEvent>(outboxMessage.Content);
         deserializedEvent.Should().NotBeNull();
         deserializedEvent!.Message.Should().Be(message);
@@ -109,7 +109,7 @@ public class DomainEventsToOutboxInterceptorTests : IDisposable
         var outboxMessages = await _dbContext.Set<OutboxMessage>().ToListAsync();
         outboxMessages.Should().HaveCount(3);
 
-        outboxMessages.ForEach(msg => msg.Type.Should().Be(nameof(DummyDomainEvent)));
+        outboxMessages.ForEach(msg => msg.Type.Should().Be(typeof(DummyDomainEvent).FullName));
 
         var deserializedEvents = outboxMessages
             .Select(msg => JsonSerializer.Deserialize<DummyDomainEvent>(msg.Content))

@@ -1,8 +1,11 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Reflection;
 using System.Text.Json;
+using TechShelf.Domain.Common;
 
 namespace TechShelf.Infrastructure.Data.Outbox;
 
@@ -37,7 +40,20 @@ public class OutboxMessageProcessor : IOutboxMessageProcessor
         {
             try
             {
-                var eventType = Type.GetType(message.Type);
+#pragma warning disable S6602 // "Find" method should be used instead of the "FirstOrDefault" extension
+                var assemblies = new[]
+                {
+                    typeof(IDomainEvent).Assembly,
+            #if DEBUG || TEST
+                    AppDomain.CurrentDomain.GetAssemblies()
+                        .FirstOrDefault(a => a.GetName().Name!.Contains("IntegrationTests")),
+            #endif
+                };
+#pragma warning restore S6602 // "Find" method should be used instead of the "FirstOrDefault" extension
+
+                var eventType = assemblies
+                    .Select(assembly => assembly?.GetType(message.Type, false))
+                    .FirstOrDefault(t => t != null);
                 if (eventType == null)
                 {
                     throw new InvalidOperationException($"Could not load event type: {message.Type}");

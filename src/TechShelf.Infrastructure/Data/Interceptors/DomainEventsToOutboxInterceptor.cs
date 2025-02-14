@@ -45,7 +45,7 @@ public class DomainEventsToOutboxInterceptor
             .Select(d => new OutboxMessage
             {
                 Id = Guid.NewGuid(),
-                Type = d.GetType().Name,
+                Type = d.GetType().FullName!,
                 Content = JsonSerializer.Serialize(d, d.GetType()),
                 OccurredOn = DateTime.UtcNow,
 

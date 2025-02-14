@@ -57,7 +57,7 @@ public class OutboxMessageProcessorIntegrationTests : IDisposable
         var message = new OutboxMessage
         {
             Id = Guid.NewGuid(),
-            Type = typeof(TestDomainEvent).AssemblyQualifiedName!,
+            Type = typeof(TestDomainEvent).FullName!,
             Content = JsonSerializer.Serialize(testEvent, testEvent.GetType()),
             ProcessedOn = null,
             RetryCount = 0
@@ -153,7 +153,7 @@ public class OutboxMessageProcessorIntegrationTests : IDisposable
         var messages = Enumerable.Range(0, 3).Select(_ => new OutboxMessage
         {
             Id = Guid.NewGuid(),
-            Type = typeof(TestDomainEvent).AssemblyQualifiedName!,
+            Type = typeof(TestDomainEvent).FullName!,
             Content = JsonSerializer.Serialize(new TestDomainEvent
             {
                 Id = Guid.NewGuid(),
