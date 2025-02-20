@@ -26,6 +26,23 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddDatabaseServices(configuration)
+            .AddOutboxServices(configuration)
+            .AddRepositoryServices()
+            .AddAuthenticationServices(configuration)
+            .AddUserServices()
+            .AddPaymentServices(configuration)
+            .AddEmailServices(configuration)
+            .AddTimeServices()
+            .AddIdentityServices(configuration);
+
+        return services;
+    }
+
+    private static IServiceCollection AddDatabaseServices(
+       this IServiceCollection services,
+       IConfiguration configuration)
+    {
         services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
         {
             options
@@ -33,31 +50,34 @@ public static class DependencyInjection
                 .AddInterceptors(serviceProvider.GetRequiredService<DomainEventsToOutboxInterceptor>());
         });
 
-        services.AddDbContext<AppIdentityDbContext>(options =>
-        {
-            options.UseNpgsql(configuration.GetConnectionString("Default"));
-        });
+        return services;
+    }
 
-        services.AddIdentityCore<ApplicationUser>(options =>
-        {
-            options.User.RequireUniqueEmail = true;
-            options.Password.RequiredLength = 8;
-            options.Password.RequireNonAlphanumeric = true;
-            options.Password.RequireUppercase = true;
-            options.Password.RequireLowercase = true;
-            options.Password.RequireDigit = true;
-        })
-            .AddRoles<IdentityRole>()
-            .AddEntityFrameworkStores<AppIdentityDbContext>();
-
-        services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
-
+    private static IServiceCollection AddOutboxServices(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
         services.AddScoped<DomainEventsToOutboxInterceptor>();
         services.AddScoped<IOutboxMessageProcessor, OutboxMessageProcessor>();
         services.Configure<OutboxOptions>(configuration.GetSection(OutboxOptions.SectionName));
         services.AddHostedService<OutboxBackgroundService>();
 
+        return services;
+    }
+
+    private static IServiceCollection AddRepositoryServices(
+        this IServiceCollection services)
+    {
+        services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddAuthenticationServices(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
         services.AddScoped<ITokenService, JwtService>();
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -75,21 +95,71 @@ public static class DependencyInjection
             });
         services.AddAuthorization();
 
-        services.Configure<AdminOptions>(configuration.GetSection(AdminOptions.SectionName));
-        services.AddScoped<IdentitySeeder>();
-        services.AddScoped<IUserService ,UserService>();
+        return services;
+    }
 
+    private static IServiceCollection AddUserServices(
+        this IServiceCollection services)
+    {
+        services.AddScoped<IUserService, UserService>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddPaymentServices(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
         services.Configure<StripeOptions>(configuration.GetSection(StripeOptions.SectionName));
-
-        services.AddSingleton(TimeProvider.System);
         services.AddScoped<IStripeService, StripeService>();
 
+        return services;
+    }
+
+    private static IServiceCollection AddEmailServices(
+       this IServiceCollection services,
+       IConfiguration configuration)
+    {
         services.AddSendGrid(options =>
         {
             options.ApiKey = configuration["SendGrid:ApiKey"];
         });
         services.AddTransient<IEmailService, SendGridService>();
         services.Configure<SendGridOptions>(configuration.GetSection(SendGridOptions.SectionName));
+
+        return services;
+    }
+
+    private static IServiceCollection AddTimeServices(this IServiceCollection services)
+    {
+        services.AddSingleton(TimeProvider.System);
+
+        return services;
+    }
+
+    private static IServiceCollection AddIdentityServices(
+       this IServiceCollection services,
+       IConfiguration configuration)
+    {
+        services.AddDbContext<AppIdentityDbContext>(options =>
+        {
+            options.UseNpgsql(configuration.GetConnectionString("Default"));
+        });
+
+        services.AddIdentityCore<ApplicationUser>(options =>
+        {
+            options.User.RequireUniqueEmail = true;
+            options.Password.RequiredLength = 8;
+            options.Password.RequireNonAlphanumeric = true;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireDigit = true;
+        })
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<AppIdentityDbContext>();
+
+        services.Configure<AdminOptions>(configuration.GetSection(AdminOptions.SectionName));
+        services.AddScoped<IdentitySeeder>();
 
         IdentityMapsterConfig.Configure();
 
