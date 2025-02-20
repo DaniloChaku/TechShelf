@@ -31,17 +31,19 @@ public class JwtService : ITokenService
     public async Task<ErrorOr<string>> GetTokenAsync(string email)
     {
         var user = await _userManager.FindByEmailAsync(email);
-
-        if (user == null)
+        if (user is null)
         {
             return UserErrors.NotFound(email);
         }
 
-        var signingCredentials = new SigningCredentials(
-            new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_jwtOptions.SecretKey)),
-            SecurityAlgorithms.HmacSha256);
+        var claims = await CreateUserClaimsAsync(user);
+        var token = CreateSecurityToken(claims);
 
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    private async Task<List<Claim>> CreateUserClaimsAsync(ApplicationUser user)
+    {
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, user.Id),
@@ -51,20 +53,35 @@ public class JwtService : ITokenService
         };
 
         var roles = await _userManager.GetRolesAsync(user);
+        var roleClaims = roles.Select(role => new Claim(ClaimTypes.Role, role));
+        claims.AddRange(roleClaims);
 
-        foreach (var role in roles)
-        {
-            claims.Add(new (ClaimTypes.Role, role));
-        }
+        return claims;
+    }
 
-        var securityToken = new JwtSecurityToken(
+    private JwtSecurityToken CreateSecurityToken(IEnumerable<Claim> claims)
+    {
+        var signingCredentials = CreateSigningCredentials();
+        var expirationTime = _timeProvider.GetUtcNow()
+            .UtcDateTime
+            .AddMinutes(_jwtOptions.ExpiresInMinutes);
+
+        return new JwtSecurityToken(
             issuer: _jwtOptions.Issuer,
             audience: _jwtOptions.Audience,
-            expires: _timeProvider.GetUtcNow().UtcDateTime.AddMinutes(_jwtOptions.ExpiresInMinutes),
+            expires: expirationTime,
             claims: claims,
             signingCredentials: signingCredentials);
+    }
 
-        return new JwtSecurityTokenHandler().WriteToken(securityToken);
+    private SigningCredentials CreateSigningCredentials()
+    {
+        var key = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(_jwtOptions.SecretKey));
+
+        return new SigningCredentials(
+            key,
+            SecurityAlgorithms.HmacSha256);
     }
 
     public async Task<ErrorOr<string>> GetRefreshTokenAsync(string email)
