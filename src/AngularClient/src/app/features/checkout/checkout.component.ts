@@ -160,7 +160,7 @@ export class CheckoutComponent
 
     const address = addressElementValues.value.address;
 
-    var request: CreateOrderRequest = {
+    const request: CreateOrderRequest = {
       name: addressElementValues.value.name,
       email: this.checkoutForm.value.email!,
       phoneNumber: addressElementValues.value.phone!,
