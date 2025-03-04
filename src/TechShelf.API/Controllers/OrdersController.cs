@@ -33,7 +33,8 @@ public class OrdersController : BaseApiController
 
     [HttpPost("checkout")]
     [Authorize(Roles = UserRoles.Customer)]
-    public async Task<IActionResult> Checkout(CreateOrderRequest createOrderRequest)
+    public async Task<IActionResult> Checkout(CreateOrderRequest createOrderRequest, 
+        CancellationToken cancellationToken = default)
     {
         CreateOrderCommand createOrderCommand;
 
@@ -52,7 +53,7 @@ public class OrdersController : BaseApiController
             createOrderRequest.ShoppingCartItems,
             userId);
 
-        var orderResponse = await _mediator.Send(createOrderCommand);
+        var orderResponse = await _mediator.Send(createOrderCommand, cancellationToken);
 
         if (orderResponse.IsError)
         {
@@ -115,10 +116,11 @@ public class OrdersController : BaseApiController
     public async Task<IActionResult> GetCustomerOrders(
         string customerId,
         [FromQuery] int pageIndex,
-        [FromQuery] int pageSize)
+        [FromQuery] int pageSize,
+        CancellationToken cancellationToken = default)
     {
         var query = new GetCustomerOrdersQuery(customerId, pageIndex, pageSize);
-        var orders = await _mediator.Send(query);
+        var orders = await _mediator.Send(query, cancellationToken);
 
         return orders.Match(Ok, Problem);
     }
@@ -130,7 +132,8 @@ public class OrdersController : BaseApiController
     [ProducesResponseType(statusCode: StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> GetMyOrders(
             [FromQuery] int pageIndex,
-            [FromQuery] int pageSize)
+            [FromQuery] int pageSize, 
+            CancellationToken cancellationToken = default)
     {
         var customerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrEmpty(customerId))
@@ -139,7 +142,7 @@ public class OrdersController : BaseApiController
         }
 
         var query = new GetCustomerOrdersQuery(customerId, pageIndex, pageSize);
-        var orders = await _mediator.Send(query);
+        var orders = await _mediator.Send(query, cancellationToken);
 
         return orders.Match(Ok, Problem);
     }

@@ -15,10 +15,10 @@ public class CategoriesController : BaseApiController
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<CategoryDto>>> GetAll()
+    public async Task<ActionResult<List<CategoryDto>>> GetAll(CancellationToken cancellationToken = default)
     {
         var query = new GetAllCategoriesQuery();
-        var categories = await _mediator.Send(query);
+        var categories = await _mediator.Send(query, cancellationToken);
 
         return categories;
     }

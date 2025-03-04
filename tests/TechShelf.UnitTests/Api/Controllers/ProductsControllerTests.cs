@@ -33,9 +33,10 @@ public class ProductsControllerTests
         // Arrange
         var request = _fixture.Create<SearchProductsRequest>();
         var expectedPagedResult = _fixture.Create<PagedResult<ProductDto>>();
+        var cancellationToken = new CancellationToken();
 
         _mediatorMock
-            .Setup(m => m.Send(It.IsAny<SearchProductsQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m => m.Send(It.IsAny<SearchProductsQuery>(), cancellationToken))
             .ReturnsAsync(expectedPagedResult);
 
         // Act
@@ -46,7 +47,7 @@ public class ProductsControllerTests
         var okResult = result as OkObjectResult;
         okResult!.Value.Should().BeEquivalentTo(expectedPagedResult);
 
-        _mediatorMock.Verify(m => m.Send(It.IsAny<SearchProductsQuery>(), It.IsAny<CancellationToken>()), Times.Once);
+        _mediatorMock.Verify(m => m.Send(It.IsAny<SearchProductsQuery>(), cancellationToken), Times.Once);
     }
 
     [Fact]

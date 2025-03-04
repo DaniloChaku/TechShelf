@@ -31,11 +31,12 @@ public class UsersController : BaseApiController
     [HttpPost("register")]
     [ProducesResponseType(statusCode: StatusCodes.Status200OK, type: typeof(TokenResponse))]
     [ProducesResponseType(statusCode: StatusCodes.Status400BadRequest, type: typeof(ValidationProblemDetails))]
-    public async Task<IActionResult> RegisterCustomer([FromBody] RegisterCustomerRequest request)
+    public async Task<IActionResult> RegisterCustomer([FromBody] RegisterCustomerRequest request, 
+        CancellationToken cancellationToken = default)
     {
         var command = request.Adapt<RegisterCustomerCommand>();
 
-        var result = await _mediator.Send(command);
+        var result = await _mediator.Send(command, cancellationToken);
 
         return result.Match(
             tokens =>
@@ -50,11 +51,12 @@ public class UsersController : BaseApiController
     [ProducesResponseType(statusCode: StatusCodes.Status200OK, type: typeof(TokenResponse))]
     [ProducesResponseType(statusCode: StatusCodes.Status400BadRequest, type: typeof(ValidationProblemDetails))]
     [ProducesResponseType(statusCode: StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> Login([FromBody] LoginRequest request)
+    public async Task<IActionResult> Login([FromBody] LoginRequest request, 
+        CancellationToken cancellationToken = default)
     {
         var command = request.Adapt<LoginCommand>();
 
-        var result = await _mediator.Send(command);
+        var result = await _mediator.Send(command, cancellationToken);
 
         return result.Match(
             tokens =>
@@ -69,7 +71,7 @@ public class UsersController : BaseApiController
     [ProducesResponseType(statusCode: StatusCodes.Status200OK, type: typeof(TokenResponse))]
     [ProducesResponseType(statusCode: StatusCodes.Status400BadRequest, type: typeof(ValidationProblemDetails))]
     [ProducesResponseType(statusCode: StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> RefreshToken()
+    public async Task<IActionResult> RefreshToken(CancellationToken cancellationToken = default)
     {
         var refreshToken = Request.Cookies[Cookies.RefreshToken];
         if (string.IsNullOrEmpty(refreshToken))
@@ -83,7 +85,7 @@ public class UsersController : BaseApiController
             return Unauthorized();
         }
 
-        var result = await _mediator.Send(new RefreshTokenCommand(email, refreshToken));
+        var result = await _mediator.Send(new RefreshTokenCommand(email, refreshToken), cancellationToken);
 
         return result.Match(
             tokens =>
@@ -98,7 +100,7 @@ public class UsersController : BaseApiController
     [HttpGet("me")]
     [ProducesResponseType(statusCode: StatusCodes.Status200OK, type: typeof(UserDto))]
     [ProducesResponseType(statusCode: StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> GetCurrentUser()
+    public async Task<IActionResult> GetCurrentUser(CancellationToken cancellationToken = default)
     {
         var email = User.FindFirstValue(ClaimTypes.Email);
         if (email is null)
@@ -107,7 +109,7 @@ public class UsersController : BaseApiController
         }
 
         var query = new GetUserInfoQuery(email);
-        var result = await _mediator.Send(query);
+        var result = await _mediator.Send(query, cancellationToken);
 
         return result.Match(
             user => Ok(user),

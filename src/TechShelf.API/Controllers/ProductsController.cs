@@ -22,10 +22,10 @@ public class ProductsController : BaseApiController
     [ProducesResponseType(statusCode: StatusCodes.Status200OK, type: typeof(PagedResult<ProductDto>))]
     [ProducesResponseType(statusCode: StatusCodes.Status400BadRequest, type: typeof(ValidationProblemDetails))]
     public async Task<IActionResult> SearchProducts(
-        [FromQuery] SearchProductsRequest request)
+        [FromQuery] SearchProductsRequest request, CancellationToken cancellationToken = default)
     {
         var query = request.Adapt<SearchProductsQuery>();
-        var result = await _mediator.Send(query);
+        var result = await _mediator.Send(query, cancellationToken);
 
         return result.Match(
             products => Ok(products),
@@ -35,10 +35,10 @@ public class ProductsController : BaseApiController
     [HttpGet("{id:int}")]
     [ProducesResponseType(statusCode: StatusCodes.Status200OK, type: typeof(PagedResult<ProductDto>))]
     [ProducesResponseType(statusCode: StatusCodes.Status404NotFound, type: typeof(ProblemDetails))]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById(int id, CancellationToken cancellationToken = default)
     {
         var query = new GetProductByIdQuery(id);
-        var result = await _mediator.Send(query);
+        var result = await _mediator.Send(query, cancellationToken);
 
         return result.Match(
             product => Ok(product),

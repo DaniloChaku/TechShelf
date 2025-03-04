@@ -26,9 +26,10 @@ public class CategoriesControllerTests
     {
         // Arrange
         var expectedCategories = _fixture.CreateMany<CategoryDto>(5).ToList();
+        var cancellationToken = new CancellationToken();
 
         _mediatorMock
-            .Setup(m => m.Send(It.IsAny<GetAllCategoriesQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m => m.Send(It.IsAny<GetAllCategoriesQuery>(), cancellationToken))
             .ReturnsAsync(expectedCategories);
 
         // Act
@@ -37,6 +38,6 @@ public class CategoriesControllerTests
         // Assert
         result.Value.Should().BeEquivalentTo(expectedCategories);
 
-        _mediatorMock.Verify(m => m.Send(It.IsAny<GetAllCategoriesQuery>(), It.IsAny<CancellationToken>()), Times.Once);
+        _mediatorMock.Verify(m => m.Send(It.IsAny<GetAllCategoriesQuery>(), cancellationToken), Times.Once);
     }
 }

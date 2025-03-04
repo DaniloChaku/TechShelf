@@ -48,9 +48,10 @@ public class UsersControllerTests
         var token = _fixture.Create<string>();
         var refreshToken = _fixture.Create<string>();
         var expectedTokenResponse = new TokenResponse(token);
+        var cancellationToken = new CancellationToken();
 
         _mediatorMock
-            .Setup(m => m.Send(It.IsAny<RegisterCustomerCommand>(), It.IsAny<CancellationToken>()))
+            .Setup(m => m.Send(It.IsAny<RegisterCustomerCommand>(), cancellationToken))
             .ReturnsAsync(new TokenDto(token, refreshToken));
 
         var httpContext = new DefaultHttpContext();
@@ -68,7 +69,8 @@ public class UsersControllerTests
         var okResult = result as OkObjectResult;
         okResult!.Value.Should().BeEquivalentTo(expectedTokenResponse);
 
-        _mediatorMock.Verify(m => m.Send(It.IsAny<RegisterCustomerCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+        _mediatorMock.Verify(m => m.Send(It.IsAny<RegisterCustomerCommand>(), cancellationToken), 
+            Times.Once);
 
         VerifyRefreshTokenBeingSet(httpContext);
     }
@@ -107,9 +109,10 @@ public class UsersControllerTests
         var token = _fixture.Create<string>();
         var refreshToken = _fixture.Create<string>();
         var expectedTokenResponse = new TokenResponse(token);
+        var cancellationToken = new CancellationToken();
 
         _mediatorMock
-            .Setup(m => m.Send(It.IsAny<LoginCommand>(), It.IsAny<CancellationToken>()))
+            .Setup(m => m.Send(It.IsAny<LoginCommand>(), cancellationToken))
             .ReturnsAsync(new TokenDto(token, refreshToken));
 
         var httpContext = new DefaultHttpContext();
@@ -127,7 +130,7 @@ public class UsersControllerTests
         var okResult = result as OkObjectResult;
         okResult!.Value.Should().BeEquivalentTo(expectedTokenResponse);
 
-        _mediatorMock.Verify(m => m.Send(It.IsAny<LoginCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+        _mediatorMock.Verify(m => m.Send(It.IsAny<LoginCommand>(), cancellationToken), Times.Once);
 
         VerifyRefreshTokenBeingSet(httpContext);
     }
@@ -164,7 +167,7 @@ public class UsersControllerTests
         };
 
         // Act
-        Func<Task> act = _controller.GetCurrentUser;
+        var act = () => _controller.GetCurrentUser();
 
         // Assert
         await act.Should().ThrowAsync<InvalidOperationException>()
@@ -177,6 +180,7 @@ public class UsersControllerTests
         // Arrange
         var email = _fixture.Create<string>();
         var userDto = _fixture.Create<UserDto>();
+        var cancellationToken = new CancellationToken();
         var user = new ClaimsPrincipal(new ClaimsIdentity(
         [
             new Claim(ClaimTypes.Email, email)
@@ -188,7 +192,7 @@ public class UsersControllerTests
         };
 
         _mediatorMock
-            .Setup(m => m.Send(It.IsAny<GetUserInfoQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m => m.Send(It.IsAny<GetUserInfoQuery>(), cancellationToken))
             .ReturnsAsync(userDto);
 
         // Act
@@ -237,6 +241,7 @@ public class UsersControllerTests
         var token = GetTestJwt(email);
         var refreshToken = _fixture.Create<string>();
         var expectedTokenResponse = new TokenResponse(token);
+        var cancellationToken = new CancellationToken();
 
         var authHeader = $"Bearer {token}";
 
@@ -260,7 +265,7 @@ public class UsersControllerTests
         };
 
         _mediatorMock
-            .Setup(m => m.Send(It.IsAny<RefreshTokenCommand>(), It.IsAny<CancellationToken>()))
+            .Setup(m => m.Send(It.IsAny<RefreshTokenCommand>(), cancellationToken))
             .ReturnsAsync(new TokenDto(token, refreshToken));
 
         // Act
@@ -271,7 +276,7 @@ public class UsersControllerTests
         var okResult = result as OkObjectResult;
         okResult!.Value.Should().BeEquivalentTo(expectedTokenResponse);
 
-        _mediatorMock.Verify(m => m.Send(It.IsAny<RefreshTokenCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+        _mediatorMock.Verify(m => m.Send(It.IsAny<RefreshTokenCommand>(), cancellationToken), Times.Once);
 
         VerifyRefreshTokenBeingSet(httpContext);
     }

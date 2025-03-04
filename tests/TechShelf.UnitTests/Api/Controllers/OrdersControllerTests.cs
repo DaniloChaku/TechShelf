@@ -52,8 +52,10 @@ public class OrdersControllerTests
         var orderDto = _fixture.Create<OrderDto>();
         var stripeUrl = _fixture.Create<string>();
         var expectedResponse = new StripeRedirectionResponse(stripeUrl);
+        var cancellationToken = new CancellationToken();
+
         _mediatorMock
-            .Setup(m => m.Send(It.IsAny<CreateOrderCommand>(), It.IsAny<CancellationToken>()))
+            .Setup(m => m.Send(It.IsAny<CreateOrderCommand>(), cancellationToken))
             .ReturnsAsync(orderDto);
         _stripeServiceMock
             .Setup(s => s.CreateCheckoutSessionAsync(orderDto))
@@ -68,7 +70,7 @@ public class OrdersControllerTests
         result.Should().BeOfType<OkObjectResult>();
         var okResult = result as OkObjectResult;
         okResult!.Value.Should().BeEquivalentTo(expectedResponse);
-        _mediatorMock.Verify(m => m.Send(It.IsAny<CreateOrderCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+        _mediatorMock.Verify(m => m.Send(It.IsAny<CreateOrderCommand>(), cancellationToken), Times.Once);
         _stripeServiceMock.Verify(s => s.CreateCheckoutSessionAsync(orderDto), Times.Once);
     }
 
@@ -266,13 +268,14 @@ public class OrdersControllerTests
         var customerId = _fixture.Create<string>();
         var orders = _fixture.CreateMany<OrderDto>(Math.Min(pageSize, totalCount)).ToList();
         var pagedResult = new PagedResult<OrderDto>(orders, totalCount, pageIndex, pageSize);
+        var cancellationToken = new CancellationToken();
 
         _mediatorMock
             .Setup(m => m.Send(It.Is<GetCustomerOrdersQuery>(q =>
                 q.CustomerId == customerId &&
                 q.PageIndex == pageIndex &&
                 q.PageSize == pageSize),
-                It.IsAny<CancellationToken>()))
+                cancellationToken))
             .ReturnsAsync(pagedResult);
 
         // Act
@@ -287,7 +290,7 @@ public class OrdersControllerTests
         returnedPagedResult.PageIndex.Should().Be(pageIndex);
         returnedPagedResult.PageSize.Should().Be(pageSize);
 
-        _mediatorMock.Verify(m => m.Send(It.IsAny<GetCustomerOrdersQuery>(), It.IsAny<CancellationToken>()), Times.Once);
+        _mediatorMock.Verify(m => m.Send(It.IsAny<GetCustomerOrdersQuery>(), cancellationToken), Times.Once);
     }
 
     [Fact]
@@ -395,6 +398,7 @@ public class OrdersControllerTests
         var pageSize = _fixture.Create<int>();
         var totalCount = _fixture.Create<int>();
         var customerId = _fixture.Create<string>();
+        var cancellationToken = new CancellationToken();
 
         var orders = _fixture.CreateMany<OrderDto>(Math.Min(pageSize, totalCount)).ToList();
         var pagedResult = new PagedResult<OrderDto>(orders, totalCount, pageIndex, pageSize);
@@ -406,7 +410,7 @@ public class OrdersControllerTests
                 q.CustomerId == customerId &&
                 q.PageIndex == pageIndex &&
                 q.PageSize == pageSize),
-                It.IsAny<CancellationToken>()))
+                cancellationToken))
             .ReturnsAsync(pagedResult);
 
         // Act

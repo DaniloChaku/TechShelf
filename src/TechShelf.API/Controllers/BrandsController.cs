@@ -15,7 +15,7 @@ public class BrandsController : BaseApiController
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<BrandDto>>> GetAll()
+    public async Task<ActionResult<List<BrandDto>>> GetAll(CancellationToken cancellationToken = default)
     {
         var query = new GetAllBrandsQuery();
         var brands = await _mediator.Send(query);

@@ -26,9 +26,10 @@ public class BrandsControllerTests
     {
         // Arrange
         var expectedBrands = _fixture.CreateMany<BrandDto>().ToList();
+        var cancellationToken = new CancellationToken();
 
         _mediatorMock
-            .Setup(m => m.Send(It.IsAny<GetAllBrandsQuery>(), It.IsAny<CancellationToken>()))
+            .Setup(m => m.Send(It.IsAny<GetAllBrandsQuery>(), cancellationToken))
             .ReturnsAsync(expectedBrands);
 
         // Act
@@ -37,6 +38,6 @@ public class BrandsControllerTests
         // Assert
         result.Value.Should().BeEquivalentTo(expectedBrands);
 
-        _mediatorMock.Verify(m => m.Send(It.IsAny<GetAllBrandsQuery>(), It.IsAny<CancellationToken>()), Times.Once);
+        _mediatorMock.Verify(m => m.Send(It.IsAny<GetAllBrandsQuery>(), cancellationToken), Times.Once);
     }
 }
