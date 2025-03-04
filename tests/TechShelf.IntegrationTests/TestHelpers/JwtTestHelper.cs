@@ -1,14 +1,12 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using System;
 using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using TechShelf.API.Common.Http;
-using TechShelf.Domain.Errors;
 using TechShelf.Infrastructure.Identity;
 
 namespace TechShelf.IntegrationTests.TestHelpers;

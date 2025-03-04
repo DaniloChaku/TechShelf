@@ -36,8 +36,9 @@ public class DomainEventsToOutboxInterceptor
             .ToList();
 
         var domainEvents = aggregates
-            .SelectMany(a => {
-                List<IDomainEvent> domainEvents = [..a.DomainEvents];
+            .SelectMany(a =>
+            {
+                List<IDomainEvent> domainEvents = [.. a.DomainEvents];
                 a.ClearDomainEvents();
 
                 return domainEvents;

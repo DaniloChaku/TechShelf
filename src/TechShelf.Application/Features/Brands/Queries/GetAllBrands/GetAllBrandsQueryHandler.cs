@@ -1,7 +1,6 @@
 ﻿using Mapster;
 using MediatR;
 using TechShelf.Application.Features.Brands.Queries.Shared;
-using TechShelf.Application.Features.Categories.Queries.Shared;
 using TechShelf.Application.Interfaces.Data;
 using TechShelf.Domain.Entities;
 

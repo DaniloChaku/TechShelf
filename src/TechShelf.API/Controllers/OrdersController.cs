@@ -2,9 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using TechShelf.API.Common;
 using TechShelf.API.Common.Requests.Orders;
 using TechShelf.API.Common.Responses;
 using TechShelf.Application.Common.Pagination;
@@ -12,7 +10,6 @@ using TechShelf.Application.Features.Orders.Commands.CreateOrder;
 using TechShelf.Application.Features.Orders.Commands.SetPaymentStatus;
 using TechShelf.Application.Features.Orders.Common.Dtos;
 using TechShelf.Application.Features.Orders.Queries.GetCustomerOrders;
-using TechShelf.Application.Features.Users.Queries.GetUserInfo;
 using TechShelf.Application.Interfaces.Services;
 using TechShelf.Domain.Common;
 
@@ -46,7 +43,7 @@ public class OrdersController : BaseApiController
         {
             return Unauthorized("Invalid token structure. Please re-login");
         }
-            
+
         createOrderCommand = new CreateOrderCommand(
             createOrderRequest.Email,
             createOrderRequest.PhoneNumber,
@@ -116,8 +113,8 @@ public class OrdersController : BaseApiController
     [ProducesResponseType(statusCode: StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(statusCode: StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> GetCustomerOrders(
-        string customerId, 
-        [FromQuery] int pageIndex, 
+        string customerId,
+        [FromQuery] int pageIndex,
         [FromQuery] int pageSize)
     {
         var query = new GetCustomerOrdersQuery(customerId, pageIndex, pageSize);

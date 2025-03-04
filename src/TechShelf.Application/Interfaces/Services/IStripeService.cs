@@ -6,6 +6,6 @@ public interface IStripeService
 {
     Task<string> CreateCheckoutSessionAsync(OrderDto order);
     StripePaymentResult? HandleStripeEvent(string json, string signature);
-} 
+}
 
 public record StripePaymentResult(Guid OrderId, bool IsSuccessful, string PaymentIntentId);

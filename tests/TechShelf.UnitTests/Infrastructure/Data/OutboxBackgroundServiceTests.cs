@@ -1,5 +1,4 @@
-﻿using AutoFixture;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Testing;
 using Microsoft.Extensions.Options;
@@ -55,7 +54,7 @@ public class OutboxBackgroundServiceTests
         var executeTask = service.StartAsync(cts.Token);
         await Task.Delay(500);
         await cts.CancelAsync();
-        await executeTask; 
+        await executeTask;
 
         // Assert
         _outboxProcessorMock.Verify(p => p.ExecuteAsync(It.IsAny<CancellationToken>()), Times.AtLeast(2));

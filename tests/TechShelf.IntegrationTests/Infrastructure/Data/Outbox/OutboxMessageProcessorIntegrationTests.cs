@@ -1,13 +1,13 @@
-﻿using MediatR;
+﻿using FluentAssertions;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TechShelf.Infrastructure.Data.Outbox;
-using TechShelf.Infrastructure.Data;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Testing;
 using System.Text.Json;
-using FluentAssertions;
-using Microsoft.Extensions.Logging;
+using TechShelf.Infrastructure.Data;
+using TechShelf.Infrastructure.Data.Outbox;
 
 namespace TechShelf.IntegrationTests.Infrastructure.Data.Outbox;
 

@@ -5,7 +5,6 @@ using Moq;
 using TechShelf.Application.Features.Users.Common;
 using TechShelf.Application.Features.Users.Queries.GetUserInfo;
 using TechShelf.Application.Interfaces.Auth;
-using TechShelf.Domain.Errors;
 
 namespace TechShelf.UnitTests.Application.Features.Users.GetUserInfo;
 

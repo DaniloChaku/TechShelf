@@ -20,7 +20,7 @@ public class OutboxBackgroundService : BackgroundService
         _logger = logger;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell",
         "S6667:Logging in a catch clause should pass the caught exception as a parameter.")]
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {

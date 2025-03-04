@@ -14,7 +14,7 @@ public class ShoppingCartItemValidator : AbstractValidator<ShoppingCartItem>
         RuleFor(x => x.Quantity)
             .GreaterThan(0)
             .WithMessage("Quantity must be greater than 0")
-            .LessThanOrEqualTo(100) 
+            .LessThanOrEqualTo(100)
             .WithMessage("Quantity cannot exceed 100 items");
     }
 }

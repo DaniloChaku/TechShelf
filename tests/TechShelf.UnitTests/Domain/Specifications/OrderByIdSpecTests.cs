@@ -1,6 +1,5 @@
 ﻿using AutoFixture;
 using FluentAssertions;
-using TechShelf.Domain.Entities;
 using TechShelf.Domain.Entities.OrderAggregate;
 using TechShelf.Domain.Specifications.Orders;
 
@@ -18,7 +17,7 @@ public class OrderByIdSpecTests
             .FromFactory(() => new Address(
                 _fixture.Create<string>(),
                 _fixture.Create<string>(),
-                _fixture.Create<string>(), 
+                _fixture.Create<string>(),
                 _fixture.Create<string>(),
                 _fixture.Create<string>()
             )));

@@ -1,18 +1,18 @@
-﻿using System.Net.Http.Json;
-using System.Net;
-using TechShelf.API.Common.Requests.Users;
-using TechShelf.IntegrationTests.TestHelpers;
-using TechShelf.API.Common.Responses;
-using FluentAssertions;
+﻿using FluentAssertions;
+using Mapster;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using System.Net;
 using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using TechShelf.API.Common.Http;
+using TechShelf.API.Common.Requests.Users;
+using TechShelf.API.Common.Responses;
 using TechShelf.Application.Features.Users.Common;
 using TechShelf.Domain.Common;
-using TechShelf.API.Common.Http;
-using Mapster;
 using TechShelf.Infrastructure.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Identity;
+using TechShelf.IntegrationTests.TestHelpers;
 using TechShelf.IntegrationTests.TestHelpers.TestData;
 
 namespace TechShelf.IntegrationTests.Api.Controllers;
@@ -184,7 +184,7 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
     {
         // Arrange
         var client = _factory.CreateClient();
-        client.DefaultRequestHeaders.Authorization = 
+        client.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", "invalid-token");
 
         // Act

@@ -42,8 +42,8 @@ public class UserService : IUserService
             if (!registrationResult.Succeeded)
             {
                 _logger.LogWarning(
-                    "Falied to add user {Email}. Errors: {Errors}", 
-                    userDto.Email, 
+                    "Falied to add user {Email}. Errors: {Errors}",
+                    userDto.Email,
                     registrationResult.Errors.Select(e => e.Description));
                 await transaction.RollbackAsync();
                 return UserErrors.RegistrationFalied;

@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using TechShelf.API.Common;
+using TechShelf.API.Common.Http;
+using TechShelf.Application;
 using TechShelf.Infrastructure;
 using TechShelf.Infrastructure.Data;
-using TechShelf.Application;
-using TechShelf.API.Common.Http;
-using TechShelf.API.Common;
 using TechShelf.Infrastructure.Identity;
-using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 

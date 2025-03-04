@@ -46,7 +46,7 @@ public class PaginationHelperTests
 
         // Assert
         result.IsError.Should().BeTrue();
-        result.Errors.Should().ContainSingle(e => 
+        result.Errors.Should().ContainSingle(e =>
             e.Description.Contains("page size", StringComparison.OrdinalIgnoreCase));
     }
 }

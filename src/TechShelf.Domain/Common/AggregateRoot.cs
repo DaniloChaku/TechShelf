@@ -1,7 +1,7 @@
 ﻿namespace TechShelf.Domain.Common;
 
-public abstract class AggregateRoot<T> : 
-    Entity<T>, 
+public abstract class AggregateRoot<T> :
+    Entity<T>,
     IAggregateRoot
     where T : notnull
 {

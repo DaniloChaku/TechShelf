@@ -1,15 +1,15 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Moq;
-using TechShelf.Infrastructure.Identity.Options;
-using TechShelf.Infrastructure.Identity.Services;
-using TechShelf.Infrastructure.Identity;
-using Microsoft.Extensions.Options;
+﻿using AutoFixture;
 using FluentAssertions;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Time.Testing;
+using Moq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using AutoFixture;
-using Microsoft.Extensions.Time.Testing;
 using TechShelf.Domain.Errors;
+using TechShelf.Infrastructure.Identity;
+using TechShelf.Infrastructure.Identity.Options;
+using TechShelf.Infrastructure.Identity.Services;
 
 namespace TechShelf.UnitTests.Infrastructure.Identity;
 
@@ -71,7 +71,7 @@ public class JwtServiceTests
 
         _userManagerMock.Setup(um => um.GetRolesAsync(expectedUser))
             .ReturnsAsync(expectedRoles);
-        
+
         var expectedTokenCreationTime = DateTime.UtcNow;
         var expectedExpirationTime = expectedTokenCreationTime.AddMinutes(_jwtOptions.ExpiresInMinutes);
         _fakeTimeProvider.SetUtcNow(expectedTokenCreationTime);

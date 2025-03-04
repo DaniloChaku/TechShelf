@@ -38,11 +38,11 @@ public class UsersController : BaseApiController
         var result = await _mediator.Send(command);
 
         return result.Match(
-            tokens => 
+            tokens =>
             {
                 SetRefreshTokenCookie(tokens.RefreshToken);
                 return Ok(new TokenResponse(tokens.Token));
-                },
+            },
             errors => Problem(errors));
     }
 

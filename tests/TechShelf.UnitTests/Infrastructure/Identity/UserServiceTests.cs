@@ -1,16 +1,16 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Moq;
-using TechShelf.Infrastructure.Identity.Services;
-using TechShelf.Infrastructure.Identity;
-using AutoFixture;
-using TechShelf.Application.Features.Users.Common;
+﻿using AutoFixture;
 using FluentAssertions;
-using Microsoft.Extensions.Logging.Testing;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using TechShelf.Domain.Errors;
 using Mapster;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Logging.Testing;
+using Moq;
+using TechShelf.Application.Features.Users.Common;
+using TechShelf.Domain.Errors;
+using TechShelf.Infrastructure.Identity;
+using TechShelf.Infrastructure.Identity.Services;
 
 namespace TechShelf.UnitTests.Infrastructure.Identity;
 

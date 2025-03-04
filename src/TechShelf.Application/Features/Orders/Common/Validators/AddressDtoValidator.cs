@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using TechShelf.Application.Features.Orders.Common.Dtos;
-using TechShelf.Domain.Entities.OrderAggregate;
 
 namespace TechShelf.Application.Features.Orders.Common.Validators;
 

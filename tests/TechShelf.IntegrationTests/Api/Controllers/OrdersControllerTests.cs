@@ -1,18 +1,18 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using FluentAssertions;
+using Mapster;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net.Http.Headers;
 using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using TechShelf.Application.Common.Pagination;
 using TechShelf.Application.Features.Orders.Common.Dtos;
 using TechShelf.Domain.Common;
 using TechShelf.Infrastructure.Identity;
 using TechShelf.IntegrationTests.TestHelpers;
 using TechShelf.IntegrationTests.TestHelpers.TestData;
-using FluentAssertions;
-using System.Net.Http.Json;
-using Microsoft.AspNetCore.WebUtilities;
-using Mapster;
-using TechShelf.Application.Common.Pagination;
-using Microsoft.AspNetCore.Mvc;
 
 namespace TechShelf.IntegrationTests.Api.Controllers;
 
@@ -44,7 +44,7 @@ public class OrdersControllerTests : IClassFixture<TestWebApplicationFactory>, I
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         var customerId = CustomerHelper.Customer1.Id;
 
-        var url = QueryHelpers.AddQueryString($"{ApiUrls.GetCustomerOrders}/{customerId}", 
+        var url = QueryHelpers.AddQueryString($"{ApiUrls.GetCustomerOrders}/{customerId}",
             new Dictionary<string, string?>() {
                 {"pageIndex", pageIndex.ToString() },
                 {"pageSize", pageSize.ToString() }

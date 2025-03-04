@@ -2,8 +2,8 @@
 using Moq;
 using TechShelf.Application.Features.Products.Queries.SearchProducts;
 using TechShelf.Application.Interfaces.Data;
-using TechShelf.Domain.Specifications.Products;
 using TechShelf.Domain.Entities;
+using TechShelf.Domain.Specifications.Products;
 
 namespace TechShelf.UnitTests.Application.Features.Products.SearchProducts;
 
@@ -113,7 +113,7 @@ public class SearchProductsQueryHandlerTests
 
         // Assert
         repositoryMock.Verify(r => r.ListWithTotalCountAsync(It.Is<SearchProductsPageSpec>(spec =>
-            spec.Skip == 5 && 
+            spec.Skip == 5 &&
             spec.Take == 5 &&
             spec.WhereExpressions.Count() == 5
         ), cancellationToken), Times.Once);

@@ -19,7 +19,7 @@ public class JwtService : ITokenService
     private readonly TimeProvider _timeProvider;
 
     public JwtService(
-        IOptions<JwtOptions> jwtOptions, 
+        IOptions<JwtOptions> jwtOptions,
         UserManager<ApplicationUser> userManager,
         TimeProvider timeProvider)
     {
@@ -106,8 +106,8 @@ public class JwtService : ITokenService
     {
         var user = await _userManager.FindByEmailAsync(email);
 
-        return user != null && 
-            user.RefreshToken == refreshToken && 
+        return user != null &&
+            user.RefreshToken == refreshToken &&
             user.RefreshTokenExpiryTime > _timeProvider.GetUtcNow().UtcDateTime;
     }
 }

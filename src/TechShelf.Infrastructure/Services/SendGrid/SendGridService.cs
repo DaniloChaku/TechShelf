@@ -13,8 +13,8 @@ public class SendGridService : IEmailService
     private readonly SendGridOptions _options;
     private readonly ILogger<SendGridService> _logger;
 
-    public SendGridService(ISendGridClient sendGridClient, 
-        IOptions<SendGridOptions> options, 
+    public SendGridService(ISendGridClient sendGridClient,
+        IOptions<SendGridOptions> options,
         ILogger<SendGridService> logger)
     {
         _sendGridClient = sendGridClient;

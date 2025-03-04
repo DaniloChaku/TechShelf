@@ -40,7 +40,7 @@ public class SearchProductsQueryHandler
             maxPrice: request.MaxPrice,
             sortBy: request.SortBy);
 
-        var (products, totalCount) = 
+        var (products, totalCount) =
             await _unitOfWork.Repository<Product>().ListWithTotalCountAsync(spec, cancellationToken);
 
         var productDtos = products.Adapt<List<ProductDto>>();

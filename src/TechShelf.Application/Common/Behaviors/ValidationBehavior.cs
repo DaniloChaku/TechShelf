@@ -1,7 +1,7 @@
-﻿using MediatR;
+﻿using Ardalis.Specification;
 using ErrorOr;
-using Ardalis.Specification;
 using FluentValidation;
+using MediatR;
 
 namespace TechShelf.Application.Common.Behaviors;
 
@@ -37,6 +37,6 @@ public class ValidationBehavior<TRequest, TResponse>
             }
         }
 
-        return await next(); 
+        return await next();
     }
 }

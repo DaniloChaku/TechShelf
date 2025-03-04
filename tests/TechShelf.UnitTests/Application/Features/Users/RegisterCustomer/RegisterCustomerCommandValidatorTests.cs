@@ -18,8 +18,9 @@ public class RegisterCustomerCommandValidatorTests
     public void Validator_HasError_WhenFirstNameIsInvalid(string? invalidFirstName)
     {
         // Arrange
-        var command = CreateValidCommand() 
-            with { FirstName = invalidFirstName!};
+        var command = CreateValidCommand()
+            with
+        { FirstName = invalidFirstName! };
 
         // Act
         var result = _validator.TestValidate(command);

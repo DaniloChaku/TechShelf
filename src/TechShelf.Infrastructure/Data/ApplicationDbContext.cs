@@ -9,7 +9,7 @@ namespace TechShelf.Infrastructure.Data;
 public class ApplicationDbContext : DbContext
 {
 #pragma warning disable CS8618
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) 
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
     {
     }

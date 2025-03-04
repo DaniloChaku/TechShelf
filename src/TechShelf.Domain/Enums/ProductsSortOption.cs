@@ -15,12 +15,12 @@ public enum ProductsSortOption
 public static class ISpecificationBuilderExtensions
 {
     public static IOrderedSpecificationBuilder<Product> ApplySorting(
-        this ISpecificationBuilder<Product> builder, 
+        this ISpecificationBuilder<Product> builder,
         ProductsSortOption sortBy)
     {
         return sortBy switch
         {
-            ProductsSortOption.Alphabetically => 
+            ProductsSortOption.Alphabetically =>
                 builder.OrderBy(p => p.Name),
             ProductsSortOption.PriceAsc =>
                 builder.OrderBy(p => p.Price),

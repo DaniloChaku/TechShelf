@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TechShelf.Infrastructure.Data.Outbox;
 
 namespace TechShelf.Infrastructure.Data.Configurations;
@@ -10,11 +10,11 @@ public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage
     {
         builder.HasKey(m => m.Id);
 
-        builder.Property(m =>  m.Id)
+        builder.Property(m => m.Id)
             .ValueGeneratedNever();
 
         builder.Property(m => m.Type)
-            .IsRequired()     
+            .IsRequired()
             .HasMaxLength(200);
 
         builder.Property(m => m.Content)

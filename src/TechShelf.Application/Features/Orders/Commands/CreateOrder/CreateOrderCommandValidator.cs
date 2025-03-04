@@ -15,7 +15,7 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
 
         RuleFor(x => x.PhoneNumber)
             .NotEmpty()
-            .Matches(CommonConstants.PhoneNumberRegex) 
+            .Matches(CommonConstants.PhoneNumberRegex)
             .WithMessage("Phone number must be in a valid format (e.g. +1234567890)");
 
 

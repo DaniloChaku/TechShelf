@@ -8,7 +8,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Moq;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http;
 using System.Security.Claims;
 using System.Text;
 using TechShelf.API.Common.Http;
@@ -37,7 +36,7 @@ public class UsersControllerTests
         _mediatorMock = new Mock<IMediator>();
         var _jwtOptionsMock = new Mock<IOptions<JwtOptions>>();
         _jwtOptions = _fixture.Create<JwtOptions>();
-        _jwtOptionsMock.Setup(o => o.Value).Returns(_jwtOptions); 
+        _jwtOptionsMock.Setup(o => o.Value).Returns(_jwtOptions);
         _controller = new UsersController(_mediatorMock.Object, _jwtOptionsMock.Object);
     }
 

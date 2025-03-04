@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using TechShelf.Application.Features.Categories.Queries.Shared;
+﻿using TechShelf.Application.Features.Categories.Queries.Shared;
 using TechShelf.Domain.Entities;
 using TechShelf.Infrastructure.Data;
 
