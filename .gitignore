@@ -431,3 +431,6 @@ e2e/*.map
 .vscode
 public/images/products
 src/AngularClient/public/images/products/
+
+# static analysis
+.sonarqube
