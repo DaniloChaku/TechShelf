@@ -118,4 +118,53 @@ public class ProductsControllerTests
 
         _mediatorMock.Verify(m => m.Send(It.IsAny<GetProductByIdQuery>(), It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    [Fact]
+    public async Task GetById_ReturnsProduct_WhenProductExists()
+    {
+        // Arrange
+        var expectedProduct = _fixture.Create<ProductDto>();
+        var cancellationToken = new CancellationToken();
+
+        _mediatorMock
+            .Setup(m => m.Send(
+                It.Is<GetProductByIdQuery>(x => x.Id == expectedProduct.Id),
+                cancellationToken))
+            .ReturnsAsync(expectedProduct);
+
+        // Act
+        var result = await _controller.GetById(expectedProduct.Id);
+
+        // Assert
+        result.Should().BeOfType<OkObjectResult>();
+        var okResult = result as OkObjectResult;
+        okResult!.Value.Should().BeEquivalentTo(expectedProduct);
+
+        _mediatorMock.Verify(m => m.Send(
+            It.Is<GetProductByIdQuery>(x => x.Id == expectedProduct.Id),
+            cancellationToken), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetById_ReturnsProblem_WhenProductNotFound()
+    {
+        // Arrange
+        var productId = _fixture.Create<int>();
+        var error = Error.NotFound();
+        _mediatorMock
+            .Setup(m => m.Send(It.Is<GetProductByIdQuery>(x => x.Id == productId), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(error);
+
+        // Act
+        var result = await _controller.GetById(productId);
+
+        // Assert
+        result.Should().BeOfType<ObjectResult>();
+        var problemResult = result as ObjectResult;
+        problemResult!.StatusCode.Should().Be(StatusCodes.Status404NotFound);
+        problemResult.Value.Should().BeOfType<ProblemDetails>();
+        _mediatorMock.Verify(m => m.Send(
+            It.Is<GetProductByIdQuery>(x => x.Id == productId),
+            It.IsAny<CancellationToken>()), Times.Once);
+    }
 }
