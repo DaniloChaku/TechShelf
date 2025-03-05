@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TechShelf.Domain.Entities;
+using TechShelf.Domain.Products;
 
 namespace TechShelf.Infrastructure.Data.Configurations;
 

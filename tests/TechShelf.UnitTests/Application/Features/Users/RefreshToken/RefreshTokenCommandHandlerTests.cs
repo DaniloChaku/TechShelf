@@ -5,7 +5,7 @@ using Moq;
 using TechShelf.Application.Features.Users.Commands.RefreshToken;
 using TechShelf.Application.Features.Users.Common;
 using TechShelf.Application.Interfaces.Auth;
-using TechShelf.Domain.Errors;
+using TechShelf.Domain.Users;
 
 namespace TechShelf.UnitTests.Application.Features.Users.RefreshToken;
 

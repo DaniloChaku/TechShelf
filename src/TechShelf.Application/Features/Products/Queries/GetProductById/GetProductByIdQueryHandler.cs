@@ -3,9 +3,8 @@ using Mapster;
 using MediatR;
 using TechShelf.Application.Features.Products.Queries.Shared;
 using TechShelf.Application.Interfaces.Data;
-using TechShelf.Domain.Entities;
-using TechShelf.Domain.Errors;
-using TechShelf.Domain.Specifications.Products;
+using TechShelf.Domain.Products;
+using TechShelf.Domain.Products.Specs;
 
 namespace TechShelf.Application.Features.Products.Queries.GetProductById;
 

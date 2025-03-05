@@ -2,9 +2,8 @@
 using Moq;
 using TechShelf.Application.Features.Products.Queries.GetProductById;
 using TechShelf.Application.Interfaces.Data;
-using TechShelf.Domain.Entities;
-using TechShelf.Domain.Errors;
-using TechShelf.Domain.Specifications.Products;
+using TechShelf.Domain.Products;
+using TechShelf.Domain.Products.Specs;
 
 namespace TechShelf.UnitTests.Application.Features.Products.GetProductById;
 

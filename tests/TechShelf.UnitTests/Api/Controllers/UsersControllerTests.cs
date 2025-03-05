@@ -69,7 +69,7 @@ public class UsersControllerTests
         var okResult = result as OkObjectResult;
         okResult!.Value.Should().BeEquivalentTo(expectedTokenResponse);
 
-        _mediatorMock.Verify(m => m.Send(It.IsAny<RegisterCustomerCommand>(), cancellationToken), 
+        _mediatorMock.Verify(m => m.Send(It.IsAny<RegisterCustomerCommand>(), cancellationToken),
             Times.Once);
 
         VerifyRefreshTokenBeingSet(httpContext);

@@ -2,7 +2,7 @@
 using MediatR;
 using TechShelf.Application.Common.Pagination;
 using TechShelf.Application.Features.Products.Queries.Shared;
-using TechShelf.Domain.Enums;
+using TechShelf.Domain.Products.Enums;
 
 namespace TechShelf.Application.Features.Products.Queries.SearchProducts;
 

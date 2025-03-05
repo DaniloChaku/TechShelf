@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using TechShelf.Domain.Entities;
-using TechShelf.Domain.Entities.OrderAggregate;
+using TechShelf.Domain.Orders;
+using TechShelf.Domain.Products;
 using TechShelf.Infrastructure.Data.Outbox;
 
 namespace TechShelf.Infrastructure.Data;

@@ -1,5 +1,5 @@
 ﻿using TechShelf.Application.Features.Categories.Queries.Shared;
-using TechShelf.Domain.Entities;
+using TechShelf.Domain.Products;
 using TechShelf.Infrastructure.Data;
 
 namespace TechShelf.IntegrationTests.TestHelpers.TestData;

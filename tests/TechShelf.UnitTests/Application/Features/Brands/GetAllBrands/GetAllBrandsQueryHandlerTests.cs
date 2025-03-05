@@ -2,7 +2,7 @@
 using Moq;
 using TechShelf.Application.Features.Brands.Queries.GetAllBrands;
 using TechShelf.Application.Interfaces.Data;
-using TechShelf.Domain.Entities;
+using TechShelf.Domain.Products;
 
 namespace TechShelf.UnitTests.Application.Features.Brands.GetAllBrands;
 

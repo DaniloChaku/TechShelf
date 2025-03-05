@@ -7,7 +7,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using TechShelf.Application.Interfaces.Auth;
-using TechShelf.Domain.Errors;
+using TechShelf.Domain.Users;
 using TechShelf.Infrastructure.Identity.Options;
 
 namespace TechShelf.Infrastructure.Identity.Services;

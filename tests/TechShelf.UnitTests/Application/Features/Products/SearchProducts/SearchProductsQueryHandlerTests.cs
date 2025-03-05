@@ -2,8 +2,8 @@
 using Moq;
 using TechShelf.Application.Features.Products.Queries.SearchProducts;
 using TechShelf.Application.Interfaces.Data;
-using TechShelf.Domain.Entities;
-using TechShelf.Domain.Specifications.Products;
+using TechShelf.Domain.Products;
+using TechShelf.Domain.Products.Specs;
 
 namespace TechShelf.UnitTests.Application.Features.Products.SearchProducts;
 

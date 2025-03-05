@@ -2,7 +2,7 @@
 using MediatR;
 using TechShelf.Application.Features.Categories.Queries.Shared;
 using TechShelf.Application.Interfaces.Data;
-using TechShelf.Domain.Entities;
+using TechShelf.Domain.Products;
 
 namespace TechShelf.Application.Features.Categories.Queries.GetAllCategories;
 

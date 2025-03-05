@@ -4,8 +4,8 @@ using Moq;
 using TechShelf.Application.Common.Pagination;
 using TechShelf.Application.Features.Orders.Queries.GetCustomerOrders;
 using TechShelf.Application.Interfaces.Data;
-using TechShelf.Domain.Entities.OrderAggregate;
-using TechShelf.Domain.Specifications.Orders;
+using TechShelf.Domain.Orders;
+using TechShelf.Domain.Orders.Specs;
 
 namespace TechShelf.UnitTests.Application.Features.Orders.Queries.GetCustomerOrders;
 

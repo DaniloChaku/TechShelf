@@ -33,7 +33,7 @@ public class OrdersController : BaseApiController
 
     [HttpPost("checkout")]
     [Authorize(Roles = UserRoles.Customer)]
-    public async Task<IActionResult> Checkout(CreateOrderRequest createOrderRequest, 
+    public async Task<IActionResult> Checkout(CreateOrderRequest createOrderRequest,
         CancellationToken cancellationToken = default)
     {
         CreateOrderCommand createOrderCommand;
@@ -132,7 +132,7 @@ public class OrdersController : BaseApiController
     [ProducesResponseType(statusCode: StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> GetMyOrders(
             [FromQuery] int pageIndex,
-            [FromQuery] int pageSize, 
+            [FromQuery] int pageSize,
             CancellationToken cancellationToken = default)
     {
         var customerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;

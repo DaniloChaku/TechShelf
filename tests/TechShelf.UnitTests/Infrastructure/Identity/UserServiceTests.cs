@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging.Testing;
 using Moq;
 using TechShelf.Application.Features.Users.Common;
-using TechShelf.Domain.Errors;
+using TechShelf.Domain.Users;
 using TechShelf.Infrastructure.Identity;
 using TechShelf.Infrastructure.Identity.Services;
 

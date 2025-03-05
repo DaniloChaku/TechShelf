@@ -4,9 +4,9 @@ using MediatR;
 using Moq;
 using TechShelf.Application.Features.Orders.Commands.SetPaymentStatus;
 using TechShelf.Application.Interfaces.Data;
-using TechShelf.Domain.Entities.OrderAggregate;
-using TechShelf.Domain.Errors;
-using TechShelf.Domain.Specifications.Orders;
+using TechShelf.Domain.Orders;
+using TechShelf.Domain.Orders.Enums;
+using TechShelf.Domain.Orders.Specs;
 
 namespace TechShelf.UnitTests.Application.Features.Orders.Commands.SetPaymentStatus;
 

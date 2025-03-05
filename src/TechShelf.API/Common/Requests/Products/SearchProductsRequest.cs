@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using TechShelf.Domain.Enums;
+using TechShelf.Domain.Products.Enums;
 
 namespace TechShelf.API.Common.Requests.Products;
 

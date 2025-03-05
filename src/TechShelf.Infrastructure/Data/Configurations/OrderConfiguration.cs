@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TechShelf.Domain.Entities.OrderAggregate;
+using TechShelf.Domain.Orders;
 
 namespace TechShelf.Infrastructure.Data.Configurations;
 

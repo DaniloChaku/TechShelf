@@ -2,7 +2,7 @@
 using Moq;
 using TechShelf.Application.Features.Categories.Queries.GetAllCategories;
 using TechShelf.Application.Interfaces.Data;
-using TechShelf.Domain.Entities;
+using TechShelf.Domain.Products;
 
 namespace TechShelf.UnitTests.Application.Features.Categories.GetAllCategories;
 

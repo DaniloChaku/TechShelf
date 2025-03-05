@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using TechShelf.Application.Interfaces.Services;
-using TechShelf.Domain.Events;
+using TechShelf.Domain.Orders.Events;
 
 namespace TechShelf.Application.Features.Orders.Handlers;
 

@@ -2,7 +2,7 @@
 using Moq;
 using TechShelf.Application.Features.Orders.Handlers;
 using TechShelf.Application.Interfaces.Services;
-using TechShelf.Domain.Events;
+using TechShelf.Domain.Orders.Events;
 
 namespace TechShelf.UnitTests.Application.Features.Orders.Handlers;
 

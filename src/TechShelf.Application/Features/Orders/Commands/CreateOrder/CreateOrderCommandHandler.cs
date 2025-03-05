@@ -3,10 +3,10 @@ using Mapster;
 using MediatR;
 using TechShelf.Application.Features.Orders.Common.Dtos;
 using TechShelf.Application.Interfaces.Data;
-using TechShelf.Domain.Entities;
-using TechShelf.Domain.Entities.OrderAggregate;
-using TechShelf.Domain.Errors;
-using TechShelf.Domain.Specifications.Products;
+using TechShelf.Domain.Orders;
+using TechShelf.Domain.Orders.ValueObjects;
+using TechShelf.Domain.Products;
+using TechShelf.Domain.Products.Specs;
 
 namespace TechShelf.Application.Features.Orders.Commands.CreateOrder;
 

@@ -2,7 +2,7 @@
 using MediatR;
 using TechShelf.Application.Features.Users.Common;
 using TechShelf.Application.Interfaces.Auth;
-using TechShelf.Domain.Errors;
+using TechShelf.Domain.Users;
 
 namespace TechShelf.Application.Features.Users.Commands.Login;
 

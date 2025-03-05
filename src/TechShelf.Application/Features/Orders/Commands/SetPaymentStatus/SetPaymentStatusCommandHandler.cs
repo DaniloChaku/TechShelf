@@ -1,9 +1,8 @@
 ﻿using ErrorOr;
 using MediatR;
 using TechShelf.Application.Interfaces.Data;
-using TechShelf.Domain.Entities.OrderAggregate;
-using TechShelf.Domain.Errors;
-using TechShelf.Domain.Specifications.Orders;
+using TechShelf.Domain.Orders;
+using TechShelf.Domain.Orders.Specs;
 
 namespace TechShelf.Application.Features.Orders.Commands.SetPaymentStatus;
 

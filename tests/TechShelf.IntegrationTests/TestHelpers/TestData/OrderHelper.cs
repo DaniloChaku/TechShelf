@@ -1,4 +1,5 @@
-﻿using TechShelf.Domain.Entities.OrderAggregate;
+﻿using TechShelf.Domain.Orders;
+using TechShelf.Domain.Orders.ValueObjects;
 using TechShelf.Infrastructure.Data;
 
 namespace TechShelf.IntegrationTests.TestHelpers.TestData;

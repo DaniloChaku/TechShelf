@@ -2,7 +2,7 @@
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using TechShelf.Domain.Entities;
+using TechShelf.Domain.Products;
 using TechShelf.Infrastructure.Data;
 using TechShelf.Infrastructure.Data.Repositories;
 

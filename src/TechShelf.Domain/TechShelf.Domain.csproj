@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Enums\ProductsSortOption.cs" />
+    <None Include="Products\Enums\ProductsSortOption.cs" />
   </ItemGroup>
 
   <ItemGroup>

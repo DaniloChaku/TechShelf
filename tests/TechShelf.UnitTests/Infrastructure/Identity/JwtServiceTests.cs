@@ -6,7 +6,7 @@ using Microsoft.Extensions.Time.Testing;
 using Moq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using TechShelf.Domain.Errors;
+using TechShelf.Domain.Users;
 using TechShelf.Infrastructure.Identity;
 using TechShelf.Infrastructure.Identity.Options;
 using TechShelf.Infrastructure.Identity.Services;

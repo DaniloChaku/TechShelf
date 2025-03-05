@@ -4,8 +4,8 @@ using MediatR;
 using TechShelf.Application.Common.Pagination;
 using TechShelf.Application.Features.Products.Queries.Shared;
 using TechShelf.Application.Interfaces.Data;
-using TechShelf.Domain.Entities;
-using TechShelf.Domain.Specifications.Products;
+using TechShelf.Domain.Products;
+using TechShelf.Domain.Products.Specs;
 
 namespace TechShelf.Application.Features.Products.Queries.SearchProducts;
 

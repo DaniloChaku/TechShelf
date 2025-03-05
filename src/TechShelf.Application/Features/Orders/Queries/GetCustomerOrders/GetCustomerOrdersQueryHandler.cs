@@ -4,8 +4,8 @@ using MediatR;
 using TechShelf.Application.Common.Pagination;
 using TechShelf.Application.Features.Orders.Common.Dtos;
 using TechShelf.Application.Interfaces.Data;
-using TechShelf.Domain.Entities.OrderAggregate;
-using TechShelf.Domain.Specifications.Orders;
+using TechShelf.Domain.Orders;
+using TechShelf.Domain.Orders.Specs;
 
 namespace TechShelf.Application.Features.Orders.Queries.GetCustomerOrders;
 
