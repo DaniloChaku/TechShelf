@@ -13,7 +13,7 @@ import { containsNumber } from '../../../shared/validators/contains-number';
 import { containsSpecial } from '../../../shared/validators/contains-special';
 import { TOKEN } from '../../../core/constants/token';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ApiError } from '../../../core/models/api-error';
+import { ApiError } from '../../../core/models/shared/api-error';
 import { phoneNumber } from '../../../shared/validators/phone-number';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';

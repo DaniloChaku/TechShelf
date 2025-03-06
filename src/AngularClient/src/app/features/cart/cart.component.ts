@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { ShoppingCartService } from '../../core/services/shopping-cart/shopping-cart.service';
 import { ProductService } from '../../core/services/product/product.service';
-import { Product } from '../../core/models/product';
+import { Product } from '../../core/models/catalog/product';
 import { CartVisibilityService } from '../../core/services/cart-visibility/cart-visibility.service';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import {

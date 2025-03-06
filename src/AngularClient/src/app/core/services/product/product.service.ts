@@ -5,8 +5,8 @@ import {
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
 import { SearchProductsRequest } from './search-products-request';
-import { PagedResult } from '../../models/pagedResult';
-import { Product } from '../../models/product';
+import { PagedResult } from '../../models/shared/paged-result';
+import { Product } from '../../models/catalog/product';
 
 @Injectable({
   providedIn: 'root',

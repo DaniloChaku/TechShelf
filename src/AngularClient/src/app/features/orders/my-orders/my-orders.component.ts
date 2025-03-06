@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { Order } from '../../../core/models/order';
+import { Order } from '../../../core/models/checkout/order';
 import { OrderService } from '../../../core/services/order/order.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';

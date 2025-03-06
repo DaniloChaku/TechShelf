@@ -4,8 +4,8 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-import { PagedResult } from '../../core/models/pagedResult';
-import { Product } from '../../core/models/product';
+import { PagedResult } from '../../core/models/shared/paged-result';
+import { Product } from '../../core/models/catalog/product';
 import { SearchProductsRequest } from '../../core/services/product/search-products-request';
 import { ProductService } from '../../core/services/product/product.service';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,8 +16,8 @@ import {
   MatPaginator,
   PageEvent,
 } from '@angular/material/paginator';
-import { Brand } from '../../core/models/brand';
-import { Category } from '../../core/models/category';
+import { Brand } from '../../core/models/catalog/brand';
+import { Category } from '../../core/models/catalog/category';
 import { BrandService } from '../../core/services/brand/brand.service';
 import { CategoryService } from '../../core/services/category/category.service';
 import { MatButtonModule } from '@angular/material/button';

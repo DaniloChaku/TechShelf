@@ -5,8 +5,8 @@ import { environment } from '../../../../environments/environment';
 import { TestBed } from '@angular/core/testing';
 import { ProductService } from './product.service';
 import { SearchProductsRequest } from './search-products-request';
-import { PagedResult } from '../../models/pagedResult';
-import { Product } from '../../models/product';
+import { PagedResult } from '../../models/shared/paged-result';
+import { Product } from '../../models/catalog/product';
 
 describe('ProductService', () => {
   let service: ProductService;

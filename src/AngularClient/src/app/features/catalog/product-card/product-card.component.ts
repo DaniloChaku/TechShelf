@@ -4,7 +4,7 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { Product } from '../../../core/models/product';
+import { Product } from '../../../core/models/catalog/product';
 import { MatCardModule } from '@angular/material/card';
 import { CurrencyPipe } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';

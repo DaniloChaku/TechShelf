@@ -9,10 +9,10 @@ import {
   signal,
 } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { RegisterCustomerRequest } from '../../models/register-customer-request';
-import { TokenResponse } from '../../models/token-response';
-import { LoginRequest } from '../../models/login-request';
-import { User } from '../../models/user';
+import { RegisterCustomerRequest } from '../../models/account/register-customer-request';
+import { TokenResponse } from '../../models/account/token-response';
+import { LoginRequest } from '../../models/account/login-request';
+import { User } from '../../models/account/user';
 import {
   catchError,
   Observable,

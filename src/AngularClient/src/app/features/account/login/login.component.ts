@@ -12,7 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../core/services/user/user.service';
 import { TOKEN } from '../../../core/constants/token';
-import { ApiError } from '../../../core/models/api-error';
+import { ApiError } from '../../../core/models/shared/api-error';
 import { HttpErrorResponse } from '@angular/common/http';
 import { containsLowercase } from '../../../shared/validators/contains-lowercase';
 import { containsUppercase } from '../../../shared/validators/contains-uppercase';

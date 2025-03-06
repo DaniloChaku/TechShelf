@@ -9,7 +9,7 @@ import {
   ActivatedRoute,
   RouterLink,
 } from '@angular/router';
-import { Product } from '../../../core/models/product';
+import { Product } from '../../../core/models/catalog/product';
 import { CurrencyPipe } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';

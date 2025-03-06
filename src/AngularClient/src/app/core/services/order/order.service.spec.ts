@@ -1,15 +1,15 @@
 import { TestBed } from '@angular/core/testing';
 import { OrderService } from './order.service';
-import { CreateOrderRequest } from '../../models/create-order-request';
+import { CreateOrderRequest } from '../../models/checkout/create-order-request';
 import { environment } from '../../../../environments/environment';
 import { provideHttpClient } from '@angular/common/http';
 import {
   HttpTestingController,
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
-import { StripeRedirectionResponse } from '../../models/stripe-redirection-response';
-import { Order } from '../../models/order';
-import { PagedResult } from '../../models/pagedResult';
+import { StripeRedirectionResponse } from '../../models/checkout/stripe-redirection-response';
+import { Order } from '../../models/checkout/order';
+import { PagedResult } from '../../models/shared/paged-result';
 
 describe('OrderService', () => {
   let service: OrderService;

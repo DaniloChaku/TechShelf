@@ -4,10 +4,10 @@ import {
 } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { CreateOrderRequest } from '../../models/create-order-request';
-import { StripeRedirectionResponse } from '../../models/stripe-redirection-response';
-import { Order } from '../../models/order';
-import { PagedResult } from '../../models/pagedResult';
+import { CreateOrderRequest } from '../../models/checkout/create-order-request';
+import { StripeRedirectionResponse } from '../../models/checkout/stripe-redirection-response';
+import { Order } from '../../models/checkout/order';
+import { PagedResult } from '../../models/shared/paged-result';
 
 @Injectable({
   providedIn: 'root',

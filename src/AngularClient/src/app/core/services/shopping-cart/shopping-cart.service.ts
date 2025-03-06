@@ -3,7 +3,7 @@ import {
   Injectable,
   signal,
 } from '@angular/core';
-import { CartItem } from '../../models/cart-item';
+import { CartItem } from '../../models/cart/cart-item';
 
 @Injectable({
   providedIn: 'root',
