@@ -46,6 +46,7 @@ public class CreateOrderCommandValidatorTests
     [InlineData("123")]
     [InlineData("invalid-phone")]
     [InlineData("+123456789012345678")]
+    [InlineData("+20123456789")]
     public void Validator_HasError_WhenPhoneNumberIsInvalid(string? invalidPhone)
     {
         // Arrange
@@ -57,8 +58,8 @@ public class CreateOrderCommandValidatorTests
     }
 
     [Theory]
-    [InlineData("+1234567890")]
-    [InlineData("+1234567890123")]
+    [InlineData("+10123456789")]
+    [InlineData("+12345678901")]
     public void Validator_HasNoError_WhenPhoneNumberIsValid(string validPhone)
     {
         // Arrange

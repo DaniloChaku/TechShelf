@@ -2,5 +2,5 @@
 
 public static class CommonConstants
 {
-    public const string PhoneNumberRegex = @"^\+[0-9\-]{9,15}$";
+    public const string PhoneNumberRegex = @"^\+1[0-9]{10}$";
 }

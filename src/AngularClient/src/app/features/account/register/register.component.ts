@@ -108,7 +108,7 @@ export class RegisterComponent {
       return 'Phone number is required.';
     }
     if (phoneNumber.hasError('phoneNumber')) {
-      return 'Enter a valid phone number. Sample format: +380123456789..';
+      return 'Enter a valid phone number. Sample format: +12345678901.';
     }
     if (this.phoneNumberErrors()) {
       return this.phoneNumberErrors()[0];

@@ -120,6 +120,8 @@ public class RegisterCustomerCommandValidatorTests
     [InlineData("")]
     [InlineData("911")]
     [InlineData("phoneNumber")]
+    [InlineData("+09987654321")]
+    [InlineData("+1234567890")]
     public void Validator_HasError_WhenPhoneNumberIsInvalid(string? invalidPhoneNumber)
     {
         // Arrange
@@ -135,7 +137,8 @@ public class RegisterCustomerCommandValidatorTests
     }
 
     [Theory]
-    [InlineData("+1234567890")]
+    [InlineData("+12345678901")]
+    [InlineData("+10123456789")]
     public void Validator_HasNoError_WhenPhoneNumberIsValid(string validPhoneNumber)
     {
         // Arrange
