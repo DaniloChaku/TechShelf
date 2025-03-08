@@ -5,8 +5,7 @@ using TechShelf.Application.Features.Users.Common;
 namespace TechShelf.Application.Features.Users.Commands.RegisterCustomer;
 
 public record RegisterCustomerCommand(
-    string FirstName,
-    string LastName,
+    string FullName,
     string Email,
     string PhoneNumber,
     string Password)

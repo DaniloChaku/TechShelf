@@ -20,8 +20,7 @@ public static class CustomerHelper
             Email = "customer1@example.com",
             UserName = "customer1@example.com",
             PhoneNumber = "+12345678901",
-            FirstName = "John",
-            LastName = "Doe",
+            FullName = "John Doe",
             EmailConfirmed = true,
             PhoneNumberConfirmed = true
         };

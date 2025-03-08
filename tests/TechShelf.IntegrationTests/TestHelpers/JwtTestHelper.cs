@@ -30,8 +30,7 @@ public class JwtTestHelper
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, user.Id),
-            new(JwtRegisteredClaimNames.GivenName, user.FirstName),
-            new(JwtRegisteredClaimNames.FamilyName, user.LastName),
+            new(JwtRegisteredClaimNames.GivenName, user.FullName),
         };
 
         if (includeEmailClaim)
@@ -106,8 +105,7 @@ public class JwtTestHelper
         token.Audiences.Should().Contain(Audience);
         token.Claims.Should().Contain(c => c.Type == JwtRegisteredClaimNames.Sub);
         token.Claims.Should().Contain(c => c.Type == JwtRegisteredClaimNames.Email && c.Value == expectedUser.Email);
-        token.Claims.Should().Contain(c => c.Type == JwtRegisteredClaimNames.GivenName && c.Value == expectedUser.FirstName);
-        token.Claims.Should().Contain(c => c.Type == JwtRegisteredClaimNames.FamilyName && c.Value == expectedUser.LastName);
+        token.Claims.Should().Contain(c => c.Type == JwtRegisteredClaimNames.GivenName && c.Value == expectedUser.FullName);
         token.ValidTo.Should().BeCloseTo(issuedTime.AddMinutes(ExpiresInMinutes), TimeSpan.FromMinutes(1));
 
         foreach (var role in expectedRoles)

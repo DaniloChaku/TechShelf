@@ -14,7 +14,7 @@ public static class OrderHelper
             new Order(
                 email: customer.Email!,
                 phoneNumber: customer.PhoneNumber!,
-                fullName: $"{customer.FirstName} {customer.LastName}",
+                fullName: customer.FullName,
                 address: new Address("123 Main St", null, "Anytown", "Anystate", "12345"),
                 orderItems:
                 [
@@ -26,7 +26,7 @@ public static class OrderHelper
             new Order(
                 email: customer.Email!,
                 phoneNumber: customer.PhoneNumber!,
-                fullName: $"{customer.FirstName} {customer.LastName}",
+                fullName: customer.FullName,
                 address: new Address("456 Elm St", "Apt 2", "Othertown", "Otherstate", "67890"),
                 orderItems:
                 [
@@ -38,7 +38,7 @@ public static class OrderHelper
             new Order(
                 email: customer.Email!,
                 phoneNumber: customer.PhoneNumber!,
-                fullName: $"{customer.FirstName} {customer.LastName}",
+                fullName: customer.FullName,
                 address: new Address("789 Oak St", null, "Sometown", "Somestate", "11223"),
                 orderItems:
                 [

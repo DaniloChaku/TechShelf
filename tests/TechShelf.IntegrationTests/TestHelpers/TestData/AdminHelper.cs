@@ -8,8 +8,7 @@ public static class AdminHelper
     public static AdminOptions.SuperAdmin SuperAdminOptions =>
             new()
             {
-                FirstName = "SuperAdmin",
-                LastName = "SuperAdmin",
+                FullName = "Super Admin",
                 Email = "superadmin@example.com",
                 PhoneNumber = "+1234567890",
                 Password = "Admin123!"
@@ -17,8 +16,7 @@ public static class AdminHelper
     public static ApplicationUser SuperAdmin =>
         new()
         {
-            FirstName = SuperAdminOptions.FirstName,
-            LastName = SuperAdminOptions.LastName,
+            FullName = SuperAdminOptions.FullName,
             Email = SuperAdminOptions.Email,
             UserName = SuperAdminOptions.Email,
             PhoneNumber = SuperAdminOptions.PhoneNumber,

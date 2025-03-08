@@ -36,10 +36,9 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
         // Arrange
         var client = _factory.CreateClient();
         var expectedUser = new RegisterCustomerRequest(
-            FirstName: "John",
-            LastName: "Doe",
+            FullName: "John Doe",
             Email: "johndoe@example.com",
-            PhoneNumber: "+1234567890",
+            PhoneNumber: "+12345678901",
             Password: "SecurePassword123!"
         );
         var issuedTime = DateTime.UtcNow;
@@ -63,8 +62,7 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
         // Arrange
         var client = _factory.CreateClient();
         var request = new RegisterCustomerRequest(
-            FirstName: "John",
-            LastName: "Doe",
+            FullName: "John Doe",
             Email: "invalid-email",
             PhoneNumber: "+1234567890",
             Password: "SecurePassword123!"
@@ -159,8 +157,7 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
         var userDto = await response.Content.ReadFromJsonAsync<UserDto>();
         userDto.Should().NotBeNull();
         userDto!.Id.Should().NotBeNull();
-        userDto.FirstName.Should().Be(user.FirstName);
-        userDto.LastName.Should().Be(user.LastName);
+        userDto.FullName.Should().Be(user.FullName);
         userDto.Email.Should().Be(user.Email);
         userDto.PhoneNumber.Should().Be(user.PhoneNumber);
         userDto.Roles.Should().BeEquivalentTo(UserRoles.SuperAdmin);

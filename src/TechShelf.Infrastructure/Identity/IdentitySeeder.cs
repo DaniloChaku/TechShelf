@@ -95,8 +95,7 @@ public class IdentitySeeder
                 {
                     UserName = admin.Email,
                     Email = admin.Email,
-                    FirstName = admin.FirstName,
-                    LastName = admin.LastName,
+                    FullName = admin.FullName,
                     PhoneNumber = admin.PhoneNumber,
                 };
 

@@ -15,67 +15,34 @@ public class RegisterCustomerCommandValidatorTests
     [Theory]
     [InlineData(null)]
     [InlineData("")]
-    public void Validator_HasError_WhenFirstNameIsInvalid(string? invalidFirstName)
+    public void Validator_HasError_WhenFullNameIsInvalid(string? invalidFullName)
     {
         // Arrange
         var command = CreateValidCommand()
             with
-        { FirstName = invalidFirstName! };
+        { FullName = invalidFullName! };
 
         // Act
         var result = _validator.TestValidate(command);
 
         // Assert
-        result.ShouldHaveValidationErrorFor(x => x.FirstName);
+        result.ShouldHaveValidationErrorFor(x => x.FullName);
     }
 
     [Theory]
-    [InlineData("John")]
-    [InlineData("Jane")]
-    [InlineData("William")]
-    public void Validator_HasNoError_WhenFirstNameIsValid(string validFirstName)
+    [InlineData("John Smith")]
+    [InlineData("Jane Doe")]
+    [InlineData("William Black")]
+    public void Validator_HasNoError_WhenFirstNameIsValid(string validFullName)
     {
         // Arrange
-        var command = CreateValidCommand() with { FirstName = validFirstName };
+        var command = CreateValidCommand() with { FullName = validFullName };
 
         // Act
         var result = _validator.TestValidate(command);
 
         // Assert
-        result.ShouldNotHaveValidationErrorFor(x => x.FirstName);
-    }
-
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    public void Validator_HasError_WhenLastNameIsInvalid(string? invalidLastName)
-    {
-        // Arrange
-        var command = CreateValidCommand()
-            with
-        { LastName = invalidLastName! };
-
-        // Act
-        var result = _validator.TestValidate(command);
-
-        // Assert
-        result.ShouldHaveValidationErrorFor(x => x.LastName);
-    }
-
-    [Theory]
-    [InlineData("Doe")]
-    [InlineData("Smith")]
-    [InlineData("Ivanov")]
-    public void Validator_HasNoError_WhenLastNameIsValid(string validLastName)
-    {
-        // Arrange
-        var command = CreateValidCommand() with { LastName = validLastName };
-
-        // Act
-        var result = _validator.TestValidate(command);
-
-        // Assert
-        result.ShouldNotHaveValidationErrorFor(x => x.LastName);
+        result.ShouldNotHaveValidationErrorFor(x => x.FullName);
     }
 
     [Theory]
@@ -191,6 +158,6 @@ public class RegisterCustomerCommandValidatorTests
 
     private RegisterCustomerCommand CreateValidCommand()
     {
-        return new RegisterCustomerCommand("Name", "LastName", "email@example.com", "+123456789", "Pa$$word123");
+        return new RegisterCustomerCommand("Full Name", "email@example.com", "+123456789", "Pa$$word123");
     }
 }

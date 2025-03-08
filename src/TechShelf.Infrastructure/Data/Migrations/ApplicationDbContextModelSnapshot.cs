@@ -37,7 +37,7 @@ namespace TechShelf.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands");
+                    b.ToTable("Brands", (string)null);
                 });
 
             modelBuilder.Entity("TechShelf.Domain.Entities.Category", b =>
@@ -55,7 +55,7 @@ namespace TechShelf.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("TechShelf.Domain.Entities.OrderAggregate.Order", b =>
@@ -93,7 +93,7 @@ namespace TechShelf.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("TechShelf.Domain.Entities.OrderAggregate.OrderHistoryEntry", b =>
@@ -119,7 +119,7 @@ namespace TechShelf.Infrastructure.Data.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderHistoryEntries");
+                    b.ToTable("OrderHistoryEntries", (string)null);
                 });
 
             modelBuilder.Entity("TechShelf.Domain.Entities.OrderAggregate.OrderItem", b =>
@@ -142,7 +142,7 @@ namespace TechShelf.Infrastructure.Data.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItems", (string)null);
                 });
 
             modelBuilder.Entity("TechShelf.Domain.Entities.Product", b =>
@@ -192,7 +192,7 @@ namespace TechShelf.Infrastructure.Data.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("TechShelf.Infrastructure.Data.OutboxMessage", b =>
@@ -229,12 +229,12 @@ namespace TechShelf.Infrastructure.Data.Migrations
 
                     b.HasIndex("RetryCount");
 
-                    b.ToTable("OutboxMessages");
+                    b.ToTable("OutboxMessages", (string)null);
                 });
 
             modelBuilder.Entity("TechShelf.Domain.Entities.OrderAggregate.Order", b =>
                 {
-                    b.OwnsOne("TechShelf.Domain.Entities.OrderAggregate.Address", "Address", b1 =>
+                    b.OwnsOne("TechShelf.Domain.Entities.OrderAggregate.Order.Address#TechShelf.Domain.Entities.OrderAggregate.Address", "Address", b1 =>
                         {
                             b1.Property<Guid>("OrderId")
                                 .HasColumnType("uuid");
@@ -265,7 +265,7 @@ namespace TechShelf.Infrastructure.Data.Migrations
 
                             b1.HasKey("OrderId");
 
-                            b1.ToTable("Orders");
+                            b1.ToTable("Orders", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderId");
@@ -291,7 +291,7 @@ namespace TechShelf.Infrastructure.Data.Migrations
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.OwnsOne("TechShelf.Domain.Entities.OrderAggregate.ProductOrdered", "ProductOrdered", b1 =>
+                    b.OwnsOne("TechShelf.Domain.Entities.OrderAggregate.OrderItem.ProductOrdered#TechShelf.Domain.Entities.OrderAggregate.ProductOrdered", "ProductOrdered", b1 =>
                         {
                             b1.Property<Guid>("OrderItemId")
                                 .HasColumnType("uuid");
@@ -311,7 +311,7 @@ namespace TechShelf.Infrastructure.Data.Migrations
 
                             b1.HasKey("OrderItemId");
 
-                            b1.ToTable("OrderItems");
+                            b1.ToTable("OrderItems", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderItemId");

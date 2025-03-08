@@ -91,8 +91,7 @@ public class JwtServiceTests
         token.Audiences.Should().Contain(_jwtOptions.Audience);
         token.Claims.Should().Contain(c => c.Type == JwtRegisteredClaimNames.Sub && c.Value == expectedUser.Id);
         token.Claims.Should().Contain(c => c.Type == JwtRegisteredClaimNames.Email && c.Value == expectedUser.Email);
-        token.Claims.Should().Contain(c => c.Type == JwtRegisteredClaimNames.GivenName && c.Value == expectedUser.FirstName);
-        token.Claims.Should().Contain(c => c.Type == JwtRegisteredClaimNames.FamilyName && c.Value == expectedUser.LastName);
+        token.Claims.Should().Contain(c => c.Type == JwtRegisteredClaimNames.GivenName && c.Value == expectedUser.FullName);
         token.ValidTo.Should().BeCloseTo(expectedExpirationTime, TimeSpan.FromSeconds(1));
 
         foreach (var role in expectedRoles)

@@ -47,8 +47,7 @@ public class JwtService : ITokenService
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, user.Id),
-            new(JwtRegisteredClaimNames.GivenName, user.FirstName),
-            new(JwtRegisteredClaimNames.FamilyName, user.LastName),
+            new(JwtRegisteredClaimNames.GivenName, user.FullName),
             new(JwtRegisteredClaimNames.Email, user.Email!)
         };
 
