@@ -74,7 +74,7 @@ export class StripeService {
       {};
 
     if (user) {
-      defaultValues.name = `${user.firstName} ${user.lastName}`;
+      defaultValues.name = `${user.fullName}`;
       defaultValues.phone = user.phoneNumber;
     }
 

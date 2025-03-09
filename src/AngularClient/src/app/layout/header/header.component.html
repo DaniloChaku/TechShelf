@@ -49,8 +49,7 @@
       </button>
       <mat-menu #accountMenu="matMenu">
         <div class="text-center py-2 font-semibold">
-          {{ userService.currentUser()?.firstName }}
-          {{ userService.currentUser()?.lastName }}
+          {{ userService.currentUser()?.fullName }}
         </div>
         <button mat-menu-item routerLink="/profile">
           Profile

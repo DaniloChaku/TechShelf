@@ -42,8 +42,7 @@ describe('UserService', () => {
     it('should return true when currentUser is set', () => {
       service.currentUser.set({
         id: '1',
-        firstName: 'Test',
-        lastName: 'User',
+        fullName: 'Test User',
         phoneNumber: '+1234567890',
         email: 'test@example.com',
         roles: ['customer'],
@@ -60,8 +59,7 @@ describe('UserService', () => {
 
   describe('register', () => {
     const mockRequest: RegisterCustomerRequest = {
-      firstName: 'John',
-      lastName: 'Doe',
+      fullName: 'John Doe',
       phoneNumber: '+123456789',
       email: 'test@example.com',
       password: 'password123',
@@ -73,8 +71,7 @@ describe('UserService', () => {
       };
       const mockUser: User = {
         id: '1',
-        firstName: 'John',
-        lastName: 'Doe',
+        fullName: 'John Doe',
         phoneNumber: '+123456789',
         email: 'test@example.com',
         roles: ['customer'],
@@ -130,8 +127,7 @@ describe('UserService', () => {
       };
       const mockUser: User = {
         id: '1',
-        firstName: 'Jane',
-        lastName: 'Doe',
+        fullName: 'Jane Doe',
         phoneNumber: '+987654321',
         email: 'test@example.com',
         roles: ['admin'],
@@ -208,8 +204,7 @@ describe('UserService', () => {
     it('should update currentUser signal on successful load', (done) => {
       const mockUser: User = {
         id: '1',
-        firstName: 'Jane',
-        lastName: 'Doe',
+        fullName: 'Jane Doe',
         phoneNumber: '+1234567890',
         email: 'jane.doe@example.com',
         roles: ['customer'],
@@ -234,8 +229,7 @@ describe('UserService', () => {
       // Set an initial user to verify it gets cleared
       service.currentUser.set({
         id: '1',
-        firstName: 'Initial',
-        lastName: 'User',
+        fullName: 'Initial User',
         phoneNumber: '+1234567890',
         email: 'initial@example.com',
         roles: ['customer'],

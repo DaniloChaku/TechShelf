@@ -11,7 +11,6 @@ import { containsLowercase } from '../../../shared/validators/contains-lowercase
 import { containsUppercase } from '../../../shared/validators/contains-uppercase';
 import { containsNumber } from '../../../shared/validators/contains-number';
 import { containsSpecial } from '../../../shared/validators/contains-special';
-import { TOKEN } from '../../../core/constants/token';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ApiError } from '../../../core/models/shared/api-error';
 import { phoneNumber } from '../../../shared/validators/phone-number';
@@ -39,11 +38,7 @@ export class RegisterComponent {
   private activatedRoute = inject(ActivatedRoute);
   private returnUrl;
   loginForm = new FormGroup({
-    firstName: new FormControl('', {
-      validators: [Validators.required],
-      nonNullable: true,
-    }),
-    lastName: new FormControl('', {
+    fullName: new FormControl('', {
       validators: [Validators.required],
       nonNullable: true,
     }),
@@ -69,33 +64,19 @@ export class RegisterComponent {
     confirmPassword: new FormControl(''),
   });
   private firstNameErrors = signal<string[]>([]);
-  private lastNameErrors = signal<string[]>([]);
   private phoneNumberErrors = signal<string[]>([]);
   private emailErrors = signal<string[]>([]);
   private passwordErrors = signal<string[]>([]);
   errorMessage = signal<string | null>(null);
 
   get firstNameError() {
-    const firstName = this.loginForm.controls.firstName;
+    const firstName = this.loginForm.controls.fullName;
 
     if (firstName.hasError('required')) {
       return 'First name is required.';
     }
     if (this.firstNameErrors()) {
       return this.firstNameErrors()[0];
-    }
-
-    return null;
-  }
-
-  get lastNameError() {
-    const lastName = this.loginForm.controls.lastName;
-
-    if (lastName.hasError('required')) {
-      return 'Last name is required.';
-    }
-    if (this.lastNameErrors()) {
-      return this.lastNameErrors()[0];
     }
 
     return null;
@@ -204,12 +185,6 @@ export class RegisterComponent {
                 .get('firstName')
                 ?.setErrors([]);
               this.firstNameErrors.set(firstNameErrors);
-            }
-            const lastNameErrors =
-              apiError.errors['LastName'];
-            if (lastNameErrors) {
-              this.loginForm.get('lastName')?.setErrors([]);
-              this.lastNameErrors.set(lastNameErrors);
             }
             const phoneNumberErrors =
               apiError.errors['PhoneNumber'];
