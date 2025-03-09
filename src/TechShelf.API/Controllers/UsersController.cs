@@ -117,6 +117,29 @@ public class UsersController : BaseApiController
             errors => Problem(errors));
     }
 
+    [Authorize]
+    [HttpPut("me/name")]
+    [ProducesResponseType(statusCode: StatusCodes.Status204NoContent)]
+    [ProducesResponseType(statusCode: StatusCodes.Status400BadRequest, type: typeof(ValidationProblemDetails))]
+    [ProducesResponseType(statusCode: StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(statusCode: StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ChangeFullName([FromBody] ChangeFullNameRequest request,
+    CancellationToken cancellationToken = default)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId is null)
+        {
+            throw new InvalidOperationException("User ID claim is missing from the authenticated user");
+        }
+
+        var command = new ChangeFullNameCommand(userId, request.FullName);
+        var result = await _mediator.Send(command, cancellationToken);
+
+        return result.Match(
+            _ => NoContent(),
+            Problem);
+    }
+
     private void SetRefreshTokenCookie(string refreshToken)
     {
         var cookieOptions = new CookieOptions

@@ -30,6 +30,8 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
         _jwtHelper = new JwtTestHelper(_scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>());
     }
 
+    #region RegisterCustomer
+
     [Fact]
     public async Task RegisterCustomer_ReturnsOk_WhenRegistrationSucceeds()
     {
@@ -77,6 +79,10 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
         problemDetails.Should().NotBeNull();
         problemDetails!.Errors.Should().ContainKey("Email");
     }
+
+    #endregion
+
+    #region Login
 
     [Fact]
     public async Task Login_ReturnsOk_WhenCredentialsAreValid()
@@ -140,6 +146,10 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
         problemDetails!.Errors.Should().ContainKey("Email");
     }
 
+    #endregion
+
+    #region GetCurrentUser
+
     [Fact]
     public async Task GetCurrentUser_ReturnsOk_WhenUserIsAuthorized()
     {
@@ -190,6 +200,10 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
+
+    #endregion
+
+    #region RefreshToken
 
     [Fact]
     public async Task RefreshToken_ReturnsOk_WhenRefreshTokenIsValid()
@@ -269,6 +283,70 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
+
+    #endregion
+
+    #region ChangeFullName
+
+    [Fact]
+    public async Task ChangeFullName_ReturnsNoContent_WhenRequestIsValid()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        var user = CustomerHelper.Customer1;
+        var token = _jwtHelper.GenerateToken(user, [UserRoles.Customer]);
+        var expectedNewFullName = "New Full Name";
+
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var request = new ChangeFullNameRequest(expectedNewFullName);
+
+        // Act
+        var response = await client.PutAsJsonAsync(ApiUrls.ChangeFullName, request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        var userManager = _scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var updatedUser = await userManager.FindByIdAsync(user.Id);
+        updatedUser!.FullName.Should().Be(expectedNewFullName);
+    }
+
+    [Fact]
+    public async Task ChangeFullName_ReturnsUnauthorized_WhenNoAuthorizationHeader()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        var request = new ChangeFullNameRequest("New Full Name");
+
+        // Act
+        var response = await client.PutAsJsonAsync(ApiUrls.ChangeFullName, request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]  
+    public async Task ChangeFullName_ReturnsBadRequest_WhenRequestIsInvalid()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        var user = CustomerHelper.Customer1;
+        var token = _jwtHelper.GenerateToken(user, [UserRoles.Customer]);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        var request = new ChangeFullNameRequest("");
+
+        // Act
+        var response = await client.PutAsJsonAsync(ApiUrls.ChangeFullName, request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        problemDetails.Should().NotBeNull();
+        problemDetails!.Errors.Should().ContainKey("FullName");
+    }
+
+
+    #endregion
 
     private bool _disposed;
 

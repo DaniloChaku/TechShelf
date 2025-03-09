@@ -14,6 +14,7 @@ using TechShelf.API.Common.Http;
 using TechShelf.API.Common.Responses;
 using TechShelf.API.Controllers;
 using TechShelf.API.Requests.Users;
+using TechShelf.Application.Features.Users.Commands.ChangeFullName;
 using TechShelf.Application.Features.Users.Commands.Login;
 using TechShelf.Application.Features.Users.Commands.RefreshToken;
 using TechShelf.Application.Features.Users.Commands.RegisterCustomer;
@@ -39,6 +40,8 @@ public class UsersControllerTests
         _jwtOptionsMock.Setup(o => o.Value).Returns(_jwtOptions);
         _controller = new UsersController(_mediatorMock.Object, _jwtOptionsMock.Object);
     }
+
+    #region RegisterCustomer
 
     [Fact]
     public async Task RegisterCustomer_ReturnsOk_WhenRegistrationSucceeds()
@@ -101,6 +104,10 @@ public class UsersControllerTests
         _mediatorMock.Verify(m => m.Send(It.IsAny<RegisterCustomerCommand>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
+    #endregion
+
+    #region Login
+
     [Fact]
     public async Task Login_ReturnsOk_WhenLoginSucceeds()
     {
@@ -155,6 +162,10 @@ public class UsersControllerTests
         problemResult!.Value.Should().BeAssignableTo<ProblemDetails>();
         _mediatorMock.Verify(m => m.Send(It.IsAny<LoginCommand>(), It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    #endregion
+
+    #region GetCurrentUser
 
     [Fact]
     public async Task GetCurrentUser_ThrowsInvalidOperationException_WhenEmailClaimIsMissing()
@@ -232,6 +243,10 @@ public class UsersControllerTests
         var problemResult = result as ObjectResult;
         problemResult!.Value.Should().BeAssignableTo<ProblemDetails>();
     }
+
+    #endregion
+
+    #region RefreshToken
 
     [Fact]
     public async Task RefreshToken_ReturnsOk_WhenRefreshTokenSucceeds()
@@ -359,4 +374,89 @@ public class UsersControllerTests
         var setCookieHeader = httpContext.Response.Headers.SetCookie.ToString();
         setCookieHeader.Should().Contain(Cookies.RefreshToken);
     }
+
+    #endregion
+
+    #region ChangeFullName
+
+    [Fact]
+    public async Task ChangeFullName_ReturnsNoContent_WhenCommandSucceeds()
+    {
+        // Arrange
+        var request = _fixture.Create<ChangeFullNameRequest>();
+        var userId = _fixture.Create<string>();
+        var cancellationToken = new CancellationToken();
+
+        var user = new ClaimsPrincipal(new ClaimsIdentity([
+            new Claim(ClaimTypes.NameIdentifier, userId)
+        ]));
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { User = user }
+        };
+
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<ChangeFullNameCommand>(), cancellationToken))
+            .ReturnsAsync(true);
+
+        // Act
+        var result = await _controller.ChangeFullName(request, cancellationToken);
+
+        // Assert
+        result.Should().BeOfType<NoContentResult>();
+        _mediatorMock.Verify(m => m.Send(It.IsAny<ChangeFullNameCommand>(), cancellationToken), Times.Once);
+    }
+
+    [Fact]
+    public async Task ChangeFullName_ReturnsProblem_WhenCommandFails()
+    {
+        // Arrange
+        var request = _fixture.Create<ChangeFullNameRequest>();
+        var userId = _fixture.Create<string>();
+        var error = _fixture.Create<Error>();
+        var cancellationToken = new CancellationToken();
+
+        var user = new ClaimsPrincipal(new ClaimsIdentity([
+            new Claim(ClaimTypes.NameIdentifier, userId)
+        ]));
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { User = user }
+        };
+
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<ChangeFullNameCommand>(), cancellationToken))
+            .ReturnsAsync(error);
+
+        // Act
+        var result = await _controller.ChangeFullName(request, cancellationToken);
+
+        // Assert
+        result.Should().BeOfType<ObjectResult>();
+        var problemResult = result as ObjectResult;
+        problemResult!.Value.Should().BeAssignableTo<ProblemDetails>();
+    }
+
+    [Fact]
+    public async Task ChangeFullName_ThrowsInvalidOperationException_WhenUserIdIsMissing()
+    {
+        // Arrange
+        var request = _fixture.Create<ChangeFullNameRequest>();
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity()) }
+        };
+
+        // Act
+        var act = () => _controller.ChangeFullName(request);
+
+        // Assert
+        await act.Should().ThrowAsync<InvalidOperationException>()
+            .WithMessage("User ID claim is missing from the authenticated user");
+    }
+
+    #endregion
+
 }
