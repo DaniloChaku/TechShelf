@@ -1,6 +1,6 @@
 ﻿using TechShelf.Application.Features.Orders.Common.Dtos;
 
-namespace TechShelf.API.Common.Requests.Orders;
+namespace TechShelf.API.Requests.Orders;
 
 public record CreateOrderRequest(
     string Email,

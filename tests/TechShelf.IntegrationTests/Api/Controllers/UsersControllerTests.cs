@@ -7,7 +7,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using TechShelf.API.Common.Http;
-using TechShelf.API.Common.Requests.Users;
+using TechShelf.API.Requests.Users;
 using TechShelf.API.Common.Responses;
 using TechShelf.Application.Features.Users.Common;
 using TechShelf.Domain.Common;

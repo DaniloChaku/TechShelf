@@ -1,4 +1,4 @@
-﻿namespace TechShelf.API.Common.Requests.Users;
+﻿namespace TechShelf.API.Requests.Users;
 
 public record RegisterCustomerRequest(
     string FullName,

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using TechShelf.Domain.Products.Enums;
 
-namespace TechShelf.API.Common.Requests.Products;
+namespace TechShelf.API.Requests.Products;
 
 public record SearchProductsRequest(
     [Range(1, int.MaxValue, ErrorMessage = "Page index must be greater than 0")] int PageIndex,

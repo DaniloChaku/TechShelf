@@ -1,7 +1,7 @@
 ﻿using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using TechShelf.API.Common.Requests.Products;
+using TechShelf.API.Requests.Products;
 using TechShelf.Application.Common.Pagination;
 using TechShelf.Application.Features.Products.Queries.GetProductById;
 using TechShelf.Application.Features.Products.Queries.SearchProducts;
