@@ -4,7 +4,8 @@ namespace TechShelf.Domain.Users;
 
 public static class UserErrors
 {
-    public static Error NotFound(string email) => Error.NotFound("User.NotFound", $"User {email} was not found.");
+    public static Error NotFoundByEmail(string email) => Error.NotFound("User.NotFoundByEmail", $"User {email} was not found.");
+    public static Error NotFoundById(string id) => Error.NotFound("User.NotFoundById", $"The user with ID {id} was not found.");
     public static Error RegistrationFalied =>
         Error.Unexpected("User.Registration", "Registration failed.");
     public static Error LoginAttemptFailed =>

@@ -49,7 +49,7 @@ public class JwtServiceTests
         var email = _fixture.Create<string>();
         _userManagerMock.Setup(um => um.FindByEmailAsync(email))
             .ReturnsAsync((ApplicationUser?)null);
-        var expectedError = UserErrors.NotFound(email);
+        var expectedError = UserErrors.NotFoundByEmail(email);
 
         // Act
         var result = await _jwtService.GetTokenAsync(email);
@@ -107,7 +107,7 @@ public class JwtServiceTests
         var email = _fixture.Create<string>();
         _userManagerMock.Setup(um => um.FindByEmailAsync(email))
             .ReturnsAsync((ApplicationUser?)null);
-        var expectedError = UserErrors.NotFound(email);
+        var expectedError = UserErrors.NotFoundByEmail(email);
 
         // Act
         var result = await _jwtService.GetRefreshTokenAsync(email);

@@ -39,6 +39,8 @@ public class UserServiceTests
             _fakeLogger);
     }
 
+    #region RegisterAsync
+
     [Fact]
     public async Task RegisterAsync_ReturnsError_WhenUserAlreadyExists()
     {
@@ -151,6 +153,10 @@ public class UserServiceTests
         return transactionMock;
     }
 
+    #endregion
+
+    #region ValidatePasswordAsync
+
     [Fact]
     public async Task ValidatePasswordAsync_ReturnsError_WhenUserNotFound()
     {
@@ -193,12 +199,16 @@ public class UserServiceTests
         result.Value.Should().Be(expectedIsPasswordValid);
     }
 
+    #endregion
+
+    #region GetUserByEmailAsync
+
     [Fact]
     public async Task GetUserByEmailAsync_ReturnsError_WhenUserNotFound()
     {
         // Arrange
         var email = _fixture.Create<string>();
-        var expectedError = UserErrors.NotFound(email);
+        var expectedError = UserErrors.NotFoundByEmail(email);
 
         _userManagerMock.Setup(um => um.FindByEmailAsync(email))
             .ReturnsAsync((ApplicationUser?)null);
@@ -234,4 +244,73 @@ public class UserServiceTests
         result.IsError.Should().BeFalse();
         result.Value.Should().BeEquivalentTo(expectedUserDto);
     }
+
+    #endregion
+
+    #region ChangeFullName
+
+    [Fact]
+    public async Task ChangeFullName_ReturnsError_WhenUserNotFound()
+    {
+        // Arrange
+        var userId = _fixture.Create<string>();
+        var newFullName = _fixture.Create<string>();
+        var expectedError = UserErrors.NotFoundById(userId);
+
+        _userManagerMock.Setup(um => um.FindByIdAsync(userId))
+            .ReturnsAsync((ApplicationUser?)null);
+
+        // Act
+        var result = await _authService.ChangeFullName(userId, newFullName);
+
+        // Assert
+        result.IsError.Should().BeTrue();
+        result.FirstError.Should().Be(expectedError);
+    }
+
+    [Fact]
+    public async Task ChangeFullName_ReturnsInvalidOperationException_WhenUpdateFails()
+    {
+        // Arrange
+        var userId = _fixture.Create<string>();
+        var newFullName = _fixture.Create<string>();
+        var user = _fixture.Create<ApplicationUser>();
+        var expectedErrors = IdentityResult.Failed(new IdentityError { Description = "Error" });
+
+        _userManagerMock.Setup(um => um.FindByIdAsync(userId))
+            .ReturnsAsync(user);
+        _userManagerMock.Setup(um => um.UpdateAsync(user))
+            .ReturnsAsync(expectedErrors);
+
+        // Act
+        var action = () => _authService.ChangeFullName(userId, newFullName);
+
+        // Assert
+        await action.Should().ThrowAsync<InvalidOperationException>()
+            .WithMessage("Failed to update user name. Errors: *");
+    }
+
+    [Fact]
+    public async Task ChangeFullName_ReturnsTrue_WhenUpdateSucceeds()
+    {
+        // Arrange
+        var userId = _fixture.Create<string>();
+        var newFullName = _fixture.Create<string>();
+        var user = _fixture.Create<ApplicationUser>();
+
+        _userManagerMock.Setup(um => um.FindByIdAsync(userId))
+            .ReturnsAsync(user);
+        _userManagerMock.Setup(um => um.UpdateAsync(user))
+            .ReturnsAsync(IdentityResult.Success);
+
+        // Act
+        var result = await _authService.ChangeFullName(userId, newFullName);
+
+        // Assert
+        result.IsError.Should().BeFalse();
+        result.Value.Should().BeTrue();
+        user.FullName.Should().Be(newFullName);
+    }
+
+    #endregion
 }

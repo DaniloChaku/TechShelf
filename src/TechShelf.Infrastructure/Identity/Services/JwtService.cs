@@ -33,7 +33,7 @@ public class JwtService : ITokenService
         var user = await _userManager.FindByEmailAsync(email);
         if (user is null)
         {
-            return UserErrors.NotFound(email);
+            return UserErrors.NotFoundByEmail(email);
         }
 
         var claims = await CreateUserClaimsAsync(user);
@@ -89,7 +89,7 @@ public class JwtService : ITokenService
 
         if (user == null)
         {
-            return UserErrors.NotFound(email);
+            return UserErrors.NotFoundByEmail(email);
         }
 
         var refreshToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));

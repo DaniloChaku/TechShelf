@@ -86,7 +86,7 @@ public class UserService : IUserService
 
         if (user is null)
         {
-            return UserErrors.NotFound(email);
+            return UserErrors.NotFoundByEmail(email);
         }
 
         var userDto = user.Adapt<UserDto>();
@@ -94,5 +94,28 @@ public class UserService : IUserService
         var roles = await _userManager.GetRolesAsync(user);
 
         return userDto with { Roles = roles ?? [] };
+    }
+
+    public async Task<ErrorOr<bool>> ChangeFullName(string userId, string newFullName)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (user is null)
+        {
+            _logger.LogWarning("Failed to change name for user ID {UserId} because the user was not found", userId);
+            return UserErrors.NotFoundById(userId);
+        }
+
+        user.FullName = newFullName;
+
+        var result = await _userManager.UpdateAsync(user);
+
+        if (!result.Succeeded)
+        {
+            throw new InvalidOperationException(
+                $"Failed to update user name. Errors: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+        }
+
+        return true;
     }
 }
