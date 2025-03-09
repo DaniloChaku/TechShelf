@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { StripeService } from './stripe.service';
 import { UserService } from '../user/user.service';
+import { User } from '../../models/account/user';
 
 // Mock Stripe and StripeElements
 const mockStripe = {
@@ -16,10 +17,11 @@ const mockUserService = {
   currentUser: jasmine
     .createSpy('currentUser')
     .and.returnValue({
-      firstName: 'John',
-      lastName: 'Doe',
+      id: '1',
+      fullName: 'John Doe',
       phoneNumber: '123-456-7890',
-    }),
+      email: 'email@example.com',
+    } as User),
 };
 
 describe('StripeService', () => {
