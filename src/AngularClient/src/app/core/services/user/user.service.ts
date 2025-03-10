@@ -116,6 +116,8 @@ export class UserService {
   }
 
   updateFullName(request: UpdateFullNameRequest) {
-    return this.http.put(this.baseUrl + 'me/name', request);
+    return this.http
+      .put(this.baseUrl + 'me/name', request)
+      .pipe(switchMap(() => this.loadCurrentUser()));
   }
 }

@@ -70,11 +70,7 @@ export class ProfileComponent {
                 duration: 3000,
               }
             );
-            this.userService.loadCurrentUser().subscribe();
-            this.nameForm.reset(
-              { fullName: '' },
-              { emitEvent: false }
-            );
+            this.nameForm.reset();
             this.isSubmitting.set(false);
           },
           error: (error) => {

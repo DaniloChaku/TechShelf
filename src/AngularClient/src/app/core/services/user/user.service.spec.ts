@@ -2,7 +2,10 @@ import { TestBed } from '@angular/core/testing';
 
 import { UserService } from './user.service';
 import { environment } from '../../../../environments/environment';
-import { provideHttpClient } from '@angular/common/http';
+import {
+  HttpErrorResponse,
+  provideHttpClient,
+} from '@angular/common/http';
 import {
   HttpTestingController,
   provideHttpClientTesting,
@@ -255,34 +258,57 @@ describe('UserService', () => {
     const mockRequest: UpdateFullNameRequest = {
       fullName: 'New Name',
     };
-    const expectedUrl = baseUrl + 'me/name';
+    const expectedUpdateUrl = baseUrl + 'me/name';
+    const expectedLoadUserUrl = baseUrl + 'me';
+    const mockUserResponse = {
+      id: '123',
+      fullName: 'New Name',
+      email: 'test@example.com',
+    };
 
-    it('should send PUT request to update name', () => {
+    it('should send PUT request to update name and then load current user', () => {
       service
         .updateFullName(mockRequest)
         .subscribe((response) => {
           expect(response).toBeTruthy();
         });
 
-      const req = httpMock.expectOne(expectedUrl);
-      expect(req.request.method).toBe('PUT');
-      expect(req.request.body).toEqual(mockRequest);
-      req.flush({});
+      // Test the first request (update name)
+      const updateReq = httpMock.expectOne(
+        expectedUpdateUrl
+      );
+      expect(updateReq.request.method).toBe('PUT');
+      expect(updateReq.request.body).toEqual(mockRequest);
+      updateReq.flush({});
+
+      // Test the second request (load user)
+      const loadUserReq = httpMock.expectOne(
+        expectedLoadUserUrl
+      );
+      expect(loadUserReq.request.method).toBe('GET');
+      loadUserReq.flush(mockUserResponse);
     });
 
-    it('should handle error when update fails', () => {
-      service.updateFullName(mockRequest).subscribe({
-        error: (error) => {
-          expect(error.status).toBe(400);
-          expect(error.statusText).toBe('Bad Request');
-        },
-      });
-
-      const req = httpMock.expectOne(expectedUrl);
-      req.flush('Update failed', {
+    it('should propagate errors from the update request', () => {
+      const errorResponse = new HttpErrorResponse({
+        error: 'Update failed',
         status: 400,
         statusText: 'Bad Request',
       });
+
+      service.updateFullName(mockRequest).subscribe({
+        next: () =>
+          fail('Expected error, got success response'),
+        error: (error) => expect(error).toBeTruthy(),
+      });
+
+      const updateReq = httpMock.expectOne(
+        expectedUpdateUrl
+      );
+      updateReq.flush('Update failed', errorResponse);
+
+      // No load user request should be made
+      httpMock.expectNone(expectedLoadUserUrl);
     });
   });
 });
