@@ -40,6 +40,41 @@
       </div>
     </div>
   </div>
+
+  <div class="w-full">
+    <mat-divider class="w-full"></mat-divider>
+    <form
+      (ngSubmit)="updateFirstName()"
+      [formGroup]="nameForm"
+      class="flex flex-col p-3 mt-4 mb-2">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>First Name</mat-label>
+        <input
+          matInput
+          formControlName="fullName"
+          placeholder="Enter new full name" />
+        @if
+        (nameForm.controls.fullName.hasError('required')) {
+        <mat-error> Full name is required </mat-error>
+        } @else if
+        (nameForm.controls.fullName.hasError('maxLength')) {
+        <mat-error>
+          Full name cannot exceed 100 characters
+        </mat-error>
+        }
+      </mat-form-field>
+      <div class="flex justify-end">
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="nameForm.invalid || isSubmitting()">
+          <mat-icon class="mr-1">save</mat-icon>
+          Update Name
+        </button>
+      </div>
+    </form>
+  </div>
 </mat-card>
 } @else {
 <app-not-found
