@@ -11,7 +11,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../core/services/user/user.service';
-import { TOKEN } from '../../../core/constants/token';
 import { ApiError } from '../../../core/models/shared/api-error';
 import { HttpErrorResponse } from '@angular/common/http';
 import { containsLowercase } from '../../../shared/validators/contains-lowercase';
@@ -120,17 +119,19 @@ export class LoginComponent {
         error: (error: HttpErrorResponse) => {
           const apiError = error.error as ApiError;
           if (error.status === 400 && apiError.errors) {
-            if (apiError.errors['Email']) {
-              this.loginForm.get('email')?.setErrors([]);
-              this.emailErrors.set(
-                apiError.errors['Email']
-              );
+            const emailErrors = apiError.errors['email'];
+            if (emailErrors) {
+              this.loginForm.controls.email.setErrors([]);
+              this.emailErrors.set(emailErrors);
             }
-            if (apiError.errors['Password']) {
-              this.loginForm.get('password')?.setErrors([]);
-              this.passwordErrors.set(
-                apiError.errors['Password']
+
+            const passwordErrors =
+              apiError.errors['password'];
+            if (passwordErrors) {
+              this.loginForm.controls.password.setErrors(
+                []
               );
+              this.passwordErrors.set(passwordErrors);
             }
           } else if (error.status === 401) {
             this.errorMessage.set(apiError.title);

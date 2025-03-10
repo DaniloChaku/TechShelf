@@ -77,7 +77,7 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
         problemDetails.Should().NotBeNull();
-        problemDetails!.Errors.Should().ContainKey("Email");
+        problemDetails!.Errors.Should().ContainKey("email");
     }
 
     #endregion
@@ -143,7 +143,7 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
         problemDetails.Should().NotBeNull();
-        problemDetails!.Errors.Should().ContainKey("Email");
+        problemDetails!.Errors.Should().ContainKey("email");
     }
 
     #endregion
@@ -342,7 +342,7 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
         problemDetails.Should().NotBeNull();
-        problemDetails!.Errors.Should().ContainKey("FullName");
+        problemDetails!.Errors.Should().ContainKey("fullName");
     }
 
 

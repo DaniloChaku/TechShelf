@@ -77,7 +77,7 @@ export class ProfileComponent {
             const apiError = error.error as ApiError;
             console.log(apiError);
             const errorMessage = apiError.errors
-              ? apiError.errors['FullName'][0]
+              ? apiError.errors['fullName'][0]
               : 'Error updating first name';
 
             this.snackBar.open(errorMessage, 'Close', {

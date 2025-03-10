@@ -63,20 +63,20 @@ export class RegisterComponent {
     }),
     confirmPassword: new FormControl(''),
   });
-  private firstNameErrors = signal<string[]>([]);
+  private fullNameErrors = signal<string[]>([]);
   private phoneNumberErrors = signal<string[]>([]);
   private emailErrors = signal<string[]>([]);
   private passwordErrors = signal<string[]>([]);
   errorMessage = signal<string | null>(null);
 
-  get firstNameError() {
+  get fullNameError() {
     const firstName = this.loginForm.controls.fullName;
 
     if (firstName.hasError('required')) {
       return 'First name is required.';
     }
-    if (this.firstNameErrors()) {
-      return this.firstNameErrors()[0];
+    if (this.fullNameErrors()) {
+      return this.fullNameErrors()[0];
     }
 
     return null;
@@ -178,31 +178,33 @@ export class RegisterComponent {
         error: (error: HttpErrorResponse) => {
           const apiError = error.error as ApiError;
           if (error.status === 400 && apiError.errors) {
-            const firstNameErrors =
-              apiError.errors['FirstName'];
-            if (firstNameErrors) {
-              this.loginForm
-                .get('firstName')
-                ?.setErrors([]);
-              this.firstNameErrors.set(firstNameErrors);
+            const fullNameErrors =
+              apiError.errors['fullName'];
+            if (fullNameErrors) {
+              this.loginForm.controls.fullName.setErrors(
+                []
+              );
+              this.fullNameErrors.set(fullNameErrors);
             }
             const phoneNumberErrors =
-              apiError.errors['PhoneNumber'];
+              apiError.errors['phoneNumber'];
             if (phoneNumberErrors) {
-              this.loginForm
-                .get('phoneNumber')
-                ?.setErrors([]);
+              this.loginForm.controls.phoneNumber.setErrors(
+                []
+              );
               this.phoneNumberErrors.set(phoneNumberErrors);
             }
-            const emailErrors = apiError.errors['Email'];
+            const emailErrors = apiError.errors['email'];
             if (emailErrors) {
-              this.loginForm.get('email')?.setErrors([]);
+              this.loginForm.controls.email.setErrors([]);
               this.emailErrors.set(emailErrors);
             }
             const passwordErrors =
-              apiError.errors['Password'];
+              apiError.errors['password'];
             if (passwordErrors) {
-              this.loginForm.get('password')?.setErrors([]);
+              this.loginForm.controls.password.setErrors(
+                []
+              );
               this.passwordErrors.set(passwordErrors);
             }
           } else {

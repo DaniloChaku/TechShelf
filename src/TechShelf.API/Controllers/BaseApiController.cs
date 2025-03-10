@@ -42,8 +42,9 @@ public class BaseApiController : ControllerBase
 
         foreach (var error in errors)
         {
+            string camelCaseCode = char.ToLowerInvariant(error.Code[0]) + error.Code.Substring(1);
             modelStateDictionary.AddModelError(
-                error.Code,
+                camelCaseCode,
                 error.Description);
         }
 
