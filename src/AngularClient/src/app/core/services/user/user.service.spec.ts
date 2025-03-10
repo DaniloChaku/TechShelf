@@ -11,10 +11,12 @@ import { RegisterCustomerRequest } from '../../models/account/register-customer-
 import { TokenResponse } from '../../models/account/token-response';
 import { LoginRequest } from '../../models/account/login-request';
 import { User } from '../../models/account/user';
+import { UpdateFullNameRequest } from '../../models/account/update-full-name-request';
 
 describe('UserService', () => {
   let service: UserService;
   let httpMock: HttpTestingController;
+  const baseUrl = environment.apiUrl + 'users/';
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -246,6 +248,41 @@ describe('UserService', () => {
       });
 
       expect(service.currentUser()).toBeNull();
+    });
+  });
+
+  describe('updateFullName', () => {
+    const mockRequest: UpdateFullNameRequest = {
+      fullName: 'New Name',
+    };
+    const expectedUrl = baseUrl + 'me/name';
+
+    it('should send PUT request to update name', () => {
+      service
+        .updateFullName(mockRequest)
+        .subscribe((response) => {
+          expect(response).toBeTruthy();
+        });
+
+      const req = httpMock.expectOne(expectedUrl);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual(mockRequest);
+      req.flush({});
+    });
+
+    it('should handle error when update fails', () => {
+      service.updateFullName(mockRequest).subscribe({
+        error: (error) => {
+          expect(error.status).toBe(400);
+          expect(error.statusText).toBe('Bad Request');
+        },
+      });
+
+      const req = httpMock.expectOne(expectedUrl);
+      req.flush('Update failed', {
+        status: 400,
+        statusText: 'Bad Request',
+      });
     });
   });
 });

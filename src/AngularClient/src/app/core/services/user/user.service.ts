@@ -24,6 +24,7 @@ import {
   IS_REFRESH_TOKEN,
   TOKEN,
 } from '../../constants/token';
+import { UpdateFullNameRequest } from '../../models/account/update-full-name-request';
 
 @Injectable({
   providedIn: 'root',
@@ -112,5 +113,9 @@ export class UserService {
   logout() {
     localStorage.removeItem('token');
     this.currentUser.set(null);
+  }
+
+  updateFullName(request: UpdateFullNameRequest) {
+    return this.http.put(this.baseUrl + 'me/name', request);
   }
 }
