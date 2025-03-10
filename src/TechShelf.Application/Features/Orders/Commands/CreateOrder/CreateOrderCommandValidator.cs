@@ -9,33 +9,33 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
     public CreateOrderCommandValidator()
     {
         RuleFor(x => x.Email)
-            .NotEmpty()
-            .EmailAddress()
-            .MaximumLength(256);
+            .NotEmpty().WithMessage("Email is required.")
+            .EmailAddress().WithMessage("A valid email address is required.")
+            .MaximumLength(256).WithMessage("Email must not exceed 256 characters.");
 
         RuleFor(x => x.PhoneNumber)
-            .NotEmpty()
+            .NotEmpty().WithMessage("Phone number is required.")
             .Matches(CommonConstants.PhoneNumberRegex)
-            .WithMessage("Phone number must be in a valid format (e.g. +1234567890)");
+            .WithMessage("Phone number must be in a valid format (e.g. +1234567890).");
 
 
         RuleFor(x => x.Name)
-            .NotEmpty()
-            .MaximumLength(100);
+            .NotEmpty().WithMessage("Name is required.")
+            .MaximumLength(100).WithMessage("Name must not exceed 100 characters.");
 
         RuleFor(x => x.ShippingAddress)
-            .NotNull()
+            .NotNull().WithMessage("Shipping address is required.")
             .SetValidator(new AddressDtoValidator());
 
         RuleFor(x => x.ShoppingCartItems)
-            .NotEmpty()
-            .WithMessage("Order must contain at least one item");
+            .NotEmpty().WithMessage("Order must contain at least one item.")
+            .WithMessage("Order must contain at least one item.");
 
         RuleForEach(x => x.ShoppingCartItems)
-            .NotEmpty()
+            .NotEmpty().WithMessage("Item quantity is required.")
             .SetValidator(new ShoppingCartItemValidator());
 
         RuleFor(x => x.CustomerId)
-            .NotEmpty();
+            .NotEmpty().WithMessage("Only registered customers can make orders.");
     }
 }

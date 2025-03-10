@@ -8,17 +8,17 @@ public class RegisterCustomerCommandValidator : AbstractValidator<RegisterCustom
     public RegisterCustomerCommandValidator()
     {
         RuleFor(x => x.FullName)
-            .NotEmpty()
-            .MaximumLength(100);
+            .NotEmpty().WithMessage("Full Name is required.")
+            .MaximumLength(100).WithMessage("Full Name must not exceed 100 characters.");
 
         RuleFor(x => x.Email)
             .NotEmpty().WithMessage("Email is required.")
             .EmailAddress().WithMessage("A valid email address is required.")
-            .MaximumLength(256).WithMessage("Email must not exceed 256 characters");
+            .MaximumLength(256).WithMessage("Email must not exceed 256 characters.");
 
         RuleFor(x => x.PhoneNumber)
             .NotEmpty().WithMessage("Phone number is required.")
-            .Matches(CommonConstants.PhoneNumberRegex).WithMessage("Invalid phone number format");
+            .Matches(CommonConstants.PhoneNumberRegex).WithMessage("Invalid phone number format.");
 
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage("Password is required.")

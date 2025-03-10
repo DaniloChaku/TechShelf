@@ -7,10 +7,10 @@ public class ChangeFullNameCommandValidator : AbstractValidator<ChangeFullNameCo
     public ChangeFullNameCommandValidator()
     {
         RuleFor(x => x.UserId)
-            .NotEmpty().WithMessage("UserId is required");
+            .NotEmpty().WithMessage("UserId is required.");
 
         RuleFor(x => x.FullName)
-            .NotEmpty().WithMessage("FullName is required")
-            .MaximumLength(100).WithMessage("FullName must not exceed 100 characters");
+            .NotEmpty().WithMessage("Full Name is required.")
+            .MaximumLength(100).WithMessage("Full Name must not exceed 100 characters.");
     }
 }
