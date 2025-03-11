@@ -357,4 +357,73 @@ public class UserServiceTests
     }
 
     #endregion
+
+    #region ResetPassword
+
+    [Fact]
+    public async Task ResetPassword_ReturnsTrue_WhenResetSucceeds()
+    {
+        // Arrange
+        var email = _fixture.Create<string>();
+        var token = _fixture.Create<string>();
+        var newPassword = _fixture.Create<string>();
+        var user = _fixture.Create<ApplicationUser>();
+        user.Email = email;
+
+        _userManagerMock.Setup(um => um.FindByEmailAsync(email))
+            .ReturnsAsync(user);
+        _userManagerMock.Setup(um => um.ResetPasswordAsync(user, token, newPassword))
+            .ReturnsAsync(IdentityResult.Success);
+
+        // Act
+        var result = await _authService.ResetPassword(email, token, newPassword);
+
+        // Assert
+        result.IsError.Should().BeFalse();
+        result.Value.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ResetPassword_ReturnsError_WhenUserNotFound()
+    {
+        // Arrange
+        var email = _fixture.Create<string>();
+        var token = _fixture.Create<string>();
+        var newPassword = _fixture.Create<string>();
+        var expectedError = UserErrors.PasswordResetFailed;
+        _userManagerMock.Setup(um => um.FindByEmailAsync(email))
+            .ReturnsAsync((ApplicationUser?)null);
+
+        // Act
+        var result = await _authService.ResetPassword(email, token, newPassword);
+
+        // Assert
+        result.IsError.Should().BeTrue();
+        result.FirstError.Should().Be(expectedError);
+    }
+
+    [Fact]
+    public async Task ResetPassword_ReturnsError_WhenResetFailed()
+    {
+        // Arrange
+        var email = _fixture.Create<string>();
+        var token = _fixture.Create<string>();
+        var newPassword = _fixture.Create<string>();
+        var user= _fixture.Create<ApplicationUser>();
+        var expectedError = UserErrors.PasswordResetFailed;
+
+        _userManagerMock.Setup(um => um.FindByEmailAsync(email))
+            .ReturnsAsync(user);
+        _userManagerMock.Setup(um => um.ResetPasswordAsync(user, token, newPassword))
+            .ReturnsAsync(IdentityResult.Failed(new IdentityError { Description = "Error" }));
+
+        // Act
+        var result = await _authService.ResetPassword(email, token, newPassword);
+
+        // Assert
+        result.IsError.Should().BeTrue();
+        result.FirstError.Should().Be(expectedError);
+    }
+
+    #endregion
 }

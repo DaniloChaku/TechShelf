@@ -130,4 +130,25 @@ public class UserService : IUserService
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
         return token;
     }
+
+    public async Task<ErrorOr<bool>> ResetPassword(string email, string token, string newPassword)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user is null)
+        {
+            return UserErrors.PasswordResetFailed;
+        }
+
+        var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+        if (!result.Succeeded)
+        {
+            _logger.LogWarning(
+                "Failed to reset password for user {Email}. Errors: {Errors}",
+                email,
+                result.Errors.Select(e => e.Description));
+            return UserErrors.PasswordResetFailed;  
+        }
+
+        return true;
+    }
 }
