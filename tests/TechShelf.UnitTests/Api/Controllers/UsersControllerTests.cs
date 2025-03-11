@@ -19,6 +19,7 @@ using TechShelf.Application.Features.Users.Commands.ForgotPassword;
 using TechShelf.Application.Features.Users.Commands.Login;
 using TechShelf.Application.Features.Users.Commands.RefreshToken;
 using TechShelf.Application.Features.Users.Commands.RegisterCustomer;
+using TechShelf.Application.Features.Users.Commands.ResetPassword;
 using TechShelf.Application.Features.Users.Common;
 using TechShelf.Application.Features.Users.Queries.GetUserInfo;
 using TechShelf.Infrastructure.Identity.Options;
@@ -493,6 +494,48 @@ public class UsersControllerTests
 
         // Act
         var result = await _controller.ForgotPassword(request);
+
+        // Assert
+        result.Should().BeOfType<ObjectResult>();
+        var problemResult = result as ObjectResult;
+        problemResult!.Value.Should().BeAssignableTo<ProblemDetails>();
+    }
+
+    #endregion
+
+    #region ResetPassword
+
+    [Fact]
+    public async Task ResetPassword_ReturnsOk_WhenCommandSucceeds()
+    {
+        // Arrange
+        var request = _fixture.Create<ResetPasswordRequest>();
+        var token = new CancellationTokenSource().Token;
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<ResetPasswordCommand>(), token))
+            .ReturnsAsync(Unit.Value);
+
+        // Act
+        var result = await _controller.ResetPassword(request, token);
+
+        // Assert
+        result.Should().BeOfType<OkResult>();
+        _mediatorMock.Verify(m => m.Send(It.IsAny<ResetPasswordCommand>(), token), Times.Once);
+    }
+
+    [Fact]
+    public async Task ResetPassword_ReturnsProblem_WhenCommandFails()
+    {
+        // Arrange
+        var request = _fixture.Create<ResetPasswordRequest>();
+        var error = _fixture.Create<Error>();
+        var token = new CancellationTokenSource().Token;
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<ResetPasswordCommand>(), token))
+            .ReturnsAsync(error);
+
+        // Act
+        var result = await _controller.ResetPassword(request, token);
 
         // Assert
         result.Should().BeOfType<ObjectResult>();

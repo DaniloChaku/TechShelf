@@ -15,6 +15,8 @@ using TechShelf.Infrastructure.Identity;
 using TechShelf.IntegrationTests.TestHelpers;
 using TechShelf.IntegrationTests.TestHelpers.TestData;
 using TechShelf.Domain.Users;
+using TechShelf.Infrastructure.Identity.Services;
+using TechShelf.Application.Interfaces.Auth;
 
 namespace TechShelf.IntegrationTests.Api.Controllers;
 
@@ -398,6 +400,98 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
         var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
         problemDetails.Should().NotBeNull();
         problemDetails!.Title.Should().Contain(UserErrors.PasswordResetFailed.Description);
+    }
+
+    #endregion
+
+    #region ResetPassword
+
+    [Fact]
+    public async Task ResetPassword_ReturnsOk_WhenCommandSucceeds()
+    {
+        var userManager = _scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var user = CustomerHelper.Customer1;
+        var token = await userManager.GeneratePasswordResetTokenAsync(user);
+        var newPassword = "NewPassword123!";
+
+        // Arrange
+        var client = _factory.CreateClient();
+        var request = new ResetPasswordRequest(
+            Email: user.Email!,
+            Token: token,
+            Password: newPassword
+        );
+
+        // Act
+        var response = await client.PostAsJsonAsync(ApiUrls.ResetPassword, request);
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var updatedUser = await userManager.FindByIdAsync(user.Id);
+        var result = await userManager.CheckPasswordAsync(updatedUser!, newPassword);
+        result.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ResetPassword_ReturnsBadRequest_WhenModelStateIsInvalid()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        var request = new ResetPasswordRequest(
+            Email: "test@example.com",
+            Token: "valid-token",
+            Password: ""
+        );
+
+        // Act
+        var response = await client.PostAsJsonAsync(ApiUrls.ResetPassword, request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        problemDetails.Should().NotBeNull();
+        problemDetails!.Errors.Should().ContainKey("password");
+    }
+
+    [Fact]
+    public async Task ResetPassword_ReturnsInternalError_WhenTokenIsInvalid()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        var request = new ResetPasswordRequest(
+            Email: CustomerHelper.Customer1.Email!,
+            Token: "invalid-reset-token",
+            Password: "NewPassword123!"
+        );
+
+        // Act
+        var response = await client.PostAsJsonAsync(ApiUrls.ResetPassword, request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
+        var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        problemDetails.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task ResetPassword_ReturnsInternalError_WhenEmailDoesNotExist()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        var request = new ResetPasswordRequest(
+            Email: "nonexistent@example.com",
+            Token: "valid-reset-token",
+            Password: "NewPassword123!"
+        );
+
+        // Act
+        var response = await client.PostAsJsonAsync(ApiUrls.ResetPassword, request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
+        var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        problemDetails.Should().NotBeNull();
     }
 
     #endregion

@@ -13,6 +13,7 @@ using TechShelf.Application.Features.Users.Commands.ForgotPassword;
 using TechShelf.Application.Features.Users.Commands.Login;
 using TechShelf.Application.Features.Users.Commands.RefreshToken;
 using TechShelf.Application.Features.Users.Commands.RegisterCustomer;
+using TechShelf.Application.Features.Users.Commands.ResetPassword;
 using TechShelf.Application.Features.Users.Common;
 using TechShelf.Application.Features.Users.Queries.GetUserInfo;
 using TechShelf.Infrastructure.Identity.Options;
@@ -147,6 +148,19 @@ public class UsersController : BaseApiController
         CancellationToken cancellationToken = default)
     {
         var command = new ForgotPasswordCommand(request.Email);
+        var result = await _mediator.Send(command, cancellationToken);
+
+        return result.Match(
+            _ => Ok(),
+            Problem);
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword(
+        ResetPasswordRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var command = new ResetPasswordCommand(request.Token, request.Email, request.Password);
         var result = await _mediator.Send(command, cancellationToken);
 
         return result.Match(

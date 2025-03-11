@@ -16,6 +16,7 @@ public static class ApiUrls
     public const string RefreshToken = $"{Users}/refresh-token";
     public const string ChangeFullName = $"{Users}/me/name";
     public const string ForgotPassword = $"{Users}/forgot-password";
+    public const string ResetPassword = $"{Users}/reset-password";
 
     public const string Orders = "api/orders";
     public const string GetCustomerOrders = $"{Orders}/customer";
