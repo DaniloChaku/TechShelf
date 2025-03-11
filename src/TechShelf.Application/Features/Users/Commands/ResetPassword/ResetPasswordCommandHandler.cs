@@ -15,7 +15,8 @@ public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand,
 
     public async Task<ErrorOr<Unit>> Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
     {
-        var result = await _userService.ResetPassword(request.Token, request.Email, request.Password);
+        var result = await _userService.ResetPassword(
+            email: request.Email, token: request.Token, newPassword: request.Password);
 
         if (result.IsError)
         {
