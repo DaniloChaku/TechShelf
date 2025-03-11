@@ -2,6 +2,7 @@
 using FluentAssertions;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -310,6 +311,49 @@ public class UserServiceTests
         result.IsError.Should().BeFalse();
         result.Value.Should().BeTrue();
         user.FullName.Should().Be(newFullName);
+    }
+
+    #endregion
+
+    #region GetPasswordResetToken
+
+    [Fact]
+    public async Task GetPasswordResetToken_ReturnsToken_WhenUserFound()
+    {
+        // Arrange
+        var email = _fixture.Create<string>();
+        var user = _fixture.Create<ApplicationUser>();
+        var token = _fixture.Create<string>();
+
+        _userManagerMock.Setup(um => um.FindByEmailAsync(email))
+            .ReturnsAsync(user);
+        _userManagerMock.Setup(um => um.GeneratePasswordResetTokenAsync(user))
+            .ReturnsAsync(token);
+
+        // Act
+        var result = await _authService.GetPasswordResetToken(email);
+
+        // Assert
+        result.IsError.Should().BeFalse();
+        result.Value.Should().Be(token);
+    }
+
+    [Fact]
+    public async Task GetPasswordResetToken_ReturnsError_WhenUserNotFound()
+    {
+        // Arrange
+        var email = _fixture.Create<string>();
+        var expectedError = UserErrors.NotFoundByEmail(email);
+
+        _userManagerMock.Setup(um => um.FindByEmailAsync(email))
+            .ReturnsAsync((ApplicationUser?)null);
+
+        // Act
+        var result = await _authService.GetPasswordResetToken(email);
+
+        // Assert
+        result.IsError.Should().BeTrue();
+        result.FirstError.Should().Be(expectedError);
     }
 
     #endregion

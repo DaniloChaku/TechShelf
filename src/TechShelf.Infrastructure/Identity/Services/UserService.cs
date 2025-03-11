@@ -118,4 +118,16 @@ public class UserService : IUserService
 
         return true;
     }
+
+    public async Task<ErrorOr<string>> GetPasswordResetToken(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user is null)
+        {
+            return UserErrors.NotFoundByEmail(email);
+        }
+
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        return token;
+    }
 }

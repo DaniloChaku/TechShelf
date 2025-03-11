@@ -9,4 +9,5 @@ public interface IUserService
     Task<ErrorOr<bool>> ValidatePasswordAsync(string email, string password);
     Task<ErrorOr<UserDto>> GetUserByEmailAsync(string email);
     Task<ErrorOr<bool>> ChangeFullName(string userId, string newFullName);
+    Task<ErrorOr<string>> GetPasswordResetToken(string email);
 }
