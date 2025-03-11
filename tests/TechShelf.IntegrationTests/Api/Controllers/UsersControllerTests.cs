@@ -14,6 +14,7 @@ using TechShelf.Domain.Common;
 using TechShelf.Infrastructure.Identity;
 using TechShelf.IntegrationTests.TestHelpers;
 using TechShelf.IntegrationTests.TestHelpers.TestData;
+using TechShelf.Domain.Users;
 
 namespace TechShelf.IntegrationTests.Api.Controllers;
 
@@ -345,6 +346,59 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
         problemDetails!.Errors.Should().ContainKey("fullName");
     }
 
+    #endregion
+
+    #region ForgotPassword
+
+    [Fact]
+    public async Task ForgotPassword_ReturnsOk_WhenCommandSucceeds()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        var request = new ForgotPasswordRequest(CustomerHelper.Customer1.Email!);
+
+        // Act
+        var response = await client.PostAsJsonAsync(ApiUrls.ForgotPassword, request);
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task ForgotPassword_ReturnsBadRequest_WhenModelStateIsInvalid()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        var request = new ForgotPasswordRequest("");
+
+        // Act
+        var response = await client.PostAsJsonAsync(ApiUrls.ForgotPassword, request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var problemDetails = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        problemDetails.Should().NotBeNull();
+        problemDetails!.Errors.Should().ContainKey("email");
+    }
+
+    [Fact]
+    public async Task ForgotPassword_ReturnsBadRequest_WhenEmailDoesNotExist()
+    {
+        // Arrange
+        var client = _factory.CreateClient();
+        var email = "nonexistent@example.com";
+        var request = new ForgotPasswordRequest(email);
+
+        // Act
+        var response = await client.PostAsJsonAsync(ApiUrls.ForgotPassword, request);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
+        problemDetails.Should().NotBeNull();
+        problemDetails!.Title.Should().Contain(UserErrors.NotFoundByEmail(email).Description);
+    }
 
     #endregion
 

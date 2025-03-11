@@ -156,7 +156,8 @@ public static class DependencyInjection
             options.Password.RequireDigit = true;
         })
             .AddRoles<IdentityRole>()
-            .AddEntityFrameworkStores<AppIdentityDbContext>();
+            .AddEntityFrameworkStores<AppIdentityDbContext>()
+            .AddDefaultTokenProviders();
 
         services.Configure<AdminOptions>(configuration.GetSection(AdminOptions.SectionName));
         services.AddScoped<IdentitySeeder>();

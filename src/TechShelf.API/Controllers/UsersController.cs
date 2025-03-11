@@ -9,6 +9,7 @@ using TechShelf.API.Common.Http;
 using TechShelf.API.Common.Responses;
 using TechShelf.API.Requests.Users;
 using TechShelf.Application.Features.Users.Commands.ChangeFullName;
+using TechShelf.Application.Features.Users.Commands.ForgotPassword;
 using TechShelf.Application.Features.Users.Commands.Login;
 using TechShelf.Application.Features.Users.Commands.RefreshToken;
 using TechShelf.Application.Features.Users.Commands.RegisterCustomer;
@@ -137,6 +138,19 @@ public class UsersController : BaseApiController
 
         return result.Match(
             _ => NoContent(),
+            Problem);
+    }
+
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword(
+        ForgotPasswordRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var command = new ForgotPasswordCommand(request.Email);
+        var result = await _mediator.Send(command, cancellationToken);
+
+        return result.Match(
+            _ => Ok(),
             Problem);
     }
 

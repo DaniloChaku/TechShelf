@@ -15,6 +15,7 @@ using TechShelf.API.Common.Responses;
 using TechShelf.API.Controllers;
 using TechShelf.API.Requests.Users;
 using TechShelf.Application.Features.Users.Commands.ChangeFullName;
+using TechShelf.Application.Features.Users.Commands.ForgotPassword;
 using TechShelf.Application.Features.Users.Commands.Login;
 using TechShelf.Application.Features.Users.Commands.RefreshToken;
 using TechShelf.Application.Features.Users.Commands.RegisterCustomer;
@@ -459,4 +460,45 @@ public class UsersControllerTests
 
     #endregion
 
+    #region ForgotPassword
+
+    [Fact]
+    public async Task ForgotPassowrd_ReturnsOk_WhenCommandSucceeds()
+    {
+        // Arrange
+        var request = _fixture.Create<ForgotPasswordRequest>();
+
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<ForgotPasswordCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Unit.Value);
+
+        // Act
+        var result = await _controller.ForgotPassword(request);
+
+        // Assert
+        result.Should().BeOfType<OkResult>();
+        _mediatorMock.Verify(m => m.Send(It.IsAny<ForgotPasswordCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task ForgotPassword_ReturnsProblem_WhenCommandFails()
+    {
+        // Arrange
+        var request = _fixture.Create<ForgotPasswordRequest>();
+        var error = _fixture.Create<Error>();
+
+        _mediatorMock
+            .Setup(m => m.Send(It.IsAny<ForgotPasswordCommand>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(error);
+
+        // Act
+        var result = await _controller.ForgotPassword(request);
+
+        // Assert
+        result.Should().BeOfType<ObjectResult>();
+        var problemResult = result as ObjectResult;
+        problemResult!.Value.Should().BeAssignableTo<ProblemDetails>();
+    }
+
+    #endregion
 }
