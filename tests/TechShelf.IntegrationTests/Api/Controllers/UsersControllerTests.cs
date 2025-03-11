@@ -383,7 +383,7 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
     }
 
     [Fact]
-    public async Task ForgotPassword_ReturnsBadRequest_WhenEmailDoesNotExist()
+    public async Task ForgotPassword_ReturnsInternalError_WhenEmailDoesNotExist()
     {
         // Arrange
         var client = _factory.CreateClient();
@@ -394,10 +394,10 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
         var response = await client.PostAsJsonAsync(ApiUrls.ForgotPassword, request);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         var problemDetails = await response.Content.ReadFromJsonAsync<ProblemDetails>();
         problemDetails.Should().NotBeNull();
-        problemDetails!.Title.Should().Contain(UserErrors.NotFoundByEmail(email).Description);
+        problemDetails!.Title.Should().Contain(UserErrors.PasswordResetFailed.Description);
     }
 
     #endregion

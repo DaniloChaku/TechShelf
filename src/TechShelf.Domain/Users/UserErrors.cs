@@ -8,6 +8,8 @@ public static class UserErrors
     public static Error NotFoundById(string id) => Error.NotFound("User.NotFoundById", $"The user with ID {id} was not found.");
     public static Error RegistrationFalied =>
         Error.Unexpected("User.Registration", "Registration failed.");
+    public static Error PasswordResetFailed =>
+        Error.Unexpected("User.PasswordReset", "Password reset failed.");
     public static Error LoginAttemptFailed =>
         Error.Unauthorized("User.Login", "Invalid email or password.");
     public static Error InvalidRefreshToken =>

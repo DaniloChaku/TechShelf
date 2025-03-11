@@ -343,7 +343,7 @@ public class UserServiceTests
     {
         // Arrange
         var email = _fixture.Create<string>();
-        var expectedError = UserErrors.NotFoundByEmail(email);
+        var expectedError = UserErrors.PasswordResetFailed;
 
         _userManagerMock.Setup(um => um.FindByEmailAsync(email))
             .ReturnsAsync((ApplicationUser?)null);

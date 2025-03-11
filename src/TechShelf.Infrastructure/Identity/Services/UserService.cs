@@ -124,7 +124,7 @@ public class UserService : IUserService
         var user = await _userManager.FindByEmailAsync(email);
         if (user is null)
         {
-            return UserErrors.NotFoundByEmail(email);
+            return UserErrors.PasswordResetFailed;
         }
 
         var token = await _userManager.GeneratePasswordResetTokenAsync(user);
