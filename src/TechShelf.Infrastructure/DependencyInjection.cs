@@ -162,6 +162,11 @@ public static class DependencyInjection
         services.Configure<AdminOptions>(configuration.GetSection(AdminOptions.SectionName));
         services.AddScoped<IdentitySeeder>();
 
+        services.Configure<DataProtectionTokenProviderOptions>(options =>
+        {
+            options.TokenLifespan = TimeSpan.FromHours(Convert.ToInt32(configuration["PasswordResetTokenLifetimeHours"]));
+        });
+
         IdentityMapsterConfig.Configure();
 
         return services;
