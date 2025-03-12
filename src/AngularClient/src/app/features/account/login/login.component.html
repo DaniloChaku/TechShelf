@@ -34,16 +34,26 @@
         <mat-error>{{ passwordError }}</mat-error>
         }
       </mat-form-field>
-      <button
-        mat-flat-button
-        [disabled]="!loginForm.valid"
-        type="submit"
-        class="w-full py-2 mb-2">
-        Sign in
-      </button>
-      @if (errorMessage()) {
-      <div class="text-red-700">{{ errorMessage() }}</div>
-      }
+      <div class="mb-4">
+        <button
+          mat-flat-button
+          [disabled]="!loginForm.valid"
+          type="submit"
+          class="w-full py-2 mb-2">
+          Sign in
+        </button>
+        @if (errorMessage()) {
+        <div class="text-red-700 mb-4">
+          {{ errorMessage() }}
+        </div>
+        }
+      </div>
+
+      <div class="text-center">
+        <a routerLink="/forgot-password"
+          >Forgot password?</a
+        >
+      </div>
     </form>
   </mat-card>
 </main>

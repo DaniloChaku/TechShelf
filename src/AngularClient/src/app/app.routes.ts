@@ -9,6 +9,8 @@ import { authGuard } from './core/guards/auth/auth.guard';
 import { CheckoutComponent } from './features/checkout/checkout.component';
 import { CheckoutSuccessComponent } from './features/checkout/checkout-success/checkout-success.component';
 import { MyOrdersComponent } from './features/orders/my-orders/my-orders.component';
+import { ForgotPasswordComponent } from './features/account/forgot-password/forgot-password.component';
+import { PasswordResetComponent } from './features/account/password-reset/password-reset.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -24,6 +26,10 @@ export const routes: Routes = [
   {
     path: 'register',
     component: RegisterComponent,
+  },
+  {
+    path: 'forgot-password',
+    component: ForgotPasswordComponent,
   },
   {
     path: 'profile',
