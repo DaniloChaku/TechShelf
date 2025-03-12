@@ -129,4 +129,11 @@ export class UserService {
       request
     );
   }
+
+  resetPassword(request: ResetPasswordRequest) {
+    return this.http.post(
+      this.baseUrl + 'reset-password',
+      request
+    );
+  }
 }
