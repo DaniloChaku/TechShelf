@@ -25,6 +25,8 @@ import {
   TOKEN,
 } from '../../constants/token';
 import { UpdateFullNameRequest } from '../../models/account/update-full-name-request';
+import { ForgotPasswordRequest } from '../../models/account/forgot-password-request';
+import { ResetPasswordRequest } from '../../models/account/reset-password-request';
 
 @Injectable({
   providedIn: 'root',
@@ -119,5 +121,12 @@ export class UserService {
     return this.http
       .put(this.baseUrl + 'me/name', request)
       .pipe(switchMap(() => this.loadCurrentUser()));
+  }
+
+  getPassowrdResetToken(request: ForgotPasswordRequest) {
+    return this.http.post(
+      this.baseUrl + 'forgot-password',
+      request
+    );
   }
 }

@@ -15,6 +15,7 @@ import { TokenResponse } from '../../models/account/token-response';
 import { LoginRequest } from '../../models/account/login-request';
 import { User } from '../../models/account/user';
 import { UpdateFullNameRequest } from '../../models/account/update-full-name-request';
+import { ForgotPasswordRequest } from '../../models/account/forgot-password-request';
 
 describe('UserService', () => {
   let service: UserService;
@@ -309,6 +310,45 @@ describe('UserService', () => {
 
       // No load user request should be made
       httpMock.expectNone(expectedLoadUserUrl);
+    });
+  });
+
+  describe('getPassowrdResetToken', () => {
+    const mockRequest: ForgotPasswordRequest = {
+      email: 'test@example.com',
+    };
+    const expectedUrl = `${baseUrl}forgot-password`;
+
+    it('should send POST request for password reset token', () => {
+      const mockResponse = { message: 'Reset token sent' };
+
+      service
+        .getPassowrdResetToken(mockRequest)
+        .subscribe((response) => {
+          expect(response).toEqual(mockResponse);
+        });
+
+      const req = httpMock.expectOne(expectedUrl);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(mockRequest);
+      req.flush(mockResponse);
+    });
+
+    it('should handle error when getting password reset token', () => {
+      service.getPassowrdResetToken(mockRequest).subscribe({
+        next: () =>
+          fail('Expected error, got success response'),
+        error: (error) => {
+          expect(error.status).toBe(400);
+          expect(error.statusText).toBe('Bad Request');
+        },
+      });
+
+      const req = httpMock.expectOne(expectedUrl);
+      req.flush('Invalid email', {
+        status: 400,
+        statusText: 'Bad Request',
+      });
     });
   });
 });
