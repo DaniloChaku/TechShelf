@@ -2,7 +2,6 @@
 using FluentAssertions;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -248,10 +247,10 @@ public class UserServiceTests
 
     #endregion
 
-    #region ChangeFullName
+    #region ChangeFullNameAsync
 
     [Fact]
-    public async Task ChangeFullName_ReturnsError_WhenUserNotFound()
+    public async Task ChangeFullNameAsync_ReturnsError_WhenUserNotFound()
     {
         // Arrange
         var userId = _fixture.Create<string>();
@@ -262,7 +261,7 @@ public class UserServiceTests
             .ReturnsAsync((ApplicationUser?)null);
 
         // Act
-        var result = await _authService.ChangeFullName(userId, newFullName);
+        var result = await _authService.ChangeFullNameAsync(userId, newFullName);
 
         // Assert
         result.IsError.Should().BeTrue();
@@ -270,7 +269,7 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task ChangeFullName_ReturnsInvalidOperationException_WhenUpdateFails()
+    public async Task ChangeFullNameAsync_ReturnsInvalidOperationException_WhenUpdateFails()
     {
         // Arrange
         var userId = _fixture.Create<string>();
@@ -284,7 +283,7 @@ public class UserServiceTests
             .ReturnsAsync(expectedErrors);
 
         // Act
-        var action = () => _authService.ChangeFullName(userId, newFullName);
+        var action = () => _authService.ChangeFullNameAsync(userId, newFullName);
 
         // Assert
         await action.Should().ThrowAsync<InvalidOperationException>()
@@ -292,7 +291,7 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task ChangeFullName_ReturnsTrue_WhenUpdateSucceeds()
+    public async Task ChangeFullNameAsync_ReturnsTrue_WhenUpdateSucceeds()
     {
         // Arrange
         var userId = _fixture.Create<string>();
@@ -305,7 +304,7 @@ public class UserServiceTests
             .ReturnsAsync(IdentityResult.Success);
 
         // Act
-        var result = await _authService.ChangeFullName(userId, newFullName);
+        var result = await _authService.ChangeFullNameAsync(userId, newFullName);
 
         // Assert
         result.IsError.Should().BeFalse();
@@ -358,10 +357,10 @@ public class UserServiceTests
 
     #endregion
 
-    #region ResetPassword
+    #region ResetPasswordAsync
 
     [Fact]
-    public async Task ResetPassword_ReturnsTrue_WhenResetSucceeds()
+    public async Task ResetPasswordAsync_ReturnsTrue_WhenResetSucceeds()
     {
         // Arrange
         var email = _fixture.Create<string>();
@@ -376,7 +375,7 @@ public class UserServiceTests
             .ReturnsAsync(IdentityResult.Success);
 
         // Act
-        var result = await _authService.ResetPassword(email, token, newPassword);
+        var result = await _authService.ResetPasswordAsync(email, token, newPassword);
 
         // Assert
         result.IsError.Should().BeFalse();
@@ -384,7 +383,7 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task ResetPassword_ReturnsError_WhenUserNotFound()
+    public async Task ResetPasswordAsync_ReturnsError_WhenUserNotFound()
     {
         // Arrange
         var email = _fixture.Create<string>();
@@ -395,7 +394,7 @@ public class UserServiceTests
             .ReturnsAsync((ApplicationUser?)null);
 
         // Act
-        var result = await _authService.ResetPassword(email, token, newPassword);
+        var result = await _authService.ResetPasswordAsync(email, token, newPassword);
 
         // Assert
         result.IsError.Should().BeTrue();
@@ -403,7 +402,7 @@ public class UserServiceTests
     }
 
     [Fact]
-    public async Task ResetPassword_ReturnsError_WhenResetFailed()
+    public async Task ResetPasswordAsync_ReturnsError_WhenResetFailed()
     {
         // Arrange
         var email = _fixture.Create<string>();
@@ -418,7 +417,7 @@ public class UserServiceTests
             .ReturnsAsync(IdentityResult.Failed(new IdentityError { Description = "Error" }));
 
         // Act
-        var result = await _authService.ResetPassword(email, token, newPassword);
+        var result = await _authService.ResetPasswordAsync(email, token, newPassword);
 
         // Assert
         result.IsError.Should().BeTrue();

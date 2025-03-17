@@ -15,6 +15,6 @@ public class ChangeFullNameCommandHandler : IRequestHandler<ChangeFullNameComman
 
     public async Task<ErrorOr<bool>> Handle(ChangeFullNameCommand request, CancellationToken cancellationToken)
     {
-        return await _userService.ChangeFullName(request.UserId, request.FullName);
+        return await _userService.ChangeFullNameAsync(request.UserId, request.FullName);
     }
 }

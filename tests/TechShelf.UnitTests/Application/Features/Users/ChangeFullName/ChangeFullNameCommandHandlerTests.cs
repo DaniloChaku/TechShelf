@@ -29,7 +29,7 @@ public class ChangeFullNameCommandHandlerTests
         var error = _fixture.Create<Error>();
 
         _userServiceMock
-            .Setup(us => us.ChangeFullName(command.UserId, command.FullName))
+            .Setup(us => us.ChangeFullNameAsync(command.UserId, command.FullName))
             .ReturnsAsync(error);
 
         // Act
@@ -48,7 +48,7 @@ public class ChangeFullNameCommandHandlerTests
         var command = _fixture.Create<ChangeFullNameCommand>();
 
         _userServiceMock
-            .Setup(us => us.ChangeFullName(command.UserId, command.FullName))
+            .Setup(us => us.ChangeFullNameAsync(command.UserId, command.FullName))
             .ReturnsAsync(true);
 
         // Act

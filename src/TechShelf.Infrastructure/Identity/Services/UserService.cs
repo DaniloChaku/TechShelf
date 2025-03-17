@@ -96,7 +96,7 @@ public class UserService : IUserService
         return userDto with { Roles = roles ?? [] };
     }
 
-    public async Task<ErrorOr<bool>> ChangeFullName(string userId, string newFullName)
+    public async Task<ErrorOr<bool>> ChangeFullNameAsync(string userId, string newFullName)
     {
         var user = await _userManager.FindByIdAsync(userId);
 
@@ -131,7 +131,7 @@ public class UserService : IUserService
         return token;
     }
 
-    public async Task<ErrorOr<bool>> ResetPassword(string email, string token, string newPassword)
+    public async Task<ErrorOr<bool>> ResetPasswordAsync(string email, string token, string newPassword)
     {
         var user = await _userManager.FindByEmailAsync(email);
         if (user is null)
