@@ -44,7 +44,7 @@ public class ResetPasswordCommandHandlerTests
         // Arrange
         var command = _fixture.Create<ResetPasswordCommand>();
         var error = _fixture.Create<Error>();
-        _mockUserService.Setup(x => x.ResetPasswordAsync(command.Token, command.Email, command.Password))
+        _mockUserService.Setup(x => x.ResetPasswordAsync(command.Email, command.Token, command.Password))
             .ReturnsAsync(error);
 
         // Act
