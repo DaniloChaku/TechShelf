@@ -435,3 +435,4 @@ src/AngularClient/public/images/products/
 # static analysis
 .sonarqube
 docker-compose.yml
+ssl
