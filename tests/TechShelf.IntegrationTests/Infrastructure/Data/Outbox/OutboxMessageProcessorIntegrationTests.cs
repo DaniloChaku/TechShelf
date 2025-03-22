@@ -1,11 +1,11 @@
-﻿using FluentAssertions;
+﻿using System.Text.Json;
+using FluentAssertions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Testing;
-using System.Text.Json;
 using TechShelf.Infrastructure.Data;
 using TechShelf.Infrastructure.Data.Outbox;
 

@@ -1,5 +1,5 @@
-﻿using FluentAssertions;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
+using FluentAssertions;
 using TechShelf.Application.Features.Brands.Queries.Shared;
 using TechShelf.IntegrationTests.TestHelpers;
 using TechShelf.IntegrationTests.TestHelpers.TestData;

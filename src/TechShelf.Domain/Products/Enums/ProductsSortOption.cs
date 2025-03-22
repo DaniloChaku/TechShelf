@@ -1,6 +1,5 @@
-﻿using Ardalis.Specification;
-using System.Text.Json.Serialization;
-using TechShelf.Domain.Products;
+﻿using System.Text.Json.Serialization;
+using Ardalis.Specification;
 
 namespace TechShelf.Domain.Products.Enums;
 

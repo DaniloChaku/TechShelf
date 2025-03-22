@@ -408,7 +408,7 @@ public class UserServiceTests
         var email = _fixture.Create<string>();
         var token = _fixture.Create<string>();
         var newPassword = _fixture.Create<string>();
-        var user= _fixture.Create<ApplicationUser>();
+        var user = _fixture.Create<ApplicationUser>();
         var expectedError = UserErrors.PasswordResetFailed;
 
         _userManagerMock.Setup(um => um.FindByEmailAsync(email))

@@ -1,8 +1,8 @@
-﻿using MediatR;
+﻿using System.Security.Claims;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
-using System.Security.Claims;
 using TechShelf.API.Common.Responses;
 using TechShelf.API.Requests.Orders;
 using TechShelf.Application.Common.Pagination;

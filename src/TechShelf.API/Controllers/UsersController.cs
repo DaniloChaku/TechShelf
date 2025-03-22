@@ -1,10 +1,10 @@
-﻿using Mapster;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using TechShelf.API.Common.Http;
 using TechShelf.API.Common.Responses;
 using TechShelf.API.Requests.Users;

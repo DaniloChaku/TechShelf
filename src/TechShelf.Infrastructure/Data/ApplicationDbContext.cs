@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Reflection;
+﻿using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using TechShelf.Domain.Orders;
 using TechShelf.Domain.Products;
 using TechShelf.Infrastructure.Data.Outbox;

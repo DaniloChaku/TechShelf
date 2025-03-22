@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using System.Text.Json;
 using TechShelf.Domain.Common;
 using TechShelf.Infrastructure.Data.Outbox;
 

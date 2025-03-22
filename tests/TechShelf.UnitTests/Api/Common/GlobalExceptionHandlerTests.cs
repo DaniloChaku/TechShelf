@@ -1,11 +1,11 @@
-﻿using FluentAssertions;
+﻿using System.Text.Json;
+using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Testing;
 using Moq;
-using System.Text.Json;
 using TechShelf.API.Common;
 
 namespace TechShelf.UnitTests.Api.Common;

@@ -1,11 +1,11 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
-using System.Globalization;
+﻿using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using FluentAssertions;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using TechShelf.API.Common.Http;
 using TechShelf.Infrastructure.Identity;
 

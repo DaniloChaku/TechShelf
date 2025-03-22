@@ -1,4 +1,7 @@
-﻿using AutoFixture;
+﻿using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
+using AutoFixture;
 using ErrorOr;
 using FluentAssertions;
 using MediatR;
@@ -8,9 +11,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Testing;
 using Moq;
 using Stripe;
-using System.Security.Claims;
-using System.Text;
-using System.Text.Json;
 using TechShelf.API.Common.Responses;
 using TechShelf.API.Controllers;
 using TechShelf.API.Requests.Orders;

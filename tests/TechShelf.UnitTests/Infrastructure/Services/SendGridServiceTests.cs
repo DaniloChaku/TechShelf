@@ -1,4 +1,5 @@
-﻿using AutoFixture;
+﻿using System.Net;
+using AutoFixture;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Testing;
@@ -6,7 +7,6 @@ using Microsoft.Extensions.Options;
 using Moq;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-using System.Net;
 using TechShelf.Application.Exceptions;
 using TechShelf.Infrastructure.Services.SendGrid;
 

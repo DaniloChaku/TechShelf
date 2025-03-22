@@ -1,12 +1,12 @@
-﻿using FluentAssertions;
+﻿using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using FluentAssertions;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using TechShelf.Application.Common.Pagination;
 using TechShelf.Application.Features.Orders.Common.Dtos;
 using TechShelf.Domain.Common;

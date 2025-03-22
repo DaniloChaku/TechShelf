@@ -1,7 +1,7 @@
-﻿using ErrorOr;
+﻿using System.Web;
+using ErrorOr;
 using MediatR;
 using Microsoft.Extensions.Options;
-using System.Web;
 using TechShelf.Application.Common.Options;
 using TechShelf.Application.Interfaces.Auth;
 using TechShelf.Application.Interfaces.Services;
@@ -33,7 +33,7 @@ public class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordComman
         }
 
         string token = tokenResult.Value;
-        string resetUrl = 
+        string resetUrl =
             $"{_clientUrlOptions.ClientUrl}/reset-password?token={HttpUtility.UrlEncode(token)}&email={HttpUtility.UrlEncode(request.Email)}";
 
         string subject = "Reset Your Password";

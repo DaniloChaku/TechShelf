@@ -1,22 +1,20 @@
-﻿using FluentAssertions;
+﻿using System.Net;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using FluentAssertions;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using TechShelf.API.Common.Http;
-using TechShelf.API.Requests.Users;
 using TechShelf.API.Common.Responses;
+using TechShelf.API.Requests.Users;
 using TechShelf.Application.Features.Users.Common;
 using TechShelf.Domain.Common;
+using TechShelf.Domain.Users;
 using TechShelf.Infrastructure.Identity;
 using TechShelf.IntegrationTests.TestHelpers;
 using TechShelf.IntegrationTests.TestHelpers.TestData;
-using TechShelf.Domain.Users;
-using TechShelf.Infrastructure.Identity.Services;
-using TechShelf.Application.Interfaces.Auth;
 
 namespace TechShelf.IntegrationTests.Api.Controllers;
 
@@ -328,7 +326,7 @@ public class UsersControllerTests : IClassFixture<TestWebApplicationFactory>, ID
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
 
-    [Fact]  
+    [Fact]
     public async Task ChangeFullName_ReturnsBadRequest_WhenRequestIsInvalid()
     {
         // Arrange

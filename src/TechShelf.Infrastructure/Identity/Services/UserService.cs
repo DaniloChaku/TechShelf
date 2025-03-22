@@ -146,7 +146,7 @@ public class UserService : IUserService
                 "Failed to reset password for user {Email}. Errors: {Errors}",
                 email,
                 result.Errors.Select(e => e.Description));
-            return UserErrors.PasswordResetFailed;  
+            return UserErrors.PasswordResetFailed;
         }
 
         return true;

@@ -1,8 +1,8 @@
-﻿using FluentAssertions;
+﻿using System.Net;
+using System.Net.Http.Json;
+using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
-using System.Net.Http.Json;
 using TechShelf.API.Requests.Products;
 using TechShelf.Application.Common.Pagination;
 using TechShelf.Application.Features.Products.Queries.Shared;

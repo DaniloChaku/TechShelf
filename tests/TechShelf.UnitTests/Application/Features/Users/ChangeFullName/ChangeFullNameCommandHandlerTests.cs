@@ -17,7 +17,7 @@ public class ChangeFullNameCommandHandlerTests
     {
         _fixture = new Fixture();
         _userServiceMock = new Mock<IUserService>();
-        
+
         _handler = new ChangeFullNameCommandHandler(_userServiceMock.Object);
     }
 

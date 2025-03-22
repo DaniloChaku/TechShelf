@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using System.Text.Json;
 using TechShelf.API.Common;
 using TechShelf.API.Common.Http;
 using TechShelf.Application;
