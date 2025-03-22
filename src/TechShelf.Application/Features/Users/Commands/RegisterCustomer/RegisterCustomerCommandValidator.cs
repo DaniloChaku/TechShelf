@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using TechShelf.Domain.Common;
+using TechShelf.Domain.Users;
 
 namespace TechShelf.Application.Features.Users.Commands.RegisterCustomer;
 
@@ -9,12 +10,14 @@ public class RegisterCustomerCommandValidator : AbstractValidator<RegisterCustom
     {
         RuleFor(x => x.FullName)
             .NotEmpty().WithMessage("Full Name is required.")
-            .MaximumLength(100).WithMessage("Full Name must not exceed 100 characters.");
+            .MaximumLength(UserConstants.FullNameMaxLength)
+            .WithMessage($"Full Name must not exceed {UserConstants.FullNameMaxLength} characters.");
 
         RuleFor(x => x.Email)
             .NotEmpty().WithMessage("Email is required.")
             .EmailAddress().WithMessage("A valid email address is required.")
-            .MaximumLength(256).WithMessage("Email must not exceed 256 characters.");
+            .MaximumLength(UserConstants.EmailMaxLength)
+            .WithMessage($"Email must not exceed {UserConstants.EmailMaxLength} characters.");
 
         RuleFor(x => x.PhoneNumber)
             .NotEmpty().WithMessage("Phone number is required.")
@@ -22,7 +25,8 @@ public class RegisterCustomerCommandValidator : AbstractValidator<RegisterCustom
 
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage("Password is required.")
-            .MinimumLength(8).WithMessage("Password must be at least 8 characters long.")
+            .MinimumLength(UserConstants.PasswordMinLength).WithMessage(
+            $"Password must be at least {UserConstants.PasswordMinLength} characters long.")
             .Matches(@"[A-Z]").WithMessage("Password must contain at least one uppercase letter.")
             .Matches(@"[a-z]").WithMessage("Password must contain at least one lowercase letter.")
             .Matches(@"\d").WithMessage("Password must contain at least one digit.")

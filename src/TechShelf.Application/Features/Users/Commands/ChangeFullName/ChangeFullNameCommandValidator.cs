@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using TechShelf.Domain.Users;
 
 namespace TechShelf.Application.Features.Users.Commands.ChangeFullName;
 
@@ -11,6 +12,7 @@ public class ChangeFullNameCommandValidator : AbstractValidator<ChangeFullNameCo
 
         RuleFor(x => x.FullName)
             .NotEmpty().WithMessage("Full Name is required.")
-            .MaximumLength(100).WithMessage("Full Name must not exceed 100 characters.");
+            .MaximumLength(UserConstants.FullNameMaxLength)
+            .WithMessage($"Full Name must not exceed {UserConstants.FullNameMaxLength} characters.");
     }
 }

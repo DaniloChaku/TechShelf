@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using TechShelf.Domain.Users;
 
 namespace TechShelf.Application.Features.Users.Commands.ResetPassword;
 
@@ -15,7 +16,8 @@ public class ResetPasswordCommandValidator : AbstractValidator<ResetPasswordComm
 
         RuleFor(x => x.Password)
            .NotEmpty().WithMessage("Password is required.")
-           .MinimumLength(8).WithMessage("Password must be at least 8 characters long.")
+           .MinimumLength(UserConstants.PasswordMinLength)
+           .WithMessage($"Password must be at least {UserConstants.PasswordMinLength} characters long.")
            .Matches(@"[A-Z]").WithMessage("Password must contain at least one uppercase letter.")
            .Matches(@"[a-z]").WithMessage("Password must contain at least one lowercase letter.")
            .Matches(@"\d").WithMessage("Password must contain at least one digit.")

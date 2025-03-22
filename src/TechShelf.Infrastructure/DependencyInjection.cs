@@ -9,6 +9,7 @@ using SendGrid.Extensions.DependencyInjection;
 using TechShelf.Application.Interfaces.Auth;
 using TechShelf.Application.Interfaces.Data;
 using TechShelf.Application.Interfaces.Services;
+using TechShelf.Domain.Users;
 using TechShelf.Infrastructure.Data;
 using TechShelf.Infrastructure.Data.Interceptors;
 using TechShelf.Infrastructure.Data.Outbox;
@@ -148,7 +149,7 @@ public static class DependencyInjection
         services.AddIdentityCore<ApplicationUser>(options =>
         {
             options.User.RequireUniqueEmail = true;
-            options.Password.RequiredLength = 8;
+            options.Password.RequiredLength = UserConstants.PasswordMinLength;
             options.Password.RequireNonAlphanumeric = true;
             options.Password.RequireUppercase = true;
             options.Password.RequireLowercase = true;

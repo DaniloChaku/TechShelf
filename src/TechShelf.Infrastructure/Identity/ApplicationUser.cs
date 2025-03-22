@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
+using TechShelf.Domain.Users;
 
 namespace TechShelf.Infrastructure.Identity;
 
 public class ApplicationUser : IdentityUser
 {
-    [StringLength(100)]
+    [StringLength(UserConstants.FullNameMaxLength)]
     public string FullName { get; set; } = string.Empty;
     [StringLength(20)]
     public override string? PhoneNumber { get => base.PhoneNumber; set => base.PhoneNumber = value; }
