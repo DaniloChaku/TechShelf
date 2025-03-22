@@ -13,7 +13,7 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
             .NotEmpty().WithMessage("Email is required.")
             .EmailAddress().WithMessage("A valid email address is required.")
             .MaximumLength(OrderConstants.EmailMaxLength)
-            .WithMessage("Email must not exceed 256 characters.");
+            .WithMessage($"Email must not exceed {OrderConstants.EmailMaxLength} characters.");
 
         RuleFor(x => x.PhoneNumber)
             .NotEmpty().WithMessage("Phone number is required.")
@@ -24,7 +24,7 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Name is required.")
             .MaximumLength(OrderConstants.FullNameMaxLength)
-            .WithMessage("Name must not exceed 100 characters.");
+            .WithMessage($"Name must not exceed {OrderConstants.FullNameMaxLength} characters.");
 
         RuleFor(x => x.ShippingAddress)
             .NotNull().WithMessage("Shipping address is required.")
