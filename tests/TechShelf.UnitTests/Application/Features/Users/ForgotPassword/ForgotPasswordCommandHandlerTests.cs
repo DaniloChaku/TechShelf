@@ -1,9 +1,4 @@
-﻿using AutoFixture;
-using ErrorOr;
-using FluentAssertions;
-using MediatR;
-using Microsoft.Extensions.Options;
-using Moq;
+﻿using Microsoft.Extensions.Options;
 using TechShelf.Application.Common.Options;
 using TechShelf.Application.Features.Users.Commands.ForgotPassword;
 using TechShelf.Application.Interfaces.Auth;

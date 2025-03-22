@@ -1,6 +1,4 @@
-﻿using AutoFixture;
-using FluentAssertions;
-using TechShelf.Domain.Orders;
+﻿using TechShelf.Domain.Orders;
 using TechShelf.Domain.Orders.Enums;
 using TechShelf.Domain.Orders.Events;
 using TechShelf.Domain.Orders.ValueObjects;

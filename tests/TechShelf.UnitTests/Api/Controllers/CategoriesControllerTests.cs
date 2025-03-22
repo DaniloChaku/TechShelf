@@ -1,8 +1,4 @@
-﻿using AutoFixture;
-using FluentAssertions;
-using MediatR;
-using Moq;
-using TechShelf.API.Controllers;
+﻿using TechShelf.API.Controllers;
 using TechShelf.Application.Features.Categories.Queries.GetAllCategories;
 using TechShelf.Application.Features.Categories.Queries.Shared;
 

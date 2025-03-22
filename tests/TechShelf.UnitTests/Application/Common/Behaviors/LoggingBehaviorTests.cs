@@ -1,9 +1,5 @@
-﻿using AutoFixture;
-using FluentAssertions;
-using MediatR;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Testing;
-using Moq;
 using TechShelf.Application.Common.Behaviors;
 
 namespace TechShelf.UnitTests.Application.Common.Behaviors;

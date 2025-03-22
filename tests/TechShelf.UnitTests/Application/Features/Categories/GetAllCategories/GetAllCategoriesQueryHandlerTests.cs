@@ -1,6 +1,4 @@
-﻿using FluentAssertions;
-using Moq;
-using TechShelf.Application.Features.Categories.Queries.GetAllCategories;
+﻿using TechShelf.Application.Features.Categories.Queries.GetAllCategories;
 using TechShelf.Application.Interfaces.Data;
 using TechShelf.Domain.Products;
 

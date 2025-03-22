@@ -1,8 +1,4 @@
-﻿using AutoFixture;
-using ErrorOr;
-using FluentAssertions;
-using Moq;
-using TechShelf.Application.Features.Orders.Commands.CreateOrder;
+﻿using TechShelf.Application.Features.Orders.Commands.CreateOrder;
 using TechShelf.Application.Features.Orders.Common.Dtos;
 using TechShelf.Application.Interfaces.Data;
 using TechShelf.Domain.Orders;

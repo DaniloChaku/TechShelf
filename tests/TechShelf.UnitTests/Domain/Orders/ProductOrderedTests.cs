@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using TechShelf.Domain.Orders.ValueObjects;
+﻿using TechShelf.Domain.Orders.ValueObjects;
 
 namespace TechShelf.UnitTests.Domain.Orders;
 

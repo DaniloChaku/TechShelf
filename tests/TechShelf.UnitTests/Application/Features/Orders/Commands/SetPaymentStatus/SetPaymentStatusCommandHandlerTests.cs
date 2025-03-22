@@ -1,8 +1,4 @@
-﻿using AutoFixture;
-using FluentAssertions;
-using MediatR;
-using Moq;
-using TechShelf.Application.Features.Orders.Commands.SetPaymentStatus;
+﻿using TechShelf.Application.Features.Orders.Commands.SetPaymentStatus;
 using TechShelf.Application.Interfaces.Data;
 using TechShelf.Domain.Orders;
 using TechShelf.Domain.Orders.Enums;

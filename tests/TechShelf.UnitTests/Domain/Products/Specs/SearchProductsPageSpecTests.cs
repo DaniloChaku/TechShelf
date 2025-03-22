@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using TechShelf.Domain.Products;
+﻿using TechShelf.Domain.Products;
 using TechShelf.Domain.Products.Enums;
 using TechShelf.Domain.Products.Specs;
 

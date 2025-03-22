@@ -1,11 +1,8 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using AutoFixture;
-using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Time.Testing;
-using Moq;
 using TechShelf.Domain.Users;
 using TechShelf.Infrastructure.Identity;
 using TechShelf.Infrastructure.Identity.Options;

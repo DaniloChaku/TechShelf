@@ -1,10 +1,5 @@
-﻿using AutoFixture;
-using ErrorOr;
-using FluentAssertions;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.Results;
-using MediatR;
-using Moq;
 using TechShelf.Application.Common.Behaviors;
 
 namespace TechShelf.UnitTests.Application.Common.Behaviors;

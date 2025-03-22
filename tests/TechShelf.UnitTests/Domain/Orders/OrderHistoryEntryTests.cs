@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using TechShelf.Domain.Orders;
+﻿using TechShelf.Domain.Orders;
 using TechShelf.Domain.Orders.Enums;
 
 namespace TechShelf.UnitTests.Domain.Orders;

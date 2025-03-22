@@ -1,8 +1,6 @@
-﻿using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Testing;
 using Microsoft.Extensions.Options;
-using Moq;
 using TechShelf.Infrastructure.Data.Outbox;
 
 namespace TechShelf.UnitTests.Infrastructure.Data;

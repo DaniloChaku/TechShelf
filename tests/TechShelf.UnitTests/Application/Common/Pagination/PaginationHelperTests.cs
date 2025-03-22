@@ -1,5 +1,4 @@
-﻿using FluentAssertions;
-using TechShelf.Application.Common.Pagination;
+﻿using TechShelf.Application.Common.Pagination;
 
 namespace TechShelf.UnitTests.Application.Common.Pagination;
 

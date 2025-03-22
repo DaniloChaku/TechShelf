@@ -1,6 +1,4 @@
-﻿using FluentAssertions;
-using Moq;
-using TechShelf.Application.Features.Brands.Queries.GetAllBrands;
+﻿using TechShelf.Application.Features.Brands.Queries.GetAllBrands;
 using TechShelf.Application.Interfaces.Data;
 using TechShelf.Domain.Products;
 

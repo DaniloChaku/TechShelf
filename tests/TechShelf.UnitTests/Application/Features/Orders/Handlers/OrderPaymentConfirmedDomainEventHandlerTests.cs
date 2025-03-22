@@ -1,6 +1,4 @@
-﻿using AutoFixture;
-using Moq;
-using TechShelf.Application.Features.Orders.Handlers;
+﻿using TechShelf.Application.Features.Orders.Handlers;
 using TechShelf.Application.Interfaces.Services;
 using TechShelf.Domain.Orders.Events;
 

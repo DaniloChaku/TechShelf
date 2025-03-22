@@ -1,8 +1,4 @@
-﻿using AutoFixture;
-using FluentAssertions;
-using MediatR;
-using Moq;
-using TechShelf.API.Controllers;
+﻿using TechShelf.API.Controllers;
 using TechShelf.Application.Features.Brands.Queries.GetAllBrands;
 using TechShelf.Application.Features.Brands.Queries.Shared;
 

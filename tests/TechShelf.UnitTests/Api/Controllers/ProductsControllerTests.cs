@@ -1,10 +1,5 @@
-﻿using AutoFixture;
-using ErrorOr;
-using FluentAssertions;
-using MediatR;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Moq;
 using TechShelf.API.Controllers;
 using TechShelf.API.Requests.Products;
 using TechShelf.Application.Common.Pagination;

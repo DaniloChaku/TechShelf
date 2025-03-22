@@ -1,8 +1,4 @@
-﻿using AutoFixture;
-using ErrorOr;
-using FluentAssertions;
-using Moq;
-using TechShelf.Application.Features.Users.Commands.ChangeFullName;
+﻿using TechShelf.Application.Features.Users.Commands.ChangeFullName;
 using TechShelf.Application.Interfaces.Auth;
 
 namespace TechShelf.UnitTests.Application.Features.Users.ChangeFullName;

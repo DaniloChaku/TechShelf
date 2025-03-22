@@ -1,15 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using AutoFixture;
-using ErrorOr;
-using FluentAssertions;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Moq;
 using TechShelf.API.Common.Http;
 using TechShelf.API.Common.Responses;
 using TechShelf.API.Controllers;

@@ -1,7 +1,4 @@
-﻿using AutoFixture;
-using FluentAssertions;
-using Moq;
-using TechShelf.Application.Common.Pagination;
+﻿using TechShelf.Application.Common.Pagination;
 using TechShelf.Application.Features.Orders.Queries.GetCustomerOrders;
 using TechShelf.Application.Interfaces.Data;
 using TechShelf.Domain.Orders;

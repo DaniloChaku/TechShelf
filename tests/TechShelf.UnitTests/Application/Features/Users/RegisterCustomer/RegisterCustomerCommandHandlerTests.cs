@@ -1,8 +1,4 @@
-﻿using AutoFixture;
-using ErrorOr;
-using FluentAssertions;
-using Mapster;
-using Moq;
+﻿using Mapster;
 using TechShelf.Application.Features.Users.Commands.RegisterCustomer;
 using TechShelf.Application.Features.Users.Common;
 using TechShelf.Application.Interfaces.Auth;

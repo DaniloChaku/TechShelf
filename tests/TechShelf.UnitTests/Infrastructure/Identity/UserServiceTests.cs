@@ -1,12 +1,9 @@
-﻿using AutoFixture;
-using FluentAssertions;
-using Mapster;
+﻿using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging.Testing;
-using Moq;
 using TechShelf.Application.Features.Users.Common;
 using TechShelf.Domain.Users;
 using TechShelf.Infrastructure.Identity;

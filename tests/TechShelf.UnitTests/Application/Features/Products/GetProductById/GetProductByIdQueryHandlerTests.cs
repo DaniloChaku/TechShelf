@@ -1,6 +1,4 @@
-﻿using FluentAssertions;
-using Moq;
-using TechShelf.Application.Features.Products.Queries.GetProductById;
+﻿using TechShelf.Application.Features.Products.Queries.GetProductById;
 using TechShelf.Application.Interfaces.Data;
 using TechShelf.Domain.Products;
 using TechShelf.Domain.Products.Specs;
