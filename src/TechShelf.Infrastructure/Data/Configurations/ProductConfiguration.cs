@@ -51,5 +51,8 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.HasOne(p => p.Brand)
             .WithMany()
             .HasForeignKey(p => p.BrandId);
+
+        builder.HasIndex(p => p.Name).HasDatabaseName("IX_Product_Name");
+        builder.HasIndex(p => p.Price).HasDatabaseName("IX_Product_Price");
     }
 }

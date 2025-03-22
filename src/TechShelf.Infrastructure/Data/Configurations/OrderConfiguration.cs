@@ -70,5 +70,11 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.Navigation(x => x.History)
             .HasField("_history")
             .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+        builder.HasIndex(x => x.Email).HasDatabaseName("IX_Order_Email");
+        builder.HasIndex(x => x.PhoneNumber).HasDatabaseName("IX_Order_PhoneNumber");
+        builder.HasIndex(x => x.CustomerId).HasDatabaseName("IX_Order_CustomerId");
+        builder.HasIndex(x => x.PaymentIntentId).HasDatabaseName("IX_Order_PaymentIntentId");
+        builder.HasIndex(x => x.Total).HasDatabaseName("IX_Order_Total");
     }
 }
