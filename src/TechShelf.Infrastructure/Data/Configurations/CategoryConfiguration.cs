@@ -15,6 +15,6 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
 
         builder.Property(c => c.Name)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(ProductConstants.Category.NameMaxLength);
     }
 }

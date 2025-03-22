@@ -16,10 +16,10 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
 
         builder.Property(p => p.Name)
             .IsRequired()
-            .HasMaxLength(200);
+            .HasMaxLength(ProductConstants.NameMaxLength);
 
         builder.Property(p => p.Description)
-            .HasMaxLength(1000);
+            .HasMaxLength(ProductConstants.DescriptionMaxLength);
 
         builder.Property(p => p.Price)
             .HasPrecision(10, 2)
@@ -29,7 +29,7 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             .IsRequired();
 
         builder.Property(p => p.ThumbnailUrl)
-           .HasMaxLength(250);
+           .HasMaxLength(ProductConstants.ThumbnailUrlMaxLength);
 
 #pragma warning disable CS8604 // Possible null reference argument.
         builder.Property(p => p.ImageUrls)
@@ -41,7 +41,7 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
                     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                     c => c.ToList())
             )
-            .HasMaxLength(1250);
+            .HasMaxLength(ProductConstants.ImageUrlsMaxLength);
 #pragma warning restore CS8604 // Possible null reference argument.
 
         builder.HasOne(p => p.Category)
