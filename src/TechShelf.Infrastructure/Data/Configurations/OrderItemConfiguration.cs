@@ -24,11 +24,11 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
 
             owned.Property(p => p.Name)
                 .IsRequired()
-                .HasMaxLength(200);
+                .HasMaxLength(OrderConstants.OrderItem.ProductNameMaxLength);
 
             owned.Property(p => p.ImageUrl)
                 .IsRequired()
-                .HasMaxLength(250);
+                .HasMaxLength(OrderConstants.OrderItem.ProductImageUrlMaxLength);
         });
     }
 }

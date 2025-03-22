@@ -24,6 +24,6 @@ public class OrderHistoryConfiguration : IEntityTypeConfiguration<OrderHistoryEn
             .IsRequired();
 
         builder.Property(x => x.Notes)
-            .HasMaxLength(500);
+            .HasMaxLength(OrderConstants.OrderHistory.NotesMaxLength);
     }
 }

@@ -12,21 +12,21 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
 
         builder.Property(x => x.Email)
             .IsRequired()
-            .HasMaxLength(256);
+            .HasMaxLength(OrderConstants.EmailMaxLength);
 
         builder.Property(x => x.PhoneNumber)
             .IsRequired()
-            .HasMaxLength(20);
+            .HasMaxLength(OrderConstants.PhoneNumberMaxLength);
 
         builder.Property(x => x.FullName)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(OrderConstants.FullNameMaxLength);
 
         builder.Property(x => x.CustomerId)
-            .HasMaxLength(50);
+            .HasMaxLength(OrderConstants.CustomerIdMaxLength);
 
         builder.Property(x => x.PaymentIntentId)
-            .HasMaxLength(50);
+            .HasMaxLength(OrderConstants.PaymentIntentIdMaxLength);
 
         builder.Property(x => x.Total)
             .IsRequired()
@@ -36,23 +36,23 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         {
             address.Property(a => a.Line1)
                     .IsRequired()
-                    .HasMaxLength(100);
+                    .HasMaxLength(OrderConstants.Address.Line1MaxLength);
 
             address.Property(a => a.Line2)
-                   .HasMaxLength(100)
+                   .HasMaxLength(OrderConstants.Address.Line2MaxLength)
                    .IsRequired(false);
 
             address.Property(a => a.City)
                    .IsRequired()
-                   .HasMaxLength(50);
+                   .HasMaxLength(OrderConstants.Address.CityMaxLength);
 
             address.Property(a => a.State)
                    .IsRequired()
-                   .HasMaxLength(50);
+                   .HasMaxLength(OrderConstants.Address.StateMaxLength);
 
             address.Property(a => a.PostalCode)
                     .IsRequired()
-                    .HasMaxLength(10);
+                    .HasMaxLength(OrderConstants.Address.PostalCodeMaxLength);
         });
 
         builder.HasMany(x => x.OrderItems)

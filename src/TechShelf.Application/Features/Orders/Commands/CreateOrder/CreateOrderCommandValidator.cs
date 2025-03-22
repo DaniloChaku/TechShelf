@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using TechShelf.Application.Features.Orders.Common.Validators;
 using TechShelf.Domain.Common;
+using TechShelf.Domain.Orders;
 
 namespace TechShelf.Application.Features.Orders.Commands.CreateOrder;
 
@@ -11,7 +12,8 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
         RuleFor(x => x.Email)
             .NotEmpty().WithMessage("Email is required.")
             .EmailAddress().WithMessage("A valid email address is required.")
-            .MaximumLength(256).WithMessage("Email must not exceed 256 characters.");
+            .MaximumLength(OrderConstants.EmailMaxLength)
+            .WithMessage("Email must not exceed 256 characters.");
 
         RuleFor(x => x.PhoneNumber)
             .NotEmpty().WithMessage("Phone number is required.")
@@ -21,7 +23,8 @@ public class CreateOrderCommandValidator : AbstractValidator<CreateOrderCommand>
 
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Name is required.")
-            .MaximumLength(100).WithMessage("Name must not exceed 100 characters.");
+            .MaximumLength(OrderConstants.FullNameMaxLength)
+            .WithMessage("Name must not exceed 100 characters.");
 
         RuleFor(x => x.ShippingAddress)
             .NotNull().WithMessage("Shipping address is required.")
