@@ -5,7 +5,6 @@ using Stripe;
 using Stripe.Checkout;
 using TechShelf.Application.Features.Orders.Common.Dtos;
 using TechShelf.Application.Interfaces.Services;
-using TechShelf.Infrastructure.Options;
 
 namespace TechShelf.Infrastructure.Services.Stripe;
 

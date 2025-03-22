@@ -1,4 +1,4 @@
-﻿namespace TechShelf.Infrastructure.Options;
+﻿namespace TechShelf.Infrastructure.Services.Stripe;
 
 public class StripeOptions
 {
