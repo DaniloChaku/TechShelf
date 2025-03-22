@@ -12,6 +12,9 @@ public class AddressDtoValidator : AbstractValidator<AddressDto>
             .NotEmpty().WithMessage("Address Line 1 is required.")
             .MaximumLength(OrderConstants.Address.Line1MaxLength)
             .WithMessage("Address Line 1 must not exceed 100 characters.");
+        RuleFor(x => x.Line2)
+            .Must(x => x is null || x.Length <= OrderConstants.Address.Line2MaxLength)
+            .WithMessage($"Address Line 2 must not exceed {OrderConstants.Address.Line2MaxLength} characters");
         RuleFor(x => x.City)
             .NotEmpty().WithMessage("City is required.")
             .MaximumLength(OrderConstants.Address.CityMaxLength)

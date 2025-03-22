@@ -1,6 +1,7 @@
 ﻿using FluentValidation.TestHelper;
 using TechShelf.Application.Features.Orders.Common.Dtos;
 using TechShelf.Application.Features.Orders.Common.Validators;
+using TechShelf.Domain.Orders;
 
 namespace TechShelf.UnitTests.Application.Features.Orders.Common;
 
@@ -30,6 +31,7 @@ public class AddressDtoValidatorTests
 
     [Theory]
     [InlineData("123 Main Street")]
+    [InlineData("412, Other Street")]
     public void Validator_HasNoError_WhenLine1IsValid(string validLine1)
     {
         // Arrange
@@ -40,6 +42,35 @@ public class AddressDtoValidatorTests
 
         // Assert
         result.ShouldNotHaveValidationErrorFor(x => x.Line1);
+    }
+
+    [Fact]
+    public void Validator_HasError_WhenLine2IsInvalid()
+    {
+        // Arrange
+        var invalidLine2 = "x".PadLeft(OrderConstants.Address.Line2MaxLength + 1);
+        var addressDto = CreateValidAddressDto() with { Line2 = invalidLine2 };
+
+        // Act
+        var result = _validator.TestValidate(addressDto);
+
+        // Assert
+        result.ShouldHaveValidationErrorFor(x => x.Line2);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("412, Other Street")]
+    public void Validator_HasNoError_WhenLine2IsValid(string? validLine2)
+    {
+        // Arrange
+        var addressDto = CreateValidAddressDto() with { Line2 = validLine2 };
+
+        // Act
+        var result = _validator.TestValidate(addressDto);
+
+        // Assert
+        result.ShouldNotHaveValidationErrorFor(x => x.Line2);
     }
 
     [Theory]
