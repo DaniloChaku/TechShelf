@@ -16,71 +16,101 @@ using TechShelf.IntegrationTests.TestHelpers.TestData;
 
 namespace TechShelf.IntegrationTests.TestHelpers;
 
-public class TestWebApplicationFactory : WebApplicationFactory<Program>
+public class TestWebApplicationFactory : WebApplicationFactory<Program>, IDisposable
 {
-    private string? _connectionString;
+    private readonly string? _connectionString;
+    private readonly IServiceScope _serviceScope;
+    private readonly IServiceProvider _serviceProvider;
+
+    public TestWebApplicationFactory()
+    {
+        _connectionString = GetConnectionString();
+        _serviceProvider = BuildServiceProvider();
+        _serviceScope = _serviceProvider.CreateScope();
+    }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.ConfigureAppConfiguration((context, configBuilder) =>
+        builder.ConfigureAppConfiguration(ConfigureTestAppConfiguration);
+        builder.ConfigureTestServices(ConfigureTestServices);
+    }
+
+    private void ConfigureTestAppConfiguration(WebHostBuilderContext context, IConfigurationBuilder configBuilder)
+    {
+        var jwtConfiguration = new Dictionary<string, string?>
         {
-            var configuration = new Dictionary<string, string?>
-            {
-                [$"Jwt:{nameof(JwtOptions.SecretKey)}"] = JwtTestHelper.Key,
-                [$"Jwt:{nameof(JwtOptions.Issuer)}"] = JwtTestHelper.Issuer,
-                [$"Jwt:{nameof(JwtOptions.Audience)}"] = JwtTestHelper.Audience,
-                [$"Jwt:{nameof(JwtOptions.ExpiresInMinutes)}"] = JwtTestHelper.ExpiresInMinutes.ToString(),
-                [$"Jwt:{nameof(JwtOptions.RefreshExpiresInDays)}"] = JwtTestHelper.RefreshExpiresInDays.ToString(),
-            };
+            [$"Jwt:{nameof(JwtOptions.SecretKey)}"] = JwtTestHelper.Key,
+            [$"Jwt:{nameof(JwtOptions.Issuer)}"] = JwtTestHelper.Issuer,
+            [$"Jwt:{nameof(JwtOptions.Audience)}"] = JwtTestHelper.Audience,
+            [$"Jwt:{nameof(JwtOptions.ExpiresInMinutes)}"] = JwtTestHelper.ExpiresInMinutes.ToString(),
+            [$"Jwt:{nameof(JwtOptions.RefreshExpiresInDays)}"] = JwtTestHelper.RefreshExpiresInDays.ToString(),
+        };
 
-            configBuilder.AddInMemoryCollection(configuration);
-        });
+        configBuilder.AddInMemoryCollection(jwtConfiguration);
+    }
 
-        builder.ConfigureTestServices(services =>
+    private void ConfigureTestServices(IServiceCollection services)
+    {
+        ConfigureDatabases(services);
+        ConfigureApplicationServices(services);
+        SeedDatabases(services);
+    }
+
+    private void ConfigureDatabases(IServiceCollection services)
+    {
+        services.RemoveAll<DbContextOptions<ApplicationDbContext>>();
+        services.RemoveAll<DbContextOptions<AppIdentityDbContext>>();
+
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseNpgsql(_connectionString, options => options.SetPostgresVersion(12, 0)));
+        services.AddDbContext<AppIdentityDbContext>(options =>
+            options.UseNpgsql(_connectionString, options => options.SetPostgresVersion(12, 0)));
+    }
+
+    private void ConfigureApplicationServices(IServiceCollection services)
+    {
+        services.Configure<AdminOptions>(options =>
         {
-            services.RemoveAll<DbContextOptions<ApplicationDbContext>>();
-            services.RemoveAll<DbContextOptions<AppIdentityDbContext>>();
-
-            _connectionString = GetConnectionString();
-
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(_connectionString, options => options.SetPostgresVersion(12, 0)));
-
-            using (var applicationDbContext = CreateDbContext<ApplicationDbContext>(services))
-            {
-                applicationDbContext.Database.EnsureDeleted();
-                applicationDbContext.Database.Migrate();
-
-                BrandHelper.Seed(applicationDbContext);
-                CategoryHelper.Seed(applicationDbContext);
-                ProductHelper.Seed(applicationDbContext);
-            }
-
-            services.AddDbContext<AppIdentityDbContext>(options =>
-                options.UseNpgsql(_connectionString, options => options.SetPostgresVersion(12, 0)));
-            services.Configure<AdminOptions>(options =>
-            {
-                options.SuperAdmins = [AdminHelper.SuperAdminOptions];
-            });
-
-            using (var appIdentityDbContext = CreateDbContext<AppIdentityDbContext>(services))
-            {
-                appIdentityDbContext.Database.Migrate();
-
-                var serviceProvider = services.BuildServiceProvider();
-                using var scope = serviceProvider.CreateScope();
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-
-                SeedRoles(roleManager).Wait();
-                CustomerHelper.Seed(userManager);
-            }
-
-            using (var applicationDbContext = CreateDbContext<ApplicationDbContext>(services))
-            {
-                OrderHelper.Seed(applicationDbContext);
-            }
+            options.SuperAdmins = [AdminHelper.SuperAdminOptions];
         });
+    }
+
+    private void SeedDatabases(IServiceCollection services)
+    {
+        SeedApplicationDatabase(services);
+        SeedIdentityDatabase(services);
+        SeedOrderData(services);
+    }
+
+    private void SeedApplicationDatabase(IServiceCollection services)
+    {
+        using var dbContext = CreateDbContext<ApplicationDbContext>(services);
+        dbContext.Database.EnsureDeleted();
+        dbContext.Database.Migrate();
+
+        BrandHelper.Seed(dbContext);
+        CategoryHelper.Seed(dbContext);
+        ProductHelper.Seed(dbContext);
+    }
+
+    private void SeedIdentityDatabase(IServiceCollection services)
+    {
+        using var dbContext = CreateDbContext<AppIdentityDbContext>(services);
+        dbContext.Database.Migrate();
+
+        var serviceProvider = services.BuildServiceProvider();
+        using var scope = serviceProvider.CreateScope();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+        SeedRoles(roleManager).Wait();
+        CustomerHelper.Seed(userManager);
+    }
+
+    private void SeedOrderData(IServiceCollection services)
+    {
+        using var dbContext = CreateDbContext<ApplicationDbContext>(services);
+        OrderHelper.Seed(dbContext);
     }
 
     private static string? GetConnectionString()
@@ -89,17 +119,15 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
             .AddUserSecrets<TestWebApplicationFactory>()
             .Build();
 
-        var connectionString = configuration.GetConnectionString("TestDatabase");
-        return connectionString;
+        return configuration.GetConnectionString("TestDatabase");
     }
 
-    private static IDbContext CreateDbContext<IDbContext>(IServiceCollection services)
-        where IDbContext : DbContext
+    private static TDbContext CreateDbContext<TDbContext>(IServiceCollection services)
+        where TDbContext : DbContext
     {
         var serviceProvider = services.BuildServiceProvider();
         var scope = serviceProvider.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<IDbContext>();
-        return dbContext;
+        return scope.ServiceProvider.GetRequiredService<TDbContext>();
     }
 
     private static async Task SeedRoles(RoleManager<IdentityRole> roleManager)
@@ -113,29 +141,42 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>
         }
     }
 
+    private IServiceProvider BuildServiceProvider()
+    {
+        var services = new ServiceCollection();
+        ConfigureDatabases(services);
+        return services.BuildServiceProvider();
+    }
+
     protected override void Dispose(bool disposing)
     {
         if (disposing && !string.IsNullOrEmpty(_connectionString))
         {
-            var appDbContextOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseNpgsql(_connectionString, options => options.SetPostgresVersion(12, 0))
-                .Options;
-
-            using (var dbContext = new ApplicationDbContext(appDbContextOptions))
-            {
-                dbContext.Database.EnsureDeleted();
-            }
-
-            var identityDbContextOptions = new DbContextOptionsBuilder<AppIdentityDbContext>()
-                .UseNpgsql(_connectionString, options => options.SetPostgresVersion(12, 0))
-                .Options;
-
-            using (var appIdentityDbContext = new AppIdentityDbContext(identityDbContextOptions))
-            {
-                appIdentityDbContext.Database.EnsureDeleted();
-            }
+            CleanupDatabases();
+            _serviceScope.Dispose();
         }
 
         base.Dispose(disposing);
+    }
+
+    private void CleanupDatabases()
+    {
+        var appDbContextOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseNpgsql(_connectionString, options => options.SetPostgresVersion(12, 0))
+            .Options;
+
+        using (var dbContext = new ApplicationDbContext(appDbContextOptions))
+        {
+            dbContext.Database.EnsureDeleted();
+        }
+
+        var identityDbContextOptions = new DbContextOptionsBuilder<AppIdentityDbContext>()
+            .UseNpgsql(_connectionString, options => options.SetPostgresVersion(12, 0))
+            .Options;
+
+        using (var appIdentityDbContext = new AppIdentityDbContext(identityDbContextOptions))
+        {
+            appIdentityDbContext.Database.EnsureDeleted();
+        }
     }
 }
