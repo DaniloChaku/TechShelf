@@ -2,7 +2,6 @@
 using FluentAssertions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Testing;
@@ -11,42 +10,51 @@ using TechShelf.Infrastructure.Data.Outbox;
 
 namespace TechShelf.IntegrationTests.Infrastructure.Data.Outbox;
 
-public class OutboxMessageProcessorIntegrationTests : IDisposable
+public class OutboxMessageProcessorIntegrationTests : PostgresContainerTestBase
 {
-    private readonly ApplicationDbContext _dbContext;
-    private readonly IServiceProvider _serviceProvider;
     private readonly FakeLogger<OutboxMessageProcessor> _logger;
-    private readonly OutboxMessageProcessor _processor;
     private readonly TestEventHandler _testEventHandler;
+    private ApplicationDbContext _dbContext;
+    private IServiceProvider _serviceProvider;
+    private OutboxMessageProcessor _processor;
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     public OutboxMessageProcessorIntegrationTests()
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     {
-        // Database setup
-        var configuration = new ConfigurationBuilder()
-            .AddUserSecrets<OutboxMessageProcessorIntegrationTests>()
-            .Build();
+        _testEventHandler = new TestEventHandler();
+        _logger = new FakeLogger<OutboxMessageProcessor>();
+    }
 
-        var connectionString = configuration["ConnectionStrings:TestDatabase"];
+    public override async Task InitializeAsync()
+    {
+        await base.InitializeAsync();
+
+        // Setup database context
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseNpgsql(connectionString, o => o.SetPostgresVersion(12, 0))
+            .UseNpgsql(ConnectionString)
             .Options;
 
         _dbContext = new ApplicationDbContext(options);
-        _dbContext.Database.EnsureDeleted();
-        _dbContext.Database.EnsureCreated();
+        await _dbContext.Database.EnsureCreatedAsync();
 
-        _testEventHandler = new TestEventHandler();
-
-        // Service provider setup
+        // Setup service provider
         var services = new ServiceCollection();
         services.AddDbContext<ApplicationDbContext>(opt =>
-            opt.UseNpgsql(connectionString, o => o.SetPostgresVersion(12, 0)));
+            opt.UseNpgsql(ConnectionString));
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(TestDomainEvent).Assembly));
         services.AddSingleton<INotificationHandler<TestDomainEvent>>(_testEventHandler);
 
         _serviceProvider = services.BuildServiceProvider();
-        _logger = new FakeLogger<OutboxMessageProcessor>();
+
+        // Initialize the processor after service provider is built
         _processor = new OutboxMessageProcessor(_serviceProvider, _logger);
+    }
+
+    public override async Task DisposeAsync()
+    {
+        await _dbContext.DisposeAsync();
+        await base.DisposeAsync();
     }
 
     [Fact]
@@ -181,27 +189,6 @@ public class OutboxMessageProcessorIntegrationTests : IDisposable
         });
 
         _testEventHandler.HandledEvents.Should().HaveCount(3);
-    }
-
-    private bool _disposed;
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!_disposed)
-        {
-            if (disposing)
-            {
-                _dbContext.Database.EnsureDeleted();
-                _dbContext.Dispose();
-            }
-
-            _disposed = true;
-        }
     }
 }
 

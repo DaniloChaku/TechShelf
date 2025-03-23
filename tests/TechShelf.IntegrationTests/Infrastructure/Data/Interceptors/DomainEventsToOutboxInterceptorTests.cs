@@ -2,35 +2,36 @@
 using AutoFixture;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using TechShelf.Domain.Common;
 using TechShelf.Infrastructure.Data.Interceptors;
 using TechShelf.Infrastructure.Data.Outbox;
 
 namespace TechShelf.IntegrationTests.Infrastructure.Data.Interceptors;
 
-public class DomainEventsToOutboxInterceptorTests : IDisposable
+public class DomainEventsToOutboxInterceptorTests : PostgresContainerTestBase
 {
-    private readonly TestDbContext _dbContext;
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    private TestDbContext _dbContext;
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
     private readonly Fixture _fixture = new();
 
-    public DomainEventsToOutboxInterceptorTests()
+    public override async Task InitializeAsync()
     {
-        var configuration = new ConfigurationBuilder()
-            .AddUserSecrets<DomainEventsToOutboxInterceptorTests>()
-            .Build();
-
-        var connectionString = configuration["ConnectionStrings:TestDatabase"];
+        await base.InitializeAsync();
 
         var options = new DbContextOptionsBuilder<TestDbContext>()
-            .UseNpgsql(connectionString, o => o.SetPostgresVersion(12, 0))
+            .UseNpgsql(ConnectionString)
             .AddInterceptors(new DomainEventsToOutboxInterceptor())
             .Options;
-
         _dbContext = new TestDbContext(options);
 
-        _dbContext.Database.EnsureDeleted();
-        _dbContext.Database.EnsureCreated();
+        await _dbContext.Database.EnsureCreatedAsync();
+    }
+
+    public override async Task DisposeAsync()
+    {
+        await _dbContext.DisposeAsync();
+        await base.DisposeAsync();
     }
 
     [Fact]
@@ -121,29 +122,6 @@ public class DomainEventsToOutboxInterceptorTests : IDisposable
 
         aggregateWithSingleEvent.DomainEvents.Should().BeEmpty();
         aggregateWithMultipleEvents.DomainEvents.Should().BeEmpty();
-    }
-
-
-    private bool _disposed;
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!_disposed)
-        {
-            if (disposing)
-            {
-                _dbContext.Database.EnsureDeleted();
-                _dbContext.Dispose();
-            }
-
-            _disposed = true;
-        }
     }
 }
 

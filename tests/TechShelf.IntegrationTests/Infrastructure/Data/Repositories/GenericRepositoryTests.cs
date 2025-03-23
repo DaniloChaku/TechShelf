@@ -1,17 +1,18 @@
 ﻿using Ardalis.Specification;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using TechShelf.Domain.Products;
 using TechShelf.Infrastructure.Data;
 using TechShelf.Infrastructure.Data.Repositories;
 
 namespace TechShelf.IntegrationTests.Infrastructure.Data.Repositories;
 
-public class GenericRepositoryTests : IDisposable
+public class GenericRepositoryTests : PostgresContainerTestBase
 {
-    private readonly ApplicationDbContext _dbContext;
-    private readonly GenericRepository<Product> _repository;
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+    private ApplicationDbContext _dbContext;
+    private GenericRepository<Product> _repository;
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 
     private readonly Product[] _testProducts = [
         new Product { Id = 1, Name = "Laptop", Description = "Product 1", Stock = 1, Price = 1000, BrandId = 1, CategoryId = 1 },
@@ -29,34 +30,39 @@ public class GenericRepositoryTests : IDisposable
         new Category { Id = 2, Name = "Mobile Devices" }
         ];
 
-    private bool _disposed;
-
-    public GenericRepositoryTests()
+    public override async Task InitializeAsync()
     {
-        var configuration = new ConfigurationBuilder()
-            .AddUserSecrets<GenericRepositoryTests>()
-            .Build();
+        await base.InitializeAsync();
 
-        var connectionString = configuration["ConnectionStrings:TestDatabase"];
         var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseNpgsql(connectionString,
-            o => o.SetPostgresVersion(12, 0))
+            .UseNpgsql(ConnectionString)
             .Options;
 
         _dbContext = new ApplicationDbContext(options);
-        _dbContext.Database.EnsureDeleted();
-        _dbContext.Database.EnsureCreated();
-        SeedTestData(_dbContext);
 
+        // Ensure clean database
+        await _dbContext.Database.EnsureCreatedAsync();
+
+        // Seed test data
+        await SeedTestDataAsync(_dbContext);
+
+        // Initialize repository
         _repository = new GenericRepository<Product>(_dbContext);
     }
 
-    private void SeedTestData(ApplicationDbContext dbContext)
+    public override async Task DisposeAsync()
+    {
+        await _dbContext.DisposeAsync();
+        await base.DisposeAsync();
+    }
+
+
+    private async Task SeedTestDataAsync(ApplicationDbContext dbContext)
     {
         dbContext.Brands.AddRange(_brands);
         dbContext.Categories.AddRange(_categories);
         dbContext.Products.AddRange(_testProducts);
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync();
     }
 
     private class ProductByIdSpecification : Specification<Product>
@@ -194,26 +200,6 @@ public class GenericRepositoryTests : IDisposable
         // Assert
         var deletedProduct = await _dbContext.Products.FindAsync(2);
         deletedProduct.Should().BeNull();
-    }
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!_disposed)
-        {
-            if (disposing)
-            {
-                _dbContext.Database.EnsureDeleted();
-                _dbContext.Dispose();
-            }
-
-            _disposed = true;
-        }
     }
 }
 
