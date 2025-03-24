@@ -11,23 +11,29 @@ using TechShelf.Infrastructure.Data;
 using TechShelf.Infrastructure.Identity;
 using TechShelf.Infrastructure.Identity.Options;
 using TechShelf.IntegrationTests.TestHelpers.TestData;
-
-[assembly: CollectionBehavior(DisableTestParallelization = true)]
+using Testcontainers.PostgreSql;
 
 namespace TechShelf.IntegrationTests.TestHelpers;
 
-public class TestWebApplicationFactory : WebApplicationFactory<Program>, IDisposable
+public class TestWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly string? _connectionString;
+    private readonly PostgreSqlContainer _postgresContainer;
     private readonly IServiceScope _serviceScope;
     private readonly IServiceProvider _serviceProvider;
 
     public TestWebApplicationFactory()
     {
-        _connectionString = GetConnectionString();
+        _postgresContainer = new PostgreSqlBuilder()
+            .WithImage("postgres:17-alpine")
+            .WithUsername("postgres")
+            .WithPassword("postgres")
+            .Build();
+
         _serviceProvider = BuildServiceProvider();
         _serviceScope = _serviceProvider.CreateScope();
     }
+
+    public string ConnectionString => _postgresContainer.GetConnectionString();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -62,9 +68,9 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>, IDispos
         services.RemoveAll<DbContextOptions<AppIdentityDbContext>>();
 
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(_connectionString, options => options.SetPostgresVersion(12, 0)));
+            options.UseNpgsql(ConnectionString));
         services.AddDbContext<AppIdentityDbContext>(options =>
-            options.UseNpgsql(_connectionString, options => options.SetPostgresVersion(12, 0)));
+            options.UseNpgsql(ConnectionString));
     }
 
     private void ConfigureApplicationServices(IServiceCollection services)
@@ -85,7 +91,6 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>, IDispos
     private void SeedApplicationDatabase(IServiceCollection services)
     {
         using var dbContext = CreateDbContext<ApplicationDbContext>(services);
-        dbContext.Database.EnsureDeleted();
         dbContext.Database.Migrate();
 
         BrandHelper.Seed(dbContext);
@@ -111,15 +116,6 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>, IDispos
     {
         using var dbContext = CreateDbContext<ApplicationDbContext>(services);
         OrderHelper.Seed(dbContext);
-    }
-
-    private static string? GetConnectionString()
-    {
-        var configuration = new ConfigurationBuilder()
-            .AddUserSecrets<TestWebApplicationFactory>()
-            .Build();
-
-        return configuration.GetConnectionString("TestDatabase");
     }
 
     private static TDbContext CreateDbContext<TDbContext>(IServiceCollection services)
@@ -148,35 +144,16 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>, IDispos
         return services.BuildServiceProvider();
     }
 
-    protected override void Dispose(bool disposing)
+    public async Task InitializeAsync()
     {
-        if (disposing && !string.IsNullOrEmpty(_connectionString))
-        {
-            CleanupDatabases();
-            _serviceScope.Dispose();
-        }
-
-        base.Dispose(disposing);
+        await _postgresContainer.StartAsync();
     }
 
-    private void CleanupDatabases()
+    public new async Task DisposeAsync()
     {
-        var appDbContextOptions = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseNpgsql(_connectionString, options => options.SetPostgresVersion(12, 0))
-            .Options;
+        _serviceScope.Dispose();
 
-        using (var dbContext = new ApplicationDbContext(appDbContextOptions))
-        {
-            dbContext.Database.EnsureDeleted();
-        }
-
-        var identityDbContextOptions = new DbContextOptionsBuilder<AppIdentityDbContext>()
-            .UseNpgsql(_connectionString, options => options.SetPostgresVersion(12, 0))
-            .Options;
-
-        using (var appIdentityDbContext = new AppIdentityDbContext(identityDbContextOptions))
-        {
-            appIdentityDbContext.Database.EnsureDeleted();
-        }
+        await _postgresContainer.StopAsync();
+        await _postgresContainer.DisposeAsync();
     }
 }
