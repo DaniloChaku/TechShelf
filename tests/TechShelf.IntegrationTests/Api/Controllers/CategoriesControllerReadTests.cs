@@ -6,11 +6,11 @@ using TechShelf.IntegrationTests.TestHelpers.TestData;
 
 namespace TechShelf.IntegrationTests.Api.Controllers;
 
-public class CategoriesControllerTests : IClassFixture<TestWebApplicationFactory>
+public class CategoriesControllerReadTests : IClassFixture<TestWebApplicationFactory>
 {
     private readonly TestWebApplicationFactory _factory;
 
-    public CategoriesControllerTests(TestWebApplicationFactory factory)
+    public CategoriesControllerReadTests(TestWebApplicationFactory factory)
     {
         _factory = factory;
     }

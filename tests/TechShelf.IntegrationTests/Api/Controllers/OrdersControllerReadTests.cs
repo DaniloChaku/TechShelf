@@ -16,14 +16,14 @@ using TechShelf.IntegrationTests.TestHelpers.TestData;
 
 namespace TechShelf.IntegrationTests.Api.Controllers;
 
-public class OrdersControllerTests : IClassFixture<TestWebApplicationFactory>, IDisposable
+public class OrdersControllerReadTests : IClassFixture<TestWebApplicationFactory>, IDisposable
 {
     private readonly TestWebApplicationFactory _factory;
     private readonly HttpClient _client;
     private readonly JwtTestHelper _jwtHelper;
     private readonly IServiceScope _scope;
 
-    public OrdersControllerTests(TestWebApplicationFactory factory)
+    public OrdersControllerReadTests(TestWebApplicationFactory factory)
     {
         _factory = factory;
         _client = factory.CreateClient();
@@ -221,30 +221,8 @@ public class OrdersControllerTests : IClassFixture<TestWebApplicationFactory>, I
 
     #endregion
 
-    private bool _disposed;
-
     public void Dispose()
     {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    // Protected implementation of Dispose pattern
-    protected virtual void Dispose(bool disposing)
-    {
-        if (_disposed)
-            return;
-
-        if (disposing)
-        {
-#pragma warning disable S1066 // Mergeable "if" statements should be combined
-            if (_scope != null)
-            {
-                _scope.Dispose();
-            }
-#pragma warning restore S1066 // Mergeable "if" statements should be combined
-        }
-
-        _disposed = true;
+        _scope.Dispose();
     }
 }

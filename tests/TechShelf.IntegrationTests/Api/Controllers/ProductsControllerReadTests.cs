@@ -11,11 +11,11 @@ using TechShelf.IntegrationTests.TestHelpers.TestData;
 
 namespace TechShelf.IntegrationTests.Api.Controllers;
 
-public class ProductsControllerTests : IClassFixture<TestWebApplicationFactory>
+public class ProductsControllerReadTests : IClassFixture<TestWebApplicationFactory>
 {
     private readonly HttpClient _client;
 
-    public ProductsControllerTests(TestWebApplicationFactory factory)
+    public ProductsControllerReadTests(TestWebApplicationFactory factory)
     {
         _client = factory.CreateClient();
     }
