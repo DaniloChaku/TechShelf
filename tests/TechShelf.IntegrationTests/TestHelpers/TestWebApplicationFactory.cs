@@ -83,22 +83,12 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>, IAsyncL
 
     private void SeedDatabases(IServiceCollection services)
     {
-        SeedApplicationDatabase(services);
+        // This order is important so that Users have ids by the time orders are seeded
         SeedIdentityDatabase(services);
-        SeedOrderData(services);
+        SeedApplicationDatabase(services);
     }
 
-    private void SeedApplicationDatabase(IServiceCollection services)
-    {
-        using var dbContext = CreateDbContext<ApplicationDbContext>(services);
-        dbContext.Database.Migrate();
-
-        BrandHelper.Seed(dbContext);
-        CategoryHelper.Seed(dbContext);
-        ProductHelper.Seed(dbContext);
-    }
-
-    private void SeedIdentityDatabase(IServiceCollection services)
+    private static void SeedIdentityDatabase(IServiceCollection services)
     {
         using var dbContext = CreateDbContext<AppIdentityDbContext>(services);
         dbContext.Database.Migrate();
@@ -112,9 +102,14 @@ public class TestWebApplicationFactory : WebApplicationFactory<Program>, IAsyncL
         CustomerHelper.Seed(userManager);
     }
 
-    private void SeedOrderData(IServiceCollection services)
+    private static void SeedApplicationDatabase(IServiceCollection services)
     {
         using var dbContext = CreateDbContext<ApplicationDbContext>(services);
+        dbContext.Database.Migrate();
+
+        BrandHelper.Seed(dbContext);
+        CategoryHelper.Seed(dbContext);
+        ProductHelper.Seed(dbContext);
         OrderHelper.Seed(dbContext);
     }
 
