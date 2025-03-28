@@ -8,8 +8,14 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+
+    env:
+      ASPNETCORE_ENVIRONMENT: Test
+      ASPNETCORE_STRIPE__SECRETKEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      ASPNETCORE_STRIPE__WHSECRET: ${{ secrets.STRIPE_WH_SECRET }}
+      ASPNETCORE_SENDGRID__APIKEY: ${{ secrets.SENDGRID_API_KEY }}
+      ASPNETCORE_SENDGRID__FROMEMAIL: ${{ secrets.SENDGRID_FROM_EMAIL }}
 
     steps:
     - uses: actions/checkout@v4
